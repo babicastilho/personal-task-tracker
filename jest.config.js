@@ -1,4 +1,6 @@
+// jest.config.js
 module.exports = {
+  preset: 'ts-jest',
   testEnvironment: 'jest-environment-jsdom',
   setupFilesAfterEnv: ['<rootDir>/setupTests.ts'],
   moduleNameMapper: {
@@ -7,7 +9,5 @@ module.exports = {
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
-    '^.+\\.ts$': 'ts-jest',
   },
-  transformIgnorePatterns: ['<rootDir>/node_modules/'],
 };

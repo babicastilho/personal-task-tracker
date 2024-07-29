@@ -1,7 +1,9 @@
 // jest.config.js
+process.env.SUPPRESS_JEST_WARNINGS = 'true';
+
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'jest-environment-jsdom',
+  testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/setupTests.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',

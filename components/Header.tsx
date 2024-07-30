@@ -1,7 +1,6 @@
 // components/Header.tsx
 import React from "react";
 import { FaGithub, FaMoon, FaSun } from "react-icons/fa";
-import { SignInButton } from "@clerk/nextjs";
 
 interface HeaderProps {
   toggleTheme: () => void; 
@@ -28,8 +27,7 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, theme }) => {
         >
           <FaGithub className="w-4 h-4 " />
         </a>
-        <span className="mx-3">|</span>
-        <SignInButton />
+        
       </div>
     </header>
   );

@@ -1,7 +1,6 @@
 // app/layout.tsx
 'use client';
 import React, { useState, useEffect } from 'react';
-import { ClerkProvider, RedirectToSignIn, useAuth } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import "./globals.scss";
 import Header from "@/components/Header";
@@ -28,11 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="transition-all duration-100 ease-intracking-tight antialiased bg-gray-50 text-gray-800 dark:bg-gray-800 dark:text-gray-300">
-        <ClerkProvider>
+        
           <Header toggleTheme={toggleTheme} theme={theme}/>
           {children}
           <Footer />
-        </ClerkProvider>
+        
       </body>
     </html>
   );

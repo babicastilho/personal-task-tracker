@@ -10,7 +10,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^5.2.6",
     "autoprefixer": "^10.4.19",
     "dotenv": "^16.4.5",
     "mongoose": "^8.5.1",

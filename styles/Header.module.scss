@@ -1,0 +1,13 @@
+.header {
+  padding: 1rem;
+  nav {
+    a {
+      margin-right: 1rem;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

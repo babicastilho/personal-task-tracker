@@ -1,3 +1,4 @@
+// models/Todo.ts
 import mongoose, { Document, Model, Schema } from 'mongoose';
 
 export interface ITodo extends Document {

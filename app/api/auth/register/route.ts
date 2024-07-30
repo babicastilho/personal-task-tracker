@@ -1,4 +1,4 @@
-// app/auth/signup.ts
+// app/api/auth/register/route.ts
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/mongodb';

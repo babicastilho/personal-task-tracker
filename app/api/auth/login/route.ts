@@ -1,4 +1,4 @@
-// app/api/auth/login.ts
+// app/api/auth/login/route.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/mongodb';

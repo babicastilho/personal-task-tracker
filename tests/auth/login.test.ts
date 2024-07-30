@@ -1,6 +1,6 @@
 // tests/auth/login.test.ts
 
-import handler from '@/app/api/auth/login'; 
+import handler from '@/app/api/auth/login/route'; 
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';

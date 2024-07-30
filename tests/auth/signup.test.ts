@@ -1,6 +1,6 @@
 // tests/auth/signup.test.ts
 
-import handler from '@/app/api/auth/signup'; 
+import handler from '@/app/api/auth/register/route'; 
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';

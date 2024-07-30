@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaRegTrashAlt, FaRegCheckSquare, FaRegSquare   } from "react-icons/fa";
 
 // Definition of the interface for Task data type
 interface Task {
@@ -69,10 +70,10 @@ const TodoList = () => {
               {task.title}
             </span>
             <button onClick={() => toggleTaskCompletion(task.id)} className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition">
-              {task.completed ? 'Mark as Incomplete' : 'Mark as Complete'}
+              {task.completed ? <FaRegSquare  /> : <FaRegCheckSquare />}
             </button>
             <button onClick={() => removeTask(task.id)} className="ml-2 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-700 transition">
-              Remove
+              <FaRegTrashAlt />
             </button>
           </li>
         ))}

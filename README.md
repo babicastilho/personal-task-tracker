@@ -11,36 +11,56 @@ The project structure is as follows:
 ```plaintext
 my-todo-list/
 ├── app/
-│ ├── api/
-│ │ ├── tasks/
-│ │ │ ├── [id]/
-│ │ │ │ └── route.ts
-│ │ │ └── route.ts
-│ ├── layout.tsx
-│ ├── page.tsx
-│ └── globals.css
+│   ├── api/
+│   │   ├── auth/
+│   │   │   ├── check/
+│   │   │   │   └── route.ts
+│   │   │   ├── login/
+│   │   │   │   └── route.ts
+│   │   │   ├── register/
+│   │   │   │   └── route.ts
+│   │   ├── tasks/
+│   │   │   ├── [id]/
+│   │   │   │   └── route.ts
+│   │   │   └── route.ts
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.scss
 ├── components/
-│ └── TodoList.tsx
+│   ├── Footer.tsx
+│   ├── Header.tsx
+│   ├── SignIn.tsx
+│   └── TodoList.tsx
 ├── lib/
-│ └── mongodb.ts
+│   ├── auth.ts
+│   ├── mongodb.ts
+│   └── todo.ts
 ├── models/
-│ └── Todo.ts
+│   ├── Todo.ts
+│   └── User.ts
 ├── public/
-│ └── (static files, images, etc.)
+│   └── (static files, images, etc.)
 ├── styles/
-│ └── (other CSS files if any)
+│   └── (other CSS files if any)
 ├── tests/
-│ ├── api/
-│ │ ├── tasks.test.ts
-│ │ └── tasksId.test.ts
-│ ├── components/
-│ │ └── TodoList.test.tsx
-│ ├── lib/
-│ │ └── mongodb.test.ts
-│ ├── models/
-│ │ └── Todo.test.ts
-│ └── pages/
-│ └── page.test.tsx
+│   ├── api/
+│   │   ├── tasks.test.ts
+│   │   └── tasksId.test.ts
+│   ├── auth/
+│   │   ├── check.test.ts
+│   │   ├── login.test.ts
+│   │   └── register.test.ts
+│   ├── components/
+│   │   └── TodoList.test.tsx
+│   ├── layout/
+│   │   └── layout.test.ts
+│   ├── lib/
+│   │   ├── mongodb.test.ts
+│   │   └── todo.test.ts
+│   ├── models/
+│   │   └── Todo.test.ts
+│   └── pages/
+│       └── page.test.tsx
 ├── .env.local
 ├── .gitignore
 ├── jest.config.js
@@ -136,37 +156,22 @@ Tests are located in the tests/ folder and cover both API and component function
 
 **GET** - Retrieve all tasks
 
+**POST** - Retrieve all tasks
+
 ```javascript
 import { NextApiRequest, NextApiResponse } from 'next';
-import dbConnect from '@/lib/mongodb';
-import Todo from '@/models/Todo';
+import { getTodos, addTodo } from '@/lib/todo';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await dbConnect();
-
-  const { method } = req;
-
-  switch (method) {
-    case 'GET':
-      try {
-        const todos = await Todo.find({});
-        res.status(200).json({ success: true, data: todos });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
-    case 'POST':
-      try {
-        const todo = await Todo.create(req.body);
-        res.status(201).json({ success: true, data: todo });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
-    default:
-      res.setHeader('Allow', ['GET', 'POST']);
-      res.status(405).end(`Method ${method} Not Allowed`);
-      break;
+  if (req.method === 'GET') {
+    const todos = await getTodos();
+    res.json(todos);
+  } else if (req.method === 'POST') {
+    const todo = await addTodo(req.body);
+    res.status(201).json(todo);
+  } else {
+    res.setHeader('Allow', ['GET', 'POST']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
 ```
@@ -181,74 +186,56 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 ```javascript
 import { NextApiRequest, NextApiResponse } from 'next';
-import dbConnect from '@/lib/mongodb';
-import Todo from '@/models/Todo';
+import { getTodoById, updateTodo, deleteTodo } from '@/lib/todo';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  await dbConnect();
 
-  const { method } = req;
-
-  switch (method) {
-    case 'GET':
-      try {
-        const todo = await Todo.findById(id);
-        if (!todo) {
-          return res.status(404).json({ success: false });
-        }
-        res.status(200).json({ success: true, data: todo });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
-    case 'PUT':
-      try {
-        const todo = await Todo.findByIdAndUpdate(id, req.body, {
-          new: true,
-          runValidators: true,
-        });
-        if (!todo) {
-          return res.status(404).json({ success: false });
-        }
-        res.status(200).json({ success: true, data: todo });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
-    case 'DELETE':
-      try {
-        const deletedTodo = await Todo.deleteOne({ _id: id });
-        if (!deletedTodo) {
-          return res.status(404).json({ success: false });
-        }
-        res.status(200).json({ success: true, data: {} });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
-    default:
-      res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
-      res.status(405).end(`Method ${method} Not Allowed`);
-      break;
+  if (req.method === 'GET') {
+    const todo = await getTodoById(id as string);
+    res.json(todo);
+  } else if (req.method === 'PUT') {
+    const updated = await updateTodo(id as string, req.body);
+    res.json({ success: updated });
+  } else if (req.method === 'DELETE') {
+    const deleted = await deleteTodo(id as string);
+    res.json({ success: deleted });
+  } else {
+    res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
-
 ```
 
 ## Directory Structure
 
-* app/api/tasks/route.ts: Defines API endpoints for task management.
-* components/TodoList.tsx: React component for displaying the to-do list.
-* lib/mongodb.ts: MongoDB connection setup.
-* models/Todo.ts: Mongoose schema and model for tasks.
-* tests/: Contains unit and integration tests.
-* public/: Static files and images.
-* styles/: Additional CSS files.
-* .env.local: Configuration file for environment variables.
-* jest.config.js: Jest configuration for running tests.
-* tailwind.config.js: Tailwind CSS configuration.
-* tsconfig.json: TypeScript configuration.
+* `app/api/auth/check/route.ts`: API endpoint to check authentication status.
+* `app/api/auth/login/route.ts`: API endpoint to handle user login.
+* `app/api/auth/register/route.ts`: API endpoint to handle user registration.
+* `app/api/tasks/route.ts`: Defines API endpoints for task management.
+* `components/Footer.tsx`: Footer component.
+* `components/Header.tsx`: Header component.
+* `components/SignIn.tsx`: Sign-in component.
+* `components/TodoList.tsx`: React component for displaying the to-do list.
+* `lib/auth.ts`: Authentication library.
+* `lib/mongodb.ts`: MongoDB connection setup.
+* `lib/todo.ts`: Library for todo operations.
+* `models/Todo.ts`: Mongoose schema and model for tasks.
+* `models/User.ts`: Mongoose schema and model for users.
+* `tests/`: Contains unit and integration tests.
+  * `api/`: Tests for API endpoints.
+  * `auth/`: Tests for authentication endpoints.
+  * `components/`: Tests for React components.
+  * `layout/`: Tests for layout components.
+  * `lib/`: Tests for library functions.
+  * `models/`: Tests for Mongoose models.
+  * `pages/`: Tests for Next.js pages.
+* `public/`: Static files and images.
+* `styles/`: Additional CSS files.
+* `.env.local`: Configuration file for environment variables.
+* `jest.config.js`: Jest configuration for running tests.
+* `tailwind.config.js`: Tailwind CSS configuration.
+* `tsconfig.json`: TypeScript configuration.
 
 ## Contributing
 

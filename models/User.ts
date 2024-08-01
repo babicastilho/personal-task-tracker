@@ -1,4 +1,5 @@
-import mongoose, { Document, Schema } from 'mongoose';
+// models/User.ts
+import { Collection, Document } from 'mongodb';
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
@@ -7,18 +8,15 @@ export interface IUser extends Document {
   password: string;
 }
 
-const UserSchema: Schema = new Schema({
-  username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
-});
+export const hashPassword = async (password: string): Promise<string> => {
+  return await bcrypt.hash(password, 10);
+};
 
-UserSchema.pre<IUser>('save', async function(next) {
-  if (this.isModified('password')) {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-  next();
-});
+export const verifyPassword = async (password: string, hashedPassword: string): Promise<boolean> => {
+  return await bcrypt.compare(password, hashedPassword);
+};
 
-const User = mongoose.model<IUser>('User', UserSchema);
-export default User;
+export const createUser = async (usersCollection: Collection<IUser>, user: IUser): Promise<void> => {
+  user.password = await hashPassword(user.password);
+  await usersCollection.insertOne(user);
+};

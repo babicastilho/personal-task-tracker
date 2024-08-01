@@ -1,31 +1,42 @@
 import { createMocks } from 'node-mocks-http';
 import handler from '@/app/api/tasks/[id]/route';
 import dbConnect from '@/lib/mongodb';
-import Todo, { ITodo } from '@/models/Todo'; 
+import { addTodo } from '@/lib/todo';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import mongoose from 'mongoose';
+import { ObjectId, MongoClient } from 'mongodb';
+
+let client: MongoClient | null = null;
 
 describe('/api/tasks/[id] API Endpoint', () => {
-  let taskId: mongoose.Types.ObjectId;
+  let taskId: ObjectId;
 
   beforeAll(async () => {
-    await dbConnect();
+    client = new MongoClient(process.env.MONGODB_URI as string);
+    await client.connect();
   });
 
   beforeEach(async () => {
-    // Create a task and assign its _id to taskId
-    const task: ITodo = await Todo.create({ title: 'Task to Test', completed: false });
-    taskId = task._id as mongoose.Types.ObjectId; // Explicitly typecast to ObjectId
+    const db = client!.db();
+    const todo = await addTodo({ title: 'Task to Test', completed: false });
+    taskId = new ObjectId(todo._id); // Use ObjectId from MongoDB
   });
 
   afterEach(async () => {
-    await Todo.deleteMany({});
+    const db = client!.db();
+    await db.collection('todos').deleteMany({});
+  });
+
+  afterAll(async () => {
+    if (client) {
+      await client.close();
+      client = null;
+    }
   });
 
   it('should update a task', async () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'PUT',
-      query: { id: taskId.toString() }, // Convert ObjectId to string
+      query: { id: taskId.toString() },
       body: { completed: true },
     });
 
@@ -33,19 +44,30 @@ describe('/api/tasks/[id] API Endpoint', () => {
 
     expect(res.statusCode).toBe(200);
     const updatedTask = JSON.parse(res._getData());
-    expect(updatedTask.data).toHaveProperty('completed', true);
+    expect(updatedTask.success).toBe(true);
+
+    const db = client!.db();
+    const task = await db.collection('todos').findOne({ _id: taskId });
+    expect(task).not.toBeNull();
+    if (task) {
+      expect(task.completed).toBe(true);
+    }
   });
 
   it('should delete a task', async () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'DELETE',
-      query: { id: taskId.toString() }, // Convert ObjectId to string
+      query: { id: taskId.toString() },
     });
 
     await handler(req, res);
 
     expect(res.statusCode).toBe(200);
     const responseData = JSON.parse(res._getData());
-    expect(responseData).toEqual({ success: true, data: {} });
+    expect(responseData.success).toBe(true);
+
+    const db = client!.db();
+    const task = await db.collection('todos').findOne({ _id: taskId });
+    expect(task).toBeNull();
   });
 });

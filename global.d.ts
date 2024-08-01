@@ -1,12 +1,8 @@
-import mongoose from 'mongoose';
-
+// global.d.ts
 declare global {
   namespace NodeJS {
     interface Global {
-      mongoose?: {
-        conn: mongoose.Connection | null;
-        promise: Promise<mongoose.Mongoose> | null;
-      };
+      // Remove mongoose references if not using mongoose anymore
     }
   }
 }

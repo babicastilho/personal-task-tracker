@@ -1,20 +1,19 @@
-// app/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import TodoList from '@/components/TodoList';
 import SignIn from '@/components/SignIn';
-import { checkAuth } from '@/lib/auth'; // Função fictícia para verificar a autenticação
+import { checkAuth } from '@/lib/auth'; // Function to check user authentication
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Verifica a autenticação do usuário
+    // Function to verify user authentication
     const verifyAuth = async () => {
       try {
-        const authenticated = await checkAuth(); // Função que verifica a autenticação
+        const authenticated = await checkAuth(); // Check if the user is authenticated
         setIsAuthenticated(authenticated);
       } catch (error) {
         console.error('Failed to check authentication:', error);
@@ -23,13 +22,13 @@ export default function Home() {
       }
     };
 
-    verifyAuth();
+    verifyAuth(); // Call the verifyAuth function on component mount
   }, []);
 
   if (loading) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
-        <p>Loading...</p>
+        <p>Loading...</p> {/* Show loading text while checking authentication */}
       </main>
     );
   }
@@ -37,9 +36,9 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       {isAuthenticated ? (
-        <TodoList />
+        <TodoList /> // Show TodoList if authenticated
       ) : (
-        <SignIn />
+        <SignIn /> // Show SignIn if not authenticated
       )}
     </main>
   );

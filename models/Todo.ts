@@ -1,22 +1,20 @@
 // models/Todo.ts
-import mongoose, { Document, Model, Schema } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
-export interface ITodo extends Document {
+export interface ITodo {
+  _id?: ObjectId;
   title: string;
   completed: boolean;
 }
 
-const TodoSchema: Schema = new Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  completed: {
-    type: Boolean,
-    default: false,
-  },
-});
+export function createTodo(data: Partial<ITodo>): ITodo {
+  if (!data.title) {
+    throw new Error('Title is required');
+  }
 
-const Todo: Model<ITodo> = mongoose.models.Todo || mongoose.model<ITodo>('Todo', TodoSchema);
-
-export default Todo;
+  return {
+    _id: data._id || new ObjectId(),
+    title: data.title,
+    completed: data.completed ?? false,
+  };
+}

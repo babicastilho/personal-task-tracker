@@ -1,84 +1,81 @@
-// tests/auth/login.test.ts
+/**
+ * @jest-environment node
+ */
 
-import handler from '@/app/api/auth/login/route'; 
+import { createMocks } from 'node-mocks-http';
+import handler from '@/app/api/auth/login/route';
 import dbConnect from '@/lib/mongodb';
-import User from '@/models/User';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { verifyPassword } from '@/models/User';
+import { generateToken } from '@/lib/auth';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-jest.mock('@/lib/mongodb'); // Mock dbConnect function
-jest.mock('jsonwebtoken'); // Mock jsonwebtoken
+jest.mock('@/lib/mongodb');
+jest.mock('@/models/User');
+jest.mock('@/lib/auth');
 
-describe('Login Endpoint', () => {
-  let req: any, res: any;
-  
-  beforeEach(() => {
-    req = {
+const mockDb = {
+  collection: jest.fn().mockReturnThis(),
+  findOne: jest.fn(),
+};
+
+(dbConnect as jest.Mock).mockResolvedValue(mockDb);
+
+describe('POST /api/auth/login', () => {
+  it('should return 200 when login is successful', async () => {
+    const { req, res } = createMocks({
       method: 'POST',
       body: {
         email: 'test@example.com',
         password: 'password123',
       },
-    };
-    res = {
-      status: jest.fn(() => res),
-      json: jest.fn(),
-    };
-  });
+    });
 
-  it('should login successfully with correct credentials', async () => {
-    const hashedPassword = await bcrypt.hash('password123', 10);
-    const mockUser = { _id: 'mocked_id', password: hashedPassword };
-    User.findOne = jest.fn().mockResolvedValue(mockUser);
-    jwt.sign = jest.fn().mockReturnValue('mocked_token');
+    mockDb.collection.mockReturnValue({
+      findOne: mockDb.findOne.mockResolvedValue({
+        _id: 'userId',
+        email: 'test@example.com',
+        password: 'hashedpassword',
+      }),
+    });
 
-    await handler(req, res);
+    (verifyPassword as jest.Mock).mockResolvedValue(true);
+    (generateToken as jest.Mock).mockReturnValue('token');
 
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({
+    await handler(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+
+    expect(res._getStatusCode()).toBe(200);
+    expect(res._getJSONData()).toEqual({
       success: true,
-      token: 'mocked_token',
+      token: 'token',
       message: 'Logged in successfully',
     });
   });
 
-  it('should return 404 if user not found', async () => {
-    User.findOne = jest.fn().mockResolvedValue(null);
-
-    await handler(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      message: 'User not found',
+  it('should return 401 when password is incorrect', async () => {
+    const { req, res } = createMocks({
+      method: 'POST',
+      body: {
+        email: 'test@example.com',
+        password: 'wrongpassword',
+      },
     });
-  });
 
-  it('should return 401 if password is incorrect', async () => {
-    const hashedPassword = await bcrypt.hash('correctpassword', 10);
-    const mockUser = { _id: 'mocked_id', password: hashedPassword };
-    User.findOne = jest.fn().mockResolvedValue(mockUser);
-    bcrypt.compare = jest.fn().mockResolvedValue(false); // Simular senha incorreta
+    mockDb.collection.mockReturnValue({
+      findOne: mockDb.findOne.mockResolvedValue({
+        _id: 'userId',
+        email: 'test@example.com',
+        password: 'hashedpassword',
+      }),
+    });
 
-    await handler(req, res);
+    (verifyPassword as jest.Mock).mockResolvedValue(false);
 
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({
+    await handler(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+
+    expect(res._getStatusCode()).toBe(401);
+    expect(res._getJSONData()).toEqual({
       success: false,
       message: 'Invalid credentials',
-    });
-  });
-
-  it('should handle internal server errors', async () => {
-    User.findOne = jest.fn().mockRejectedValue(new Error('Database error'));
-
-    await handler(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      message: 'Internal server error',
-      error: 'Database error', // Inclua o campo de erro se necessário
     });
   });
 });

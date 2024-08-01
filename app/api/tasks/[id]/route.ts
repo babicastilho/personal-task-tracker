@@ -1,54 +1,21 @@
-// app/api/tasks/[id]/routes.ts
+// app/api/tasks/[id]/route.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import dbConnect from '@/lib/mongodb';
-import Todo from '@/models/Todo';
+import { getTodoById, updateTodo, deleteTodo } from '@/lib/todo';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  await dbConnect();
 
-  const { method } = req;
-
-  switch (method) {
-    case 'GET':
-      try {
-        const todo = await Todo.findById(id);
-        if (!todo) {
-          return res.status(404).json({ success: false });
-        }
-        res.status(200).json({ success: true, data: todo });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
-    case 'PUT':
-      try {
-        const todo = await Todo.findByIdAndUpdate(id, req.body, {
-          new: true,
-          runValidators: true,
-        });
-        if (!todo) {
-          return res.status(404).json({ success: false });
-        }
-        res.status(200).json({ success: true, data: todo });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
-    case 'DELETE':
-      try {
-        const deletedTodo = await Todo.deleteOne({ _id: id });
-        if (!deletedTodo) {
-          return res.status(404).json({ success: false });
-        }
-        res.status(200).json({ success: true, data: {} });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
-    default:
-      res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
-      res.status(405).end(`Method ${method} Not Allowed`);
-      break;
+  if (req.method === 'GET') {
+    const todo = await getTodoById(id as string);
+    res.json(todo);
+  } else if (req.method === 'PUT') {
+    const updated = await updateTodo(id as string, req.body);
+    res.json({ success: updated });
+  } else if (req.method === 'DELETE') {
+    const deleted = await deleteTodo(id as string);
+    res.json({ success: deleted });
+  } else {
+    res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

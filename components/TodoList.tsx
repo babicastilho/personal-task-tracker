@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { FaRegTrashAlt, FaRegCheckSquare, FaRegSquare   } from "react-icons/fa";
+import { FaRegTrashAlt, FaRegCheckSquare, FaRegSquare } from "react-icons/fa";
 
 // Definition of the interface for Task data type
-interface Task {
+export interface Task {
   id: number;
   title: string;
   completed: boolean;
@@ -15,7 +15,7 @@ const initialTasks: Task[] = [
   { id: 3, title: 'Task 3', completed: false }
 ];
 
-const TodoList = () => {
+const TodoList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
@@ -69,10 +69,18 @@ const TodoList = () => {
             <span className="flex-1" style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
               {task.title}
             </span>
-            <button onClick={() => toggleTaskCompletion(task.id)} className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition">
-              {task.completed ? <FaRegSquare  /> : <FaRegCheckSquare />}
+            <button
+              onClick={() => toggleTaskCompletion(task.id)}
+              className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"
+              aria-label={`toggle-${task.id}`}
+            >
+              {task.completed ? <FaRegCheckSquare /> : <FaRegSquare />}
             </button>
-            <button onClick={() => removeTask(task.id)} className="ml-2 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-700 transition">
+            <button
+              onClick={() => removeTask(task.id)}
+              className="ml-2 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-700 transition"
+              aria-label={`remove-${task.id}`}
+            >
               <FaRegTrashAlt />
             </button>
           </li>

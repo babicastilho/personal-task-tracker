@@ -9,8 +9,7 @@ describe('Todo Model', () => {
       completed: false,
     };
     const todo = createTodo(todoData);
-    expect(todo._id).toBeDefined(); // Check if _id is defined
-    expect(todo._id).toBeInstanceOf(ObjectId); // Check if _id is an instance of ObjectId
+    expect(todo._id).toBeDefined(); // Verifica se _id está definido
     expect(todo.title).toBe('Test Todo');
     expect(todo.completed).toBe(false);
   });

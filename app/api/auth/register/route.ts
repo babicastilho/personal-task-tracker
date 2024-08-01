@@ -1,40 +1,34 @@
 // app/api/auth/register/route.ts
-
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/mongodb';
-import User from '@/models/User';
-import bcrypt from 'bcryptjs';
+import { IUser, createUser } from '@/models/User';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await dbConnect();
+  if (req.method !== 'POST') {
+    return res.setHeader('Allow', ['POST']).status(405).end('Method Not Allowed');
+  }
 
-  if (req.method === 'POST') {
+  try {
     const { username, email, password } = req.body;
 
-    try {
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        return res.status(409).json({ success: false, message: 'User already exists' });
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = new User({
-        username,
-        email,
-        password: hashedPassword
-      });
-
-      await user.save();
-      res.status(201).json({ success: true, message: 'User registered successfully' });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
-      } else {
-        res.status(500).json({ success: false, message: 'An unknown error occurred' });
-      }
+    if (!username || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Missing required fields' });
     }
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end('Method Not Allowed');
+
+    const db = await dbConnect();
+    const usersCollection = db.collection<IUser>('users');
+
+    const existingUser = await usersCollection.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ success: false, message: 'User already exists' });
+    }
+
+    const newUser: IUser = { username, email, password } as IUser;
+    await createUser(usersCollection, newUser);
+
+    res.status(201).json({ success: true, message: 'User registered successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal server error', error: (error as Error).message });
   }
 }
+

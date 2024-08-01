@@ -1,9 +1,10 @@
+// tests/unit/api/tasksId.test.ts
 import { createMocks } from 'node-mocks-http';
 import handler from '@/app/api/tasks/[id]/route';
+import { MongoClient, ObjectId } from 'mongodb';
 import dbConnect from '@/lib/mongodb';
 import { addTodo } from '@/lib/todo';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { ObjectId, MongoClient } from 'mongodb';
 
 let client: MongoClient | null = null;
 
@@ -13,12 +14,13 @@ describe('/api/tasks/[id] API Endpoint', () => {
   beforeAll(async () => {
     client = new MongoClient(process.env.MONGODB_URI as string);
     await client.connect();
+    await dbConnect();
   });
 
   beforeEach(async () => {
     const db = client!.db();
-    const todo = await addTodo({ title: 'Task to Test', completed: false });
-    taskId = new ObjectId(todo._id); // Use ObjectId from MongoDB
+    const result = await db.collection('todos').insertOne({ title: 'Task to Test', completed: false });
+    taskId = result.insertedId;
   });
 
   afterEach(async () => {

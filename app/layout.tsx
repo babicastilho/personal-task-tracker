@@ -1,37 +1,24 @@
 // app/layout.tsx
 'use client';
-import React, { useState, useEffect } from 'react';
-import type { Metadata } from "next";
-import "./globals.scss";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import React, { ReactNode } from 'react';
+import './globals.scss';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { useTheme } from '@/hooks/useTheme';
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
 
-  const [theme, setTheme] = useState('light');
-
-  useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.toggle('dark', theme === 'dark');
-    root.setAttribute('data-theme', theme);  // Atualiza o atributo data-theme conforme o tema
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-  };
+export default function RootLayout({ children }: RootLayoutProps) {
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <html lang="en">
-      <body className="transition-all duration-100 ease-intracking-tight antialiased bg-gray-50 text-gray-800 dark:bg-gray-800 dark:text-gray-300">
-        
-          <Header toggleTheme={toggleTheme} theme={theme}/>
-          {children}
-          <Footer />
-        
+      <body className="transition-all duration-100 ease-in tracking-tight antialiased bg-gray-50 text-gray-800 dark:bg-gray-800 dark:text-gray-300">
+        <Header toggleTheme={toggleTheme} theme={theme} />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

@@ -1,16 +1,17 @@
-// api/tasks.test.ts
+// tests/unit/api/tasks.test.ts
 import { createMocks } from 'node-mocks-http';
 import handler from '@/app/api/tasks/route';
-import dbConnect from '@/lib/mongodb';
-import { addTodo, getTodos } from '@/lib/todo';
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { MongoClient } from 'mongodb';
+import dbConnect from '@/lib/mongodb';
+import { addTodo } from '@/lib/todo';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 let client: MongoClient | null = null;
 
 beforeAll(async () => {
   client = new MongoClient(process.env.MONGODB_URI as string);
   await client.connect();
+  await dbConnect();
 });
 
 afterAll(async () => {
@@ -21,18 +22,17 @@ afterAll(async () => {
 });
 
 describe('/api/tasks API Endpoint', () => {
-  // Cleanup after each test
   afterEach(async () => {
     const db = client!.db();
     await db.collection('todos').deleteMany({});
   });
 
-  // Test for listing all tasks
   it('should return a list of tasks', async () => {
     const db = client!.db();
-    // Create some tasks to test listing
-    await addTodo({ title: 'Task 1', completed: false });
-    await addTodo({ title: 'Task 2', completed: true });
+    await db.collection('todos').insertMany([
+      { title: 'Task 1', completed: false },
+      { title: 'Task 2', completed: true },
+    ]);
 
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'GET',
@@ -54,7 +54,6 @@ describe('/api/tasks API Endpoint', () => {
     );
   });
 
-  // Test for creating a new task
   it('should create a new task', async () => {
     const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
       method: 'POST',
@@ -75,8 +74,8 @@ describe('/api/tasks API Endpoint', () => {
       })
     );
 
-    // Cleanup after the test
     const db = client!.db();
-    await db.collection('todos').deleteOne({ title: 'New Task' });
+    const taskInDb = await db.collection('todos').findOne({ title: 'New Task' });
+    expect(taskInDb).not.toBeNull();
   });
 });

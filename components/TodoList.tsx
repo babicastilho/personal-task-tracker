@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { FaRegTrashAlt, FaRegCheckSquare, FaRegSquare } from "react-icons/fa";
 
-// Definition of the interface for Task data type
 export interface Task {
   id: number;
   title: string;
   completed: boolean;
 }
 
-// Initial tasks data as a mock, replaceable by API data later
 const initialTasks: Task[] = [
   { id: 1, title: 'Task 1', completed: false },
   { id: 2, title: 'Task 2', completed: true },
@@ -19,7 +17,6 @@ const TodoList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
-  // Function to toggle the completion state of a task
   const toggleTaskCompletion = (id: number) => {
     const updatedTasks = tasks.map(task => {
       if (task.id === id) {
@@ -30,16 +27,14 @@ const TodoList: React.FC = () => {
     setTasks(updatedTasks);
   };
 
-  // Function to add a new task
   const addTask = () => {
     if (newTaskTitle.trim() !== '') {
       const newTask = { id: Math.max(...tasks.map(t => t.id)) + 1, title: newTaskTitle, completed: false };
       setTasks([...tasks, newTask]);
-      setNewTaskTitle(''); // Clear the input field after adding
+      setNewTaskTitle('');
     }
   };
 
-  // Function to remove a task
   const removeTask = (id: number) => {
     const filteredTasks = tasks.filter(task => task.id !== id);
     setTasks(filteredTasks);

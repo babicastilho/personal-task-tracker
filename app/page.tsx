@@ -35,11 +35,12 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      {isAuthenticated ? (
+      {/* {isAuthenticated ? (
         <TodoList /> // Show TodoList if authenticated
       ) : (
         <SignIn /> // Show SignIn if not authenticated
-      )}
+      )} */}
+      <TodoList />
     </main>
   );
 }

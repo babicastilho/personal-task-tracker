@@ -31,6 +31,17 @@ my-todo-list/
 │   ├── Header.tsx
 │   ├── SignIn.tsx
 │   └── TodoList.tsx
+├── cypress/
+│   ├── e2e/
+│   │   └── todo.cy.ts
+│   ├── fixtures/
+│   ├── plugins/
+│   ├── support/
+│   │   ├── commands.ts
+│   │   └── e2e.ts
+│   └── tsconfig.json
+├── hooks/
+│   └── useState.ts
 ├── lib/
 │   ├── auth.ts
 │   ├── mongodb.ts
@@ -43,26 +54,29 @@ my-todo-list/
 ├── styles/
 │   └── (other CSS files if any)
 ├── tests/
-│   ├── api/
-│   │   ├── tasks.test.ts
-│   │   └── tasksId.test.ts
-│   ├── auth/
-│   │   ├── check.test.ts
-│   │   ├── login.test.ts
-│   │   └── register.test.ts
 │   ├── components/
-│   │   └── TodoList.test.tsx
-│   ├── layout/
-│   │   └── layout.test.ts
-│   ├── lib/
-│   │   ├── mongodb.test.ts
-│   │   └── todo.test.ts
-│   ├── models/
-│   │   └── Todo.test.ts
-│   └── pages/
-│       └── page.test.tsx
+│   │   ├── layout/
+│   │   │   └── layout.test.tsx
+│   │   ├── page/
+│   │   │   └── page.test.tsx
+│   │   └── todo/
+│   │       └── todo.test.tsx
+│   ├── unity/
+│   │   ├── api/
+│   │   │   ├── tasks.test.ts
+│   │   │   └── tasksId.test.ts
+│   │   ├── auth/
+│   │   │   ├── check.test.ts
+│   │   │   ├── login.test.ts
+│   │   │   └── register.test.ts
+│   │   ├── lib/
+│   │   │   ├── mongodb.test.ts
+│   │   │   └── todo.test.ts
+│   │   ├── models/
+│   │   │   └── todo.test.ts
 ├── .env.local
 ├── .gitignore
+├── cypress.config.ts
 ├── jest.config.js
 ├── setupTests.ts
 ├── tailwind.config.js
@@ -150,6 +164,15 @@ npm test
 ```
 Tests are located in the tests/ folder and cover both API and component functionality.
 
+### Running E2E Tests
+
+To execute the end-to-end tests using Cypress, use:
+
+```bash
+npx cypress open
+```
+This will open the Cypress test runner. Ensure your development server is running before starting the tests.
+
 ## API Endpoints
 
 ### `/api/tasks`
@@ -217,22 +240,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 * `components/Header.tsx`: Header component.
 * `components/SignIn.tsx`: Sign-in component.
 * `components/TodoList.tsx`: React component for displaying the to-do list.
+* `cypress/`: Contains Cypress end-to-end tests.
+  * `e2e/todo.cy.ts`: E2E tests for the TodoList component.
+  * `fixtures/`: Fixtures for Cypress tests.
+  * `plugins/`: Cypress plugins.
+  * `support/`: Support files for Cypress tests.
+    * `commands.ts`: Custom commands for Cypress.
+    * `e2e.ts`: Entry point for Cypress support files.
+* `hooks/useState.ts`: Custom hooks for state management.
 * `lib/auth.ts`: Authentication library.
 * `lib/mongodb.ts`: MongoDB connection setup.
 * `lib/todo.ts`: Library for todo operations.
 * `models/Todo.ts`: Mongoose schema and model for tasks.
 * `models/User.ts`: Mongoose schema and model for users.
 * `tests/`: Contains unit and integration tests.
-  * `api/`: Tests for API endpoints.
-  * `auth/`: Tests for authentication endpoints.
   * `components/`: Tests for React components.
-  * `layout/`: Tests for layout components.
-  * `lib/`: Tests for library functions.
-  * `models/`: Tests for Mongoose models.
-  * `pages/`: Tests for Next.js pages.
+    * `layout/layout.test.tsx`: Tests for layout components.
+    * `page/page.test.tsx`: Tests for page components.
+    * `todo/todo.test.tsx`: Tests for the TodoList component.
+  * `unity/`: Unit tests.
+    * `api/`: Tests for API endpoints.
+      * `tasks.test.ts`: Unit tests for tasks API.
+      * `tasksId.test.ts`: Unit tests for specific task API.
+    * `auth/`: Tests for authentication endpoints.
+      * `check.test.ts`: Unit tests for check authentication API.
+      * `login.test.ts`: Unit tests for login API.
+      * `register.test.ts`: Unit tests for register API.
+    * `lib/`: Tests for library functions.
+      * `mongodb.test.ts`: Unit tests for MongoDB connection.
+      * `todo.test.ts`: Unit tests for todo library functions.
+    * `models/`: Tests for Mongoose models.
+      * `todo.test.ts`: Unit tests for Todo model.
 * `public/`: Static files and images.
 * `styles/`: Additional CSS files.
 * `.env.local`: Configuration file for environment variables.
+* `cypress.config.ts`: Configuration for Cypress.
 * `jest.config.js`: Jest configuration for running tests.
 * `tailwind.config.js`: Tailwind CSS configuration.
 * `tsconfig.json`: TypeScript configuration.

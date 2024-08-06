@@ -1,13 +1,13 @@
-// models/Todo.ts
 import { ObjectId } from 'mongodb';
 
-export interface ITodo {
+export interface ITask {
   _id?: ObjectId;
   title: string;
   completed: boolean;
+  userId: ObjectId; // Add userId to associate task with a user
 }
 
-export function createTodo(data: Partial<ITodo>): ITodo {
+export function createTask(data: Partial<ITask>): ITask {
   if (!data.title) {
     throw new Error('Title is required');
   }
@@ -16,5 +16,6 @@ export function createTodo(data: Partial<ITodo>): ITodo {
     _id: data._id || new ObjectId(),
     title: data.title,
     completed: data.completed ?? false,
+    userId: data.userId!,
   };
 }

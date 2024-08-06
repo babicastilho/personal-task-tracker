@@ -1,6 +1,6 @@
 describe('Todo App E2E', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3000'); // Certifique-se de que o servidor de desenvolvimento está rodando
+    cy.visit('http://localhost:3000');
   });
 
   it('should load the app and display the task list', () => {

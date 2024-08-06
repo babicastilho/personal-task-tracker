@@ -1,4 +1,3 @@
-// lib/auth.ts
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
@@ -69,5 +68,14 @@ export const checkAuth = async (): Promise<boolean> => {
     return data.success;
   } catch {
     return false;
+  }
+};
+
+/**
+ * Logs out the user by removing the JWT token from cookies.
+ */
+export const logout = (): void => {
+  if (typeof document !== 'undefined') {
+    document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
   }
 };

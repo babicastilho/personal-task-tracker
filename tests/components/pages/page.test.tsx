@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import { render, screen, waitFor, act } from '@testing-library/react';
 import Home from '@/app/page';
 import { checkAuth } from '@/lib/auth';
@@ -7,36 +8,45 @@ jest.mock('@/lib/auth', () => ({
   checkAuth: jest.fn(),
 }));
 
-// Mock the TodoList and SignIn components
-jest.mock('@/components/TodoList', () => {
-  const TodoList = () => <div>TodoList Component</div>;
-  return TodoList;
+// Mock the Dashboard and SignIn components
+jest.mock('@/components/Dashboard', () => {
+  return () => (
+    <div>
+      <h2 className="text-lg font-bold mb-4">Welcome, </h2>
+    </div>
+  );
 });
 
 jest.mock('@/components/SignIn', () => {
-  const SignIn = () => <div>SignIn Component</div>;
-  return SignIn;
+  return () => (
+    <div>
+      <h2 className="text-lg font-bold mb-4">Sign In</h2>
+    </div>
+  );
 });
 
 describe('Home Page', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('renders SignIn component when not authenticated', async () => {
-    (checkAuth as jest.Mock).mockReturnValue(Promise.resolve(false));
+    (checkAuth as jest.Mock).mockResolvedValueOnce(false);
     await act(async () => {
       render(<Home />);
     });
     await waitFor(() => {
-      expect(screen.getByText('SignIn Component')).toBeInTheDocument();
+      expect(screen.getByText('Sign In')).toBeInTheDocument();
     });
   });
 
-  it('renders TodoList component when authenticated', async () => {
-    (checkAuth as jest.Mock).mockReturnValue(Promise.resolve(true));
+  it('renders Dashboard component when authenticated', async () => {
+    (checkAuth as jest.Mock).mockResolvedValueOnce(true);
     await act(async () => {
       render(<Home />);
     });
     await waitFor(() => {
-      const todoListComponents = screen.getAllByText('TodoList Component');
-      expect(todoListComponents.length).toBeGreaterThan(0);
+      expect(screen.getByText('Welcome,')).toBeInTheDocument();
     });
   });
 });

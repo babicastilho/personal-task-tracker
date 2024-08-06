@@ -3,15 +3,14 @@
  */
 
 import { createMocks } from 'node-mocks-http';
-import handler from '@/app/api/auth/check/route';
+import { GET } from '@/app/api/auth/check/route';
 import { verifyToken } from '@/lib/auth';
-import type { NextApiRequest, NextApiResponse } from 'next';
 
 jest.mock('@/lib/auth');
 
 describe('GET /api/auth/check', () => {
   it('should return 200 when token is valid', async () => {
-    const { req, res } = createMocks({
+    const { req } = createMocks({
       method: 'GET',
       headers: {
         authorization: 'Bearer validtoken',
@@ -20,10 +19,14 @@ describe('GET /api/auth/check', () => {
 
     (verifyToken as jest.Mock).mockImplementation(() => ({ userId: 'userId' }));
 
-    await handler(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+    const response = await GET(new Request('http://localhost:3000/api/auth/check', {
+      method: 'GET',
+      headers: req.headers as HeadersInit,
+    }));
 
-    expect(res._getStatusCode()).toBe(200);
-    expect(res._getJSONData()).toEqual({
+    expect(response.status).toBe(200);
+    const json = await response.json();
+    expect(json).toEqual({
       success: true,
       message: 'Authenticated',
       user: { userId: 'userId' },
@@ -31,7 +34,7 @@ describe('GET /api/auth/check', () => {
   });
 
   it('should return 401 when token is invalid', async () => {
-    const { req, res } = createMocks({
+    const { req } = createMocks({
       method: 'GET',
       headers: {
         authorization: 'Bearer invalidtoken',
@@ -42,13 +45,34 @@ describe('GET /api/auth/check', () => {
       throw new Error('Invalid token');
     });
 
-    await handler(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+    const response = await GET(new Request('http://localhost:3000/api/auth/check', {
+      method: 'GET',
+      headers: req.headers as HeadersInit,
+    }));
 
-    expect(res._getStatusCode()).toBe(401);
-    expect(res._getJSONData()).toEqual({
+    expect(response.status).toBe(401);
+    const json = await response.json();
+    expect(json).toEqual({
       success: false,
       message: 'Invalid token',
       error: 'Invalid token',
+    });
+  });
+
+  it('should return 401 when no token is provided', async () => {
+    const { req } = createMocks({
+      method: 'GET',
+    });
+
+    const response = await GET(new Request('http://localhost:3000/api/auth/check', {
+      method: 'GET',
+    }));
+
+    expect(response.status).toBe(401);
+    const json = await response.json();
+    expect(json).toEqual({
+      success: false,
+      message: 'No token provided',
     });
   });
 });

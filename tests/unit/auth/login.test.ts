@@ -3,14 +3,17 @@
  */
 
 import { createMocks } from 'node-mocks-http';
-import handler from '@/app/api/auth/login/route';
+import { POST } from '@/app/api/auth/login/route';
 import dbConnect from '@/lib/mongodb';
 import { verifyPassword } from '@/models/User';
 import { generateToken } from '@/lib/auth';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { ObjectId } from 'mongodb';
 
 jest.mock('@/lib/mongodb');
-jest.mock('@/models/User');
+jest.mock('@/models/User', () => ({
+  ...jest.requireActual('@/models/User'),
+  verifyPassword: jest.fn(),
+}));
 jest.mock('@/lib/auth');
 
 const mockDb = {
@@ -21,8 +24,13 @@ const mockDb = {
 (dbConnect as jest.Mock).mockResolvedValue(mockDb);
 
 describe('POST /api/auth/login', () => {
-  it('should return 200 when login is successful', async () => {
-    const { req, res } = createMocks({
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should login user successfully', async () => {
+    const userId = new ObjectId();
+    const { req } = createMocks({
       method: 'POST',
       body: {
         email: 'test@example.com',
@@ -32,37 +40,69 @@ describe('POST /api/auth/login', () => {
 
     mockDb.collection.mockReturnValue({
       findOne: mockDb.findOne.mockResolvedValue({
-        _id: 'userId',
+        _id: userId,
         email: 'test@example.com',
         password: 'hashedpassword',
       }),
     });
 
     (verifyPassword as jest.Mock).mockResolvedValue(true);
-    (generateToken as jest.Mock).mockReturnValue('token');
+    (generateToken as jest.Mock).mockReturnValue('validtoken');
 
-    await handler(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+    const response = await POST(new Request('http://localhost:3000/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: req.headers as HeadersInit,
+    }));
 
-    expect(res._getStatusCode()).toBe(200);
-    expect(res._getJSONData()).toEqual({
+    expect(response.status).toBe(200);
+    const json = await response.json();
+    expect(json).toEqual({
       success: true,
-      token: 'token',
+      token: 'validtoken',
       message: 'Logged in successfully',
     });
   });
 
-  it('should return 401 when password is incorrect', async () => {
-    const { req, res } = createMocks({
+  it('should return 404 if user not found', async () => {
+    const { req } = createMocks({
       method: 'POST',
       body: {
         email: 'test@example.com',
-        password: 'wrongpassword',
+        password: 'password123',
+      },
+    });
+
+    mockDb.collection.mockReturnValue({
+      findOne: mockDb.findOne.mockResolvedValue(null),
+    });
+
+    const response = await POST(new Request('http://localhost:3000/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: req.headers as HeadersInit,
+    }));
+
+    expect(response.status).toBe(404);
+    const json = await response.json();
+    expect(json).toEqual({
+      success: false,
+      message: 'User not found',
+    });
+  });
+
+  it('should return 401 if password is incorrect', async () => {
+    const { req } = createMocks({
+      method: 'POST',
+      body: {
+        email: 'test@example.com',
+        password: 'password123',
       },
     });
 
     mockDb.collection.mockReturnValue({
       findOne: mockDb.findOne.mockResolvedValue({
-        _id: 'userId',
+        _id: new ObjectId(),
         email: 'test@example.com',
         password: 'hashedpassword',
       }),
@@ -70,12 +110,67 @@ describe('POST /api/auth/login', () => {
 
     (verifyPassword as jest.Mock).mockResolvedValue(false);
 
-    await handler(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+    const response = await POST(new Request('http://localhost:3000/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: req.headers as HeadersInit,
+    }));
 
-    expect(res._getStatusCode()).toBe(401);
-    expect(res._getJSONData()).toEqual({
+    expect(response.status).toBe(401);
+    const json = await response.json();
+    expect(json).toEqual({
       success: false,
       message: 'Invalid credentials',
+    });
+  });
+
+  it('should return 400 if required fields are missing', async () => {
+    const { req } = createMocks({
+      method: 'POST',
+      body: {
+        email: 'test@example.com',
+      },
+    });
+
+    const response = await POST(new Request('http://localhost:3000/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: req.headers as HeadersInit,
+    }));
+
+    expect(response.status).toBe(400);
+    const json = await response.json();
+    expect(json).toEqual({
+      success: false,
+      message: 'Email and password are required',
+    });
+  });
+
+  it('should return 500 if there is a server error', async () => {
+    const { req } = createMocks({
+      method: 'POST',
+      body: {
+        email: 'test@example.com',
+        password: 'password123',
+      },
+    });
+
+    mockDb.collection.mockReturnValue({
+      findOne: mockDb.findOne.mockRejectedValue(new Error('Internal server error')),
+    });
+
+    const response = await POST(new Request('http://localhost:3000/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: req.headers as HeadersInit,
+    }));
+
+    expect(response.status).toBe(500);
+    const json = await response.json();
+    expect(json).toEqual({
+      success: false,
+      message: 'Internal server error',
+      error: 'Internal server error',
     });
   });
 });

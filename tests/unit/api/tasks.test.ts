@@ -1,9 +1,11 @@
-// tests/unit/api/tasks.test.ts
+/**
+ * @jest-environment node
+ */
+
 import { createMocks } from 'node-mocks-http';
 import handler from '@/app/api/tasks/route';
-import { MongoClient } from 'mongodb';
 import dbConnect from '@/lib/mongodb';
-import { addTodo } from '@/lib/todo';
+import { MongoClient } from 'mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 let client: MongoClient | null = null;

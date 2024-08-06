@@ -3,12 +3,13 @@
  */
 
 import { createMocks } from 'node-mocks-http';
-import handler from '@/app/api/auth/register/route';
+import { POST } from '@/app/api/auth/register/route';
 import dbConnect from '@/lib/mongodb';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { generateToken } from '@/lib/auth';
 import { ObjectId } from 'mongodb';
 
 jest.mock('@/lib/mongodb');
+jest.mock('@/lib/auth');
 
 const mockDb = {
   collection: jest.fn().mockReturnThis(),
@@ -19,8 +20,12 @@ const mockDb = {
 (dbConnect as jest.Mock).mockResolvedValue(mockDb);
 
 describe('POST /api/auth/register', () => {
-  it('should return 201 when user is registered successfully', async () => {
-    const { req, res } = createMocks({
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should register a new user successfully', async () => {
+    const { req } = createMocks({
       method: 'POST',
       body: {
         username: 'testuser',
@@ -36,21 +41,25 @@ describe('POST /api/auth/register', () => {
       }),
     });
 
-    await handler(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+    (generateToken as jest.Mock).mockReturnValue('validtoken');
 
-    console.log('Response status:', res._getStatusCode());
-    console.log('Response data:', res._getJSONData());
+    const response = await POST(new Request('http://localhost:3000/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: req.headers as HeadersInit,
+    }));
 
-    expect(res._getStatusCode()).toBe(201);
-    expect(res._getJSONData()).toEqual({
+    expect(response.status).toBe(201);
+    const json = await response.json();
+    expect(json).toEqual({
       success: true,
       message: 'User registered successfully',
-      token: expect.any(String),
+      token: 'validtoken',
     });
   });
 
-  it('should return 409 when user already exists', async () => {
-    const { req, res } = createMocks({
+  it('should return 409 if user already exists', async () => {
+    const { req } = createMocks({
       method: 'POST',
       body: {
         username: 'testuser',
@@ -63,20 +72,44 @@ describe('POST /api/auth/register', () => {
       findOne: mockDb.findOne.mockResolvedValue({ email: 'test@example.com' }),
     });
 
-    await handler(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+    const response = await POST(new Request('http://localhost:3000/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: req.headers as HeadersInit,
+    }));
 
-    console.log('Response status:', res._getStatusCode());
-    console.log('Response data:', res._getJSONData());
-
-    expect(res._getStatusCode()).toBe(409);
-    expect(res._getJSONData()).toEqual({
+    expect(response.status).toBe(409);
+    const json = await response.json();
+    expect(json).toEqual({
       success: false,
       message: 'User already exists',
     });
   });
 
-  it('should return 500 when there is an internal server error', async () => {
-    const { req, res } = createMocks({
+  it('should return 400 if required fields are missing', async () => {
+    const { req } = createMocks({
+      method: 'POST',
+      body: {
+        username: 'testuser',
+      },
+    });
+
+    const response = await POST(new Request('http://localhost:3000/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: req.headers as HeadersInit,
+    }));
+
+    expect(response.status).toBe(400);
+    const json = await response.json();
+    expect(json).toEqual({
+      success: false,
+      message: 'Missing required fields',
+    });
+  });
+
+  it('should return 500 if there is a server error', async () => {
+    const { req } = createMocks({
       method: 'POST',
       body: {
         username: 'testuser',
@@ -89,15 +122,18 @@ describe('POST /api/auth/register', () => {
       findOne: mockDb.findOne.mockRejectedValue(new Error('Internal server error')),
     });
 
-    await handler(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+    const response = await POST(new Request('http://localhost:3000/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+      headers: req.headers as HeadersInit,
+    }));
 
-    console.log('Response status:', res._getStatusCode());
-    console.log('Response data:', res._getJSONData());
-
-    expect(res._getStatusCode()).toBe(500);
-    expect(res._getJSONData()).toEqual({
+    expect(response.status).toBe(500);
+    const json = await response.json();
+    expect(json).toEqual({
       success: false,
       message: 'Internal server error',
+      error: 'Internal server error',
     });
   });
 });

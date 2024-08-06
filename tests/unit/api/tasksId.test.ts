@@ -1,9 +1,12 @@
+/**
+ * @jest-environment node
+ */
+
 import { createMocks } from 'node-mocks-http';
 import handler from '@/app/api/tasks/[id]/route';
 import dbConnect from '@/lib/mongodb';
-import { addTodo } from '@/lib/todo';
+import { MongoClient, ObjectId } from 'mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { ObjectId, MongoClient } from 'mongodb';
 
 let client: MongoClient | null = null;
 
@@ -48,7 +51,7 @@ describe('/api/tasks/[id] API Endpoint', () => {
     expect(updatedTask.success).toBe(true);
 
     const db = client!.db();
-    const task = await db.collection('todos').findOne({ _id: taskId });
+    const task = await db.collection('todos').findOne({ _id: new ObjectId(taskId) });
     expect(task).not.toBeNull();
     if (task) {
       expect(task.completed).toBe(true);
@@ -68,7 +71,7 @@ describe('/api/tasks/[id] API Endpoint', () => {
     expect(responseData.success).toBe(true);
 
     const db = client!.db();
-    const task = await db.collection('todos').findOne({ _id: taskId });
+    const task = await db.collection('todos').findOne({ _id: new ObjectId(taskId) });
     expect(task).toBeNull();
   });
 });

@@ -1,18 +1,15 @@
 // app/api/auth/register/route.ts
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { IUser, createUser } from '@/models/User';
+import { generateToken } from '@/lib/auth';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.setHeader('Allow', ['POST']).status(405).end('Method Not Allowed');
-  }
-
+export async function POST(request: Request) {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password } = await request.json();
 
     if (!username || !email || !password) {
-      return res.status(400).json({ success: false, message: 'Missing required fields' });
+      return NextResponse.json({ success: false, message: 'Missing required fields' }, { status: 400 });
     }
 
     const db = await dbConnect();
@@ -20,15 +17,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const existingUser = await usersCollection.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ success: false, message: 'User already exists' });
+      return NextResponse.json({ success: false, message: 'User already exists' }, { status: 409 });
     }
 
     const newUser: IUser = { username, email, password } as IUser;
-    await createUser(usersCollection, newUser);
+    const createdUser = await createUser(usersCollection, newUser);
 
-    res.status(201).json({ success: true, message: 'User registered successfully' });
+    const token = generateToken(createdUser._id!.toHexString());
+
+    return NextResponse.json({ success: true, message: 'User registered successfully', token }, { status: 201 });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Internal server error', error: (error as Error).message });
+    return NextResponse.json({ success: false, message: 'Internal server error', error: (error as Error).message }, { status: 500 });
   }
 }
 

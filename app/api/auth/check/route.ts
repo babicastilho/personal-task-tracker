@@ -1,22 +1,19 @@
 // app/api/auth/check/route.ts
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    return res.setHeader('Allow', ['GET']).status(405).end('Method Not Allowed');
-  }
-
+export async function GET(request: Request) {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    const authorization = request.headers.get('authorization');
+    const token = authorization?.split(' ')[1];
 
     if (!token) {
-      return res.status(401).json({ success: false, message: 'No token provided' });
+      return NextResponse.json({ success: false, message: 'No token provided' }, { status: 401 });
     }
 
     const decoded = verifyToken(token);
-    res.status(200).json({ success: true, message: 'Authenticated', user: decoded });
+    return NextResponse.json({ success: true, message: 'Authenticated', user: decoded }, { status: 200 });
   } catch (error) {
-    res.status(401).json({ success: false, message: 'Invalid token', error: (error as Error).message });
+    return NextResponse.json({ success: false, message: 'Invalid token', error: (error as Error).message }, { status: 401 });
   }
 }

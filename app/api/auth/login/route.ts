@@ -1,19 +1,15 @@
 // app/api/auth/login/route.ts
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { verifyPassword, IUser } from '@/models/User';
 import { generateToken } from '@/lib/auth';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.setHeader('Allow', ['POST']).status(405).end('Method Not Allowed');
-  }
-
+export async function POST(request: Request) {
   try {
-    const { email, password } = req.body;
+    const { email, password } = await request.json();
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Email and password are required' });
+      return NextResponse.json({ success: false, message: 'Email and password are required' }, { status: 400 });
     }
 
     const db = await dbConnect();
@@ -21,17 +17,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const user = await usersCollection.findOne({ email });
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
+      return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
     }
 
     const isMatch = await verifyPassword(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      return NextResponse.json({ success: false, message: 'Invalid credentials' }, { status: 401 });
     }
 
     const token = generateToken(user._id.toString());
-    res.status(200).json({ success: true, token, message: 'Logged in successfully' });
+    return NextResponse.json({ success: true, token, message: 'Logged in successfully' }, { status: 200 });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Internal server error', error: (error as Error).message });
+    return NextResponse.json({ success: false, message: 'Internal server error', error: (error as Error).message }, { status: 500 });
   }
 }

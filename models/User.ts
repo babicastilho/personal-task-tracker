@@ -1,8 +1,9 @@
 // models/User.ts
-import { Collection, Document } from 'mongodb';
+import { Collection, Document, ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
+  _id?: ObjectId;
   username: string;
   email: string;
   password: string;
@@ -16,7 +17,8 @@ export const verifyPassword = async (password: string, hashedPassword: string): 
   return await bcrypt.compare(password, hashedPassword);
 };
 
-export const createUser = async (usersCollection: Collection<IUser>, user: IUser): Promise<void> => {
+export const createUser = async (usersCollection: Collection<IUser>, user: IUser): Promise<IUser> => {
   user.password = await hashPassword(user.password);
-  await usersCollection.insertOne(user);
+  const result = await usersCollection.insertOne(user);
+  return { ...user, _id: result.insertedId };
 };

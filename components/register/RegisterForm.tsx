@@ -1,47 +1,67 @@
-// components/SignIn.tsx
+// components/register/RegisterForm.tsx
+'use client'
 import { useState } from 'react';
-import Link from 'next/link';
 
-export default function SignIn() {
+const RegisterForm = () => {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError(null);
+    setSuccess(null);
+
+    if (!username || !email || !password) {
+      setError('Please fill out all fields');
+      return;
+    }
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to login');
+        throw new Error(data.message || 'Failed to register');
       }
 
-      // Define o cookie de autenticação
-      document.cookie = `authToken=${data.token}; path=/; max-age=3600; SameSite=Lax`;
-      window.location.reload();
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message || 'An unexpected error occurred');
+      localStorage.setItem('token', data.token);
+      setSuccess('User registered successfully');
+      setUsername('');
+      setEmail('');
+      setPassword('');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message || 'Error registering user');
       } else {
-        setError('An unexpected error occurred');
+        setError('Error registering user');
       }
-      console.error('Login failed:', error);
     }
   };
 
   return (
     <div className="p-4 bg-white shadow-lg rounded-lg">
-      <h2 className="text-lg font-bold mb-4">Sign In</h2>
+      <h2 className="text-lg font-bold mb-4">Register</h2>
       <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label htmlFor="username" className="block text-sm font-medium mb-2">Username:</label>
+          <input
+            id="username"
+            type="text"
+            className="p-2 border border-gray-300 rounded w-full"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </div>
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium mb-2">Email:</label>
           <input
@@ -65,19 +85,16 @@ export default function SignIn() {
           />
         </div>
         {error && <p className="text-red-500 mb-4">{error}</p>}
+        {success && <p className="text-green-500 mb-4">{success}</p>}
         <button
           type="submit"
           className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"
         >
-          Sign In
+          Register
         </button>
       </form>
-      <p className="mt-4">
-        Don&#39;t have an account?{' '}
-        <Link className="text-red-500" href="/register">
-          Register here
-        </Link>
-      </p>
     </div>
   );
-}
+};
+
+export default RegisterForm;

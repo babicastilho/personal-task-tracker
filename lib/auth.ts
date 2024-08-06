@@ -35,18 +35,38 @@ export const verifyToken = (token: string): JwtPayload => {
 };
 
 /**
- * Checks if the user is authenticated by verifying the JWT token stored in localStorage.
+ * Checks if the user is authenticated by verifying the JWT token stored in cookies.
  * @returns True if the user is authenticated, false otherwise.
  */
-export const checkAuth = (): boolean => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+export const checkAuth = async (): Promise<boolean> => {
+  if (typeof document === 'undefined') {
+    return false;
+  }
+
+  const cookie = document.cookie.split('; ').find(row => row.startsWith('authToken='));
+  if (!cookie) {
+    return false;
+  }
+
+  const token = cookie.split('=')[1];
   if (!token) {
     return false;
   }
 
   try {
-    verifyToken(token);
-    return true;
+    const response = await fetch('/api/auth/check', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to authenticate');
+    }
+
+    const data = await response.json();
+    return data.success;
   } catch {
     return false;
   }

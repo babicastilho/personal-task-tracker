@@ -4,6 +4,23 @@
 
 My Todo List MERN is a to-do list application built using the MERN stack (MongoDB, Express, React, and Node.js). The project includes API endpoints for managing tasks and a basic user interface for interacting with these tasks.
 
+## Table of Contents
+- [Project Structure](#project-structure)
+- [Setup](#setup)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+    - [Local MongoDB](#local-mongodb)
+    - [MongoDB Atlas](#mongodb-atlas)
+- [Usage](#usage)
+  - [Running the Development Server](#running-the-development-server)
+  - [Running Tests](#running-tests)
+  - [Running E2E Tests](#running-e2e-tests)
+- [API Endpoints](#api-endpoints)
+- [Directory Structure](#directory-structure)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Project Structure
 
 The project structure is as follows:
@@ -17,51 +34,69 @@ my-todo-list/
 │   │   │   │   └── route.ts
 │   │   │   ├── login/
 │   │   │   │   └── route.ts
-│   │   │   ├── register/
+│   │   │   └── register/
 │   │   │   │   └── route.ts
 │   │   ├── tasks/
-│   │   │   ├── [id]/
+│   │   │   └── [id]/
 │   │   │   │   └── route.ts
 │   │   │   └── route.ts
+│   │   └── users/
+│   │   │   └── delete/
+│   │   │   │   └── route.ts
+│   └── register/
+│   │   └── page.tsx
+│   ├── favicon.ico
+│   ├── globals.scss
 │   ├── layout.tsx
-│   ├── page.tsx
-│   └── globals.scss
+│   └── page.tsx
 ├── components/
+│   └── register/
+│   │   ├── RegisterForm.tsx
+│   │   └── RegisterPage.tsx
+│   ├── Dashboard.tsx
 │   ├── Footer.tsx
 │   ├── Header.tsx
 │   ├── SignIn.tsx
 │   └── TodoList.tsx
 ├── cypress/
+│   ├── component/
 │   ├── e2e/
+│   │   ├── auth.cy.ts
 │   │   └── todo.cy.ts
 │   ├── fixtures/
+│   │   └── example.json
+│   ├── integration/
 │   ├── plugins/
-│   ├── support/
+│   └── support/
 │   │   ├── commands.ts
 │   │   └── e2e.ts
+│   ├── cypress.config.ts
+│   ├── cypress.json
 │   └── tsconfig.json
 ├── hooks/
-│   └── useState.ts
+│   └── useTheme.ts
 ├── lib/
 │   ├── auth.ts
 │   ├── mongodb.ts
 │   └── todo.ts
 ├── models/
-│   ├── Todo.ts
+│   ├── Task.ts
 │   └── User.ts
 ├── public/
-│   └── (static files, images, etc.)
+│   ├── next.svg
+│   └── vercel.svg
 ├── styles/
-│   └── (other CSS files if any)
-├── tests/
+│   ├── Header.module.scss
+│   └── RegisterForm.module.scss
+└── tests/
 │   ├── components/
 │   │   ├── layout/
 │   │   │   └── layout.test.tsx
-│   │   ├── page/
+│   │   ├── pages/
 │   │   │   └── page.test.tsx
 │   │   └── todo/
-│   │       └── todo.test.tsx
-│   ├── unity/
+│   │   │   └── TodoList.test.tsx
+│   └── unit/
 │   │   ├── api/
 │   │   │   ├── tasks.test.ts
 │   │   │   └── tasksId.test.ts
@@ -73,17 +108,24 @@ my-todo-list/
 │   │   │   ├── mongodb.test.ts
 │   │   │   └── todo.test.ts
 │   │   ├── models/
-│   │   │   └── todo.test.ts
-├── .env.local
-├── .gitignore
+│   │   │   └── Todo.test.ts
+│   │   └── users/
+│   │   │   └── delete.test.ts
+├── LICENSE
+├── README.md
+├── babel.config.js
 ├── cypress.config.ts
+├── global.d.ts
 ├── jest.config.js
-├── setupTests.ts
-├── tailwind.config.js
-├── tsconfig.json
+├── next-env.d.ts
+├── next.config.mjs
+├── package-lock.json
 ├── package.json
-└── README.md
-```
+├── postcss.config.mjs
+├── setupTests.ts
+├── tailwind.config.ts
+└── tsconfig.json
+´´´
 
 ## Setup
 
@@ -175,60 +217,7 @@ This will open the Cypress test runner. Ensure your development server is runnin
 
 ## API Endpoints
 
-### `/api/tasks`
-
-**GET** - Retrieve all tasks
-
-**POST** - Retrieve all tasks
-
-```javascript
-import { NextApiRequest, NextApiResponse } from 'next';
-import { getTodos, addTodo } from '@/lib/todo';
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'GET') {
-    const todos = await getTodos();
-    res.json(todos);
-  } else if (req.method === 'POST') {
-    const todo = await addTodo(req.body);
-    res.status(201).json(todo);
-  } else {
-    res.setHeader('Allow', ['GET', 'POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
-}
-```
-
-### `/api/tasks/[id]`
-
-**GET** - Retrieve a specific task by ID
-
-**PUT** - Update a task by ID
-
-**DELETE** - Delete a task by ID
-
-```javascript
-import { NextApiRequest, NextApiResponse } from 'next';
-import { getTodoById, updateTodo, deleteTodo } from '@/lib/todo';
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
-
-  if (req.method === 'GET') {
-    const todo = await getTodoById(id as string);
-    res.json(todo);
-  } else if (req.method === 'PUT') {
-    const updated = await updateTodo(id as string, req.body);
-    res.json({ success: updated });
-  } else if (req.method === 'DELETE') {
-    const deleted = await deleteTodo(id as string);
-    res.json({ success: deleted });
-  } else {
-    res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
-}
-```
+The API endpoints are documented in a separate file for better organization. Please refer to [API Endpoints Documentation](API_ENDPOINTS.md).
 
 ## Directory Structure
 
@@ -236,29 +225,48 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 * `app/api/auth/login/route.ts`: API endpoint to handle user login.
 * `app/api/auth/register/route.ts`: API endpoint to handle user registration.
 * `app/api/tasks/route.ts`: Defines API endpoints for task management.
+* `app/api/tasks/[id]/route.ts`: Defines API endpoints for specific task management.
+* `app/api/users/delete/route.ts`: API endpoint to handle user deletion.
+* `components/Dashboard.tsx`: Dashboard component.
 * `components/Footer.tsx`: Footer component.
 * `components/Header.tsx`: Header component.
 * `components/SignIn.tsx`: Sign-in component.
 * `components/TodoList.tsx`: React component for displaying the to-do list.
+* `components/register/RegisterForm.tsx`: Register form component.
+* `components/register/RegisterPage.tsx`: Register page component.
 * `cypress/`: Contains Cypress end-to-end tests.
-  * `e2e/todo.cy.ts`: E2E tests for the TodoList component.
+  * `component/`: Tests for components.
+  * `e2e/`: E2E tests for the application.
+    * `auth.cy.ts`: E2E tests for authentication.
+    * `todo.cy.ts`: E2E tests for the TodoList component.
   * `fixtures/`: Fixtures for Cypress tests.
+    * `example.json`: Example fixture.
+  * `integration/`: Integration tests.
   * `plugins/`: Cypress plugins.
   * `support/`: Support files for Cypress tests.
     * `commands.ts`: Custom commands for Cypress.
     * `e2e.ts`: Entry point for Cypress support files.
-* `hooks/useState.ts`: Custom hooks for state management.
+  * `cypress.config.ts`: Cypress configuration.
+  * `cypress.json`: Cypress JSON configuration.
+  * `tsconfig.json`: Cypress TypeScript configuration.
+* `hooks/useTheme.ts`: Custom hooks for theme management.
 * `lib/auth.ts`: Authentication library.
 * `lib/mongodb.ts`: MongoDB connection setup.
 * `lib/todo.ts`: Library for todo operations.
-* `models/Todo.ts`: Mongoose schema and model for tasks.
+* `models/Task.ts`: Mongoose schema and model for tasks.
 * `models/User.ts`: Mongoose schema and model for users.
+* `public/`: Static files and images.
+  * `next.svg`: Next.js logo.
+  * `vercel.svg`: Vercel logo.
+* `styles/`: Additional CSS files.
+  * `Header.module.scss`: SCSS module for the header component.
+  * `RegisterForm.module.scss`: SCSS module for the register form.
 * `tests/`: Contains unit and integration tests.
   * `components/`: Tests for React components.
     * `layout/layout.test.tsx`: Tests for layout components.
-    * `page/page.test.tsx`: Tests for page components.
-    * `todo/todo.test.tsx`: Tests for the TodoList component.
-  * `unity/`: Unit tests.
+    * `pages/page.test.tsx`: Tests for page components.
+    * `todo/TodoList.test.tsx`: Tests for the TodoList component.
+  * `unit/`: Unit tests.
     * `api/`: Tests for API endpoints.
       * `tasks.test.ts`: Unit tests for tasks API.
       * `tasksId.test.ts`: Unit tests for specific task API.
@@ -271,13 +279,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       * `todo.test.ts`: Unit tests for todo library functions.
     * `models/`: Tests for Mongoose models.
       * `todo.test.ts`: Unit tests for Todo model.
-* `public/`: Static files and images.
-* `styles/`: Additional CSS files.
 * `.env.local`: Configuration file for environment variables.
-* `cypress.config.ts`: Configuration for Cypress.
+* `LICENSE`: License file.
+* `README.md`: Project README file.
+* `babel.config.js`: Babel configuration.
+* `cypress.config.ts`: Cypress configuration.
+* `global.d.ts`: Global TypeScript declarations.
 * `jest.config.js`: Jest configuration for running tests.
-* `tailwind.config.js`: Tailwind CSS configuration.
+* `next-env.d.ts`: Next.js TypeScript environment declarations.
+* `next.config.mjs`: Next.js configuration.
+* `package.json`: Package file.
+* `postcss.config.mjs`: PostCSS configuration.
+* `setupTests.ts`: Setup file for tests.
+* `tailwind.config.ts`: Tailwind CSS configuration.
 * `tsconfig.json`: TypeScript configuration.
+
 
 ## Contributing
 

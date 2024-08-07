@@ -1,33 +1,42 @@
 // app/api/tasks/route.ts
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { createTask, ITask } from '@/models/Task';
 import { verifyToken } from '@/lib/auth';
 import { ObjectId } from 'mongodb';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const db = await dbConnect(); // Get the database connection
+export async function GET(req: Request) {
+  const db = await dbConnect();
+  const token = req.headers.get('Authorization')?.split(' ')[1];
 
-  const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
-    return res.status(401).json({ success: false, message: 'No token provided' });
+    return NextResponse.json({ success: false, message: 'No token provided' }, { status: 401 });
   }
 
   const decoded = verifyToken(token);
   const userId = new ObjectId(decoded.userId);
 
-  if (req.method === 'GET') {
-    // Get tasks for the authenticated user
-    const tasks = await db.collection('tasks').find({ userId }).toArray();
-    return res.status(200).json({ success: true, tasks });
-  } else if (req.method === 'POST') {
-    // Add a new task for the authenticated user
-    const { title } = req.body;
-    const newTask = createTask({ title, userId });
-    await db.collection('tasks').insertOne(newTask);
-    return res.status(201).json({ success: true, task: newTask });
-  } else {
-    res.setHeader('Allow', ['GET', 'POST']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  const tasks = await db.collection('tasks').find({ userId }).toArray();
+  return NextResponse.json({ success: true, tasks }, { status: 200 });
+}
+
+export async function POST(req: Request) {
+  const db = await dbConnect();
+  const token = req.headers.get('Authorization')?.split(' ')[1];
+
+  if (!token) {
+    return NextResponse.json({ success: false, message: 'No token provided' }, { status: 401 });
   }
+
+  const decoded = verifyToken(token);
+  const userId = new ObjectId(decoded.userId);
+  const { title } = await req.json();
+
+  if (!title) {
+    return NextResponse.json({ success: false, message: 'Title is required' }, { status: 400 });
+  }
+
+  const newTask = createTask({ title, userId });
+  await db.collection('tasks').insertOne(newTask);
+  return NextResponse.json({ success: true, task: newTask }, { status: 201 });
 }

@@ -47,15 +47,18 @@ const TodoList: React.FC = () => {
           body: JSON.stringify({ completed: !task.completed }),
         });
         const data = await response.json();
+        console.log('PUT response data:', data); // Adicione este log
         if (data.success) {
           setTasks(tasks.map(task => (task._id === id ? data.task : task)));
+        } else {
+          console.error('Error in PUT response:', data.message);
         }
       }
     } catch (error) {
       console.error('Error updating task:', error);
     }
   };
-
+  
   const addTask = async () => {
     if (newTaskTitle.trim() !== '') {
       try {
@@ -87,14 +90,17 @@ const TodoList: React.FC = () => {
         },
       });
       const data = await response.json();
+      console.log('DELETE response data:', data); // Adicione este log
       if (data.success) {
         setTasks(tasks.filter(task => task._id !== id));
+      } else {
+        console.error('Error in DELETE response:', data.message);
       }
     } catch (error) {
       console.error('Error deleting task:', error);
     }
   };
-
+  
   return (
     <div className="p-4 bg-white shadow-lg rounded-lg">
       <h2 className="text-lg font-bold mb-4">Task List</h2>

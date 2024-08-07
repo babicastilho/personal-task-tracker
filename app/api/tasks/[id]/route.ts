@@ -1,53 +1,94 @@
 // app/api/tasks/[id]/route.ts
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { verifyToken } from '@/lib/auth';
 import { ObjectId } from 'mongodb';
 
-// Handler to update and delete a task
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const db = await dbConnect(); // Get the database connection
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
+  try {
+    console.log("PUT request received");
+    const db = await dbConnect();
+    const token = req.headers.get('Authorization')?.split(' ')[1];
+    console.log("Token:", token);
 
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'No token provided' });
-  }
+    if (!token) {
+      console.log("No token provided");
+      return NextResponse.json({ success: false, message: 'No token provided' }, { status: 401 });
+    }
 
-  const decoded = verifyToken(token);
-  const userId = new ObjectId(decoded.userId);
-  const { id } = req.query;
+    const decoded = verifyToken(token);
+    const userId = new ObjectId(decoded.userId);
+    const { id } = params;
+    const { completed } = await req.json();
+    console.log("Task ID:", id, "User ID:", userId, "Completed:", completed);
 
-  if (req.method === 'PUT') {
-    // Update a task
-    const { completed } = req.body;
-    const result = await db.collection('tasks').findOneAndUpdate(
-      { _id: new ObjectId(id as string), userId },
-      { $set: { completed } },
-      { returnDocument: 'after' }
+    const task = await db.collection('tasks').findOne({ _id: new ObjectId(id), userId });
+    console.log("Task found:", task);
+
+    if (!task) {
+      console.log("Task not found or user mismatch");
+      return NextResponse.json({ success: false, message: 'Task not found or user mismatch' }, { status: 404 });
+    }
+
+    const updateResult = await db.collection('tasks').updateOne(
+      { _id: new ObjectId(id), userId },
+      { $set: { completed } }
     );
-    if (!result) {
-      return res.status(500).json({ success: false, message: 'Failed to update task' });
+
+    console.log("Update result:", updateResult);
+
+    if (updateResult.matchedCount === 0) {
+      console.log("Update failed: Task not found or user mismatch");
+      return NextResponse.json({ success: false, message: 'Failed to update task' }, { status: 500 });
     }
-    const updatedTask = result.value;
-    if (!updatedTask) {
-      return res.status(404).json({ success: false, message: 'Task not found' });
-    }
-    return res.status(200).json({ success: true, task: updatedTask });
-  } else if (req.method === 'DELETE') {
-    // Delete a task
-    const result = await db.collection('tasks').findOneAndDelete({ _id: new ObjectId(id as string), userId });
-    if (!result) {
-      return res.status(500).json({ success: false, message: 'Failed to delete task' });
-    }
-    const deletedTask = result.value;
-    if (!deletedTask) {
-      return res.status(404).json({ success: false, message: 'Task not found' });
-    }
-    return res.status(200).json({ success: true, task: deletedTask });
-  } else {
-    res.setHeader('Allow', ['PUT', 'DELETE']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
+
+    const updatedTask = await db.collection('tasks').findOne({ _id: new ObjectId(id), userId });
+    console.log("Updated task:", updatedTask);
+
+    return NextResponse.json({ success: true, task: updatedTask }, { status: 200 });
+  } catch (error) {
+    console.error("Error in PUT handler:", error);
+    return NextResponse.json({ success: false, message: 'Internal server error', error: (error as Error).message }, { status: 500 });
   }
 }
 
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  try {
+    console.log("DELETE request received");
+    const db = await dbConnect();
+    const token = req.headers.get('Authorization')?.split(' ')[1];
+    console.log("Token:", token);
 
+    if (!token) {
+      console.log("No token provided");
+      return NextResponse.json({ success: false, message: 'No token provided' }, { status: 401 });
+    }
+
+    const decoded = verifyToken(token);
+    const userId = new ObjectId(decoded.userId);
+    const { id } = params;
+    console.log("Task ID:", id, "User ID:", userId);
+
+    const task = await db.collection('tasks').findOne({ _id: new ObjectId(id), userId });
+    console.log("Task found:", task);
+
+    if (!task) {
+      console.log("Task not found or user mismatch");
+      return NextResponse.json({ success: false, message: 'Task not found or user mismatch' }, { status: 404 });
+    }
+
+    const deleteResult = await db.collection('tasks').deleteOne({ _id: new ObjectId(id), userId });
+    console.log("Delete result:", deleteResult);
+
+    if (deleteResult.deletedCount === 0) {
+      console.log("Delete failed: Task not found or user mismatch");
+      return NextResponse.json({ success: false, message: 'Failed to delete task' }, { status: 500 });
+    }
+
+    console.log("Task deleted successfully");
+    return NextResponse.json({ success: true, message: 'Task deleted successfully' }, { status: 200 });
+  } catch (error) {
+    console.error("Error in DELETE handler:", error);
+    return NextResponse.json({ success: false, message: 'Internal server error', error: (error as Error).message }, { status: 500 });
+  }
+}

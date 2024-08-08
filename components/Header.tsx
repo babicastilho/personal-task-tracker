@@ -19,11 +19,11 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated }) 
     <header className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 p-4 fixed top-0 w-full flex justify-between items-center z-10">
       <h1 className="text-4xl text-center flex-1">TO DO App</h1>
       <div className="flex items-center">
-        <button onClick={toggleTheme}>
+        <button onClick={toggleTheme} className="toggle-button p-2">
           {theme === "light" ? (
-            <FaSun className="w-4 h-4" />
+            <FaSun className="w-6 h-6 text-yellow-500" />
           ) : (
-            <FaMoon className="w-4 h-4" />
+            <FaMoon className="w-6 h-6 text-gray-300" />
           )}
         </button>
         <span className="mx-3">|</span>
@@ -32,13 +32,13 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated }) 
           className="flex items-center"
           target="_blank"
         >
-          <FaGithub className="w-4 h-4 " />
+          <FaGithub className="w-6 h-6" />
         </a>
         {isAuthenticated && (
           <>
             <span className="mx-3">|</span>
             <button onClick={handleLogout} className="flex items-center">
-              <FaPowerOff className="w-4 h-4" />
+              <FaPowerOff className="w-6 h-6 text-red-500" />
             </button>
           </>
         )}

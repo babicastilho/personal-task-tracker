@@ -3,27 +3,26 @@ import { useState, useEffect } from 'react';
 type Theme = 'light' | 'dark';
 
 export const useTheme = () => {
-  const [theme, setTheme] = useState<Theme>('light');
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme || 'light';
-    setTheme(savedTheme);
-  }, []);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    const body = document.body;
-    if (theme === 'dark') {
-      body.classList.add('dark');
-      body.classList.remove('bg-gray-50', 'text-gray-800');
-      body.classList.add('bg-gray-800', 'text-gray-300');
-    } else {
-      body.classList.remove('dark');
-      body.classList.add('bg-gray-50', 'text-gray-800');
-      body.classList.remove('bg-gray-800', 'text-gray-300');
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme') as Theme;
+      return savedTheme || 'light';
     }
-    root.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+    return 'light';
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const root = document.documentElement;
+      if (theme === 'dark') {
+        root.classList.add('dark');
+        root.classList.remove('light');
+      } else {
+        root.classList.add('light');
+        root.classList.remove('dark');
+      }
+      localStorage.setItem('theme', theme);
+    }
   }, [theme]);
 
   const toggleTheme = () => {

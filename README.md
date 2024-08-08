@@ -125,7 +125,7 @@ my-todo-list/
 ├── setupTests.ts
 ├── tailwind.config.ts
 └── tsconfig.json
-´´´
+```
 
 ## Setup
 

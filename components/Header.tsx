@@ -1,46 +1,47 @@
-import React from "react";
-import { FaGithub, FaMoon, FaSun, FaPowerOff } from "react-icons/fa";
-import { logout } from "@/lib/auth";
+import React from 'react';
+import { FaGithub, FaMoon, FaPowerOff, FaSun } from 'react-icons/fa';
+import { HiMenu, HiOutlineX } from 'react-icons/hi';
+import Title from '@/components/Title';
 
 interface HeaderProps {
   toggleTheme: () => void;
   theme: string;
-  isAuthenticated: boolean; // New property
+  isAuthenticated: boolean;
+  handleMenuToggle: () => void;
+  isMenuOpen: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated }) => {
-  // Function to handle logout and refresh the page
-  const handleLogout = () => {
-    logout();
-    window.location.reload(); // Reloads the page
-  };
-
+const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated, handleMenuToggle, isMenuOpen }) => {
   return (
-    <header className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 p-4 fixed top-0 w-full flex justify-between items-center z-10">
-      <h1 className="text-4xl text-center flex-1">TO DO App</h1>
-      <div className="flex items-center">
-        <button onClick={toggleTheme} className="toggle-button p-2">
+    <header className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 p-4 fixed top-0 w-full flex justify-between items-center z-50">
+      <Title text="TO DO App" />
+      <div className="lg:hidden relative z-50">
+        <button
+          onClick={handleMenuToggle}
+          className="p-2"
+        >
+          {isMenuOpen ? (
+            <HiOutlineX className="w-6 h-6" />
+          ) : (
+            <HiMenu className="w-6 h-6" />
+          )}
+        </button>
+      </div>
+      <div className="hidden lg:flex items-center space-x-4">
+        <button onClick={toggleTheme} className="p-2">
           {theme === "light" ? (
             <FaSun className="w-6 h-6 text-yellow-500" />
           ) : (
             <FaMoon className="w-6 h-6 text-gray-300" />
           )}
         </button>
-        <span className="mx-3">|</span>
-        <a
-          href="https://github.com/babicastilho"
-          className="flex items-center"
-          target="_blank"
-        >
+        <a href="https://github.com/babicastilho" target="_blank" className="p-2">
           <FaGithub className="w-6 h-6" />
         </a>
         {isAuthenticated && (
-          <>
-            <span className="mx-3">|</span>
-            <button onClick={handleLogout} className="flex items-center">
-              <FaPowerOff className="w-6 h-6 text-red-500" />
-            </button>
-          </>
+          <button onClick={() => window.location.reload()} className="p-2">
+            <FaPowerOff className="w-6 h-6" />
+          </button>
         )}
       </div>
     </header>

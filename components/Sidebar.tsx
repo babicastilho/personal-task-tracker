@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { FaCalendarAlt, FaTasks, FaGithub, FaPowerOff, FaSun, FaMoon } from 'react-icons/fa';
+import { FaCalendarAlt, FaTasks, FaGithub, FaPowerOff, FaBookmark, FaSun, FaMoon } from 'react-icons/fa';
 import Title from '@/components/Title';
 
 interface SidebarProps {
@@ -26,6 +26,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, the
             <Link href="/" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded">
               <FaCalendarAlt className="w-5 h-5 mr-2" />
               Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link href="/categories" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded">
+              <FaBookmark  className="w-5 h-5 mr-2" />
+              Categories
             </Link>
           </li>
           <li>

@@ -80,7 +80,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               )}
             </>
           )}
-          <main className="flex-1 p-4">
+          <main className="flex-1 my-20 mx-10 p-4">
             {children}
           </main>
         </div>

@@ -1,38 +1,75 @@
-// components/TodoList.tsx
 import React, { useState, useEffect } from 'react';
 import { FaRegTrashAlt, FaRegCheckSquare, FaRegSquare } from "react-icons/fa";
 
+// Define the Task and Category interfaces
 export interface Task {
   _id: string;
   title: string;
   completed: boolean;
 }
 
+interface Category {
+  _id: string;
+  name: string;
+}
+
 const TodoList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch tasks from the API when the component mounts
-    const fetchTasks = async () => {
+    // Fetch tasks and categories from the API when the component mounts
+    const fetchTasksAndCategories = async () => {
       try {
-        const response = await fetch('/api/tasks', {
+        const taskResponse = await fetch('/api/tasks', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${document.cookie.split('authToken=')[1]}`,
           },
         });
-        const data = await response.json();
-        if (data.success) {
-          setTasks(data.tasks);
+        const taskData = await taskResponse.json();
+        if (taskData.success) {
+          setTasks(taskData.tasks);
+        }
+
+        const categoryResponse = await fetch('/api/categories', {
+          method: 'GET',
+        });
+        const categoryData = await categoryResponse.json();
+        if (categoryData.success) {
+          setCategories(categoryData.categories);
         }
       } catch (error) {
-        console.error('Error fetching tasks:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    fetchTasks();
+    fetchTasksAndCategories();
   }, []);
+
+  const addTask = async () => {
+    if (newTaskTitle.trim() !== '') {
+      try {
+        const response = await fetch('/api/tasks', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${document.cookie.split('authToken=')[1]}`,
+          },
+          body: JSON.stringify({ title: newTaskTitle, categoryId: selectedCategoryId }),
+        });
+        const data = await response.json();
+        if (data.success) {
+          setTasks([...tasks, data.task]);
+          setNewTaskTitle('');
+        }
+      } catch (error) {
+        console.error('Error adding task:', error);
+      }
+    }
+  };
 
   const toggleTaskCompletion = async (id: string) => {
     try {
@@ -47,37 +84,12 @@ const TodoList: React.FC = () => {
           body: JSON.stringify({ completed: !task.completed }),
         });
         const data = await response.json();
-        console.log('PUT response data:', data); // Adicione este log
         if (data.success) {
           setTasks(tasks.map(task => (task._id === id ? data.task : task)));
-        } else {
-          console.error('Error in PUT response:', data.message);
         }
       }
     } catch (error) {
       console.error('Error updating task:', error);
-    }
-  };
-  
-  const addTask = async () => {
-    if (newTaskTitle.trim() !== '') {
-      try {
-        const response = await fetch('/api/tasks', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${document.cookie.split('authToken=')[1]}`,
-          },
-          body: JSON.stringify({ title: newTaskTitle }),
-        });
-        const data = await response.json();
-        if (data.success) {
-          setTasks([...tasks, data.task]);
-          setNewTaskTitle('');
-        }
-      } catch (error) {
-        console.error('Error adding task:', error);
-      }
     }
   };
 
@@ -90,17 +102,14 @@ const TodoList: React.FC = () => {
         },
       });
       const data = await response.json();
-      console.log('DELETE response data:', data); // Adicione este log
       if (data.success) {
         setTasks(tasks.filter(task => task._id !== id));
-      } else {
-        console.error('Error in DELETE response:', data.message);
       }
     } catch (error) {
       console.error('Error deleting task:', error);
     }
   };
-  
+
   return (
     <div className="p-4 bg-white shadow-lg rounded-lg">
       <h2 className="text-lg font-bold mb-4">Task List</h2>
@@ -112,6 +121,18 @@ const TodoList: React.FC = () => {
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
         />
+        <select
+          className="mr-2 p-2 border border-gray-300 rounded"
+          value={selectedCategoryId || ''}
+          onChange={(e) => setSelectedCategoryId(e.target.value || null)}
+        >
+          <option value="">Select category</option>
+          {categories.map((category) => (
+            <option key={category._id} value={category._id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
         <button
           onClick={addTask}
           className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"

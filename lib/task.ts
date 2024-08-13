@@ -1,19 +1,20 @@
-// lib/todo.ts
+// lib/task.ts
+
 import { ObjectId } from 'mongodb';
 import dbConnect from '@/lib/mongodb';
-import { ITodo, createTodo } from '@/models/Todo';
+import { ITask, createTask } from '@/models/Task';
 
-export async function getTodos(): Promise<ITodo[]> {
+export async function getTodos(): Promise<ITask[]> {
   const db = await dbConnect();
   const todos = await db.collection('todos').find({}).toArray();
   return todos.map(todo => ({
     _id: todo._id,
     title: todo.title,
     completed: todo.completed
-  })) as ITodo[];
+  })) as ITask[];
 }
 
-export async function getTodoById(id: string): Promise<ITodo | null> {
+export async function getTodoById(id: string): Promise<ITask | null> {
   const db = await dbConnect();
   const todo = await db.collection('todos').findOne({ _id: new ObjectId(id) });
   if (!todo) return null;
@@ -21,17 +22,17 @@ export async function getTodoById(id: string): Promise<ITodo | null> {
     _id: todo._id,
     title: todo.title,
     completed: todo.completed
-  } as ITodo;
+  } as ITask;
 }
 
-export async function addTodo(data: Partial<ITodo>): Promise<ITodo> {
+export async function addTodo(data: Partial<ITask>): Promise<ITask> {
   const db = await dbConnect();
-  const todo = createTodo(data);
+  const todo = createTask(data);
   const result = await db.collection('todos').insertOne(todo);
   return { ...todo, _id: result.insertedId };
 }
 
-export async function updateTodo(id: string, data: Partial<ITodo>): Promise<boolean> {
+export async function updateTodo(id: string, data: Partial<ITask>): Promise<boolean> {
   const db = await dbConnect();
   const result = await db.collection('todos').updateOne({ _id: new ObjectId(id) }, { $set: data });
   return result.modifiedCount > 0;

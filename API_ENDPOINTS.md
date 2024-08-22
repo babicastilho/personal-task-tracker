@@ -1,5 +1,12 @@
 # API Endpoints Documentation
 
+* `/api/auth/check`: Check authentication status.
+* `/api/auth/login`: Handle user login.
+* `/api/auth/register`: Handle user registration.
+* `/api/tasks`: Retrieve all tasks or create a new task.
+* `/api/tasks/[id]`: Retrieve, update, or delete a specific task by ID.
+
+
 ## `/api/auth/check`
 
 **GET** - Check authentication status
@@ -124,9 +131,9 @@ export async function POST(req: Request) {
 **POST** - Retrieve all tasks
 
 ```javascript
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
-import { createTask, ITask } from '@/models/Task';
+import { createTask } from '@/models/Task';
 import { verifyToken } from '@/lib/auth';
 import { ObjectId } from 'mongodb';
 
@@ -270,4 +277,41 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
   }
 }
 ```
+
+## `/api/categories`
+
+**GET** - Retrieve all categories
+
+**POST** - Create a new category
+
+```javascript
+import { NextResponse } from 'next/server';
+import dbConnect from '@/lib/mongodb';
+import { verifyToken } from '@/lib/auth';
+import { ObjectId } from 'mongodb';
+
+export async function GET(req: Request) {
+  const db = await dbConnect();
+  const categories = await db.collection('categories').find().toArray();
+  return NextResponse.json({ success: true, categories }, { status: 200 });
+}
+
+export async function POST(req: Request) {
+  const db = await dbConnect();
+  const { name, description } = await req.json();
+
+  if (!name) {
+    return NextResponse.json({ success: false, message: 'Name is required' }, { status: 400 });
+  }
+
+  const newCategory = {
+    name,
+    description,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  await db.collection('categories').insertOne(newCategory);
+  return NextResponse.json({ success: true, category: newCategory }, { status: 201 });
+}
 

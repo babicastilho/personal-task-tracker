@@ -2,7 +2,7 @@
 
 ## Description
 
-My Todo List MERN is a to-do list application built using the MERN stack (MongoDB, Express, React, and Node.js). The project includes API endpoints for managing tasks and a basic user interface for interacting with these tasks.
+My Todo List MERN is a comprehensive to-do list application built with MongoDB, Express, React, and Node.js. It features task management with categories, user authentication, theming, and more. This project serves as a practical implementation of the MERN stack for task management applications.
 
 ## Table of Contents
 - [Project Structure](#project-structure)
@@ -28,103 +28,32 @@ The project structure is as follows:
 ```plaintext
 my-todo-list/
 ├── app/
-│   ├── api/
-│   │   ├── auth/
-│   │   │   ├── check/
-│   │   │   │   └── route.ts
-│   │   │   ├── login/
-│   │   │   │   └── route.ts
-│   │   │   └── register/
-│   │   │   │   └── route.ts
-│   │   ├── tasks/
-│   │   │   └── [id]/
-│   │   │   │   └── route.ts
-│   │   │   └── route.ts
-│   │   └── users/
-│   │   │   └── delete/
-│   │   │   │   └── route.ts
-│   └── register/
-│   │   └── page.tsx
-│   ├── favicon.ico
-│   ├── globals.scss
-│   ├── layout.tsx
-│   └── page.tsx
-├── components/
-│   └── register/
-│   │   ├── RegisterForm.tsx
-│   │   └── RegisterPage.tsx
-│   ├── Dashboard.tsx
-│   ├── Footer.tsx
-│   ├── Header.tsx
-│   ├── SignIn.tsx
-│   └── TodoList.tsx
-├── cypress/
-│   ├── component/
-│   ├── e2e/
-│   │   ├── auth.cy.ts
-│   │   └── todo.cy.ts
-│   ├── fixtures/
-│   │   └── example.json
-│   ├── integration/
-│   ├── plugins/
-│   └── support/
-│   │   ├── commands.ts
-│   │   └── e2e.ts
-│   ├── cypress.config.ts
-│   ├── cypress.json
-│   └── tsconfig.json
-├── hooks/
-│   └── useTheme.ts
-├── lib/
-│   ├── auth.ts
-│   ├── mongodb.ts
-│   └── todo.ts
-├── models/
-│   ├── Task.ts
-│   └── User.ts
-├── public/
-│   ├── next.svg
-│   └── vercel.svg
-├── styles/
-│   ├── Header.module.scss
-│   └── RegisterForm.module.scss
-└── tests/
-│   ├── components/
-│   │   ├── layout/
-│   │   │   └── layout.test.tsx
-│   │   ├── pages/
-│   │   │   └── page.test.tsx
-│   │   └── todo/
-│   │   │   └── TodoList.test.tsx
-│   └── unit/
-│   │   ├── api/
-│   │   │   ├── tasks.test.ts
-│   │   │   └── tasksId.test.ts
-│   │   ├── auth/
-│   │   │   ├── check.test.ts
-│   │   │   ├── login.test.ts
-│   │   │   └── register.test.ts
-│   │   ├── lib/
-│   │   │   ├── mongodb.test.ts
-│   │   │   └── todo.test.ts
-│   │   ├── models/
-│   │   │   └── Todo.test.ts
-│   │   └── users/
-│   │   │   └── delete.test.ts
-├── LICENSE
-├── README.md
-├── babel.config.js
-├── cypress.config.ts
-├── global.d.ts
-├── jest.config.js
-├── next-env.d.ts
-├── next.config.mjs
-├── package-lock.json
-├── package.json
-├── postcss.config.mjs
-├── setupTests.ts
-├── tailwind.config.ts
-└── tsconfig.json
+│   ├── api/                  # Contains API route handlers for auth, tasks, users, and categories.
+│   ├── categories/           # Pages and components related to task categories.
+│   ├── register/             # User registration pages and forms.
+│   ├── tasks/                # Pages and components related to tasks.
+│   ├── layout.tsx            # Global layout component for the application.
+│   ├── page.tsx              # Main entry point for the application.
+│   └── favicon.ico           # Favicon for the application.
+├── components/               # Reusable React components (e.g., Header, Footer, TodoList).
+├── cypress/                  # Cypress End-to-End tests.
+├── hooks/                    # Custom React hooks (e.g., useTheme).
+├── lib/                      # Utility functions and libraries for auth, database connections, etc.
+├── models/                   # Mongoose models for MongoDB collections.
+├── public/                   # Public assets like images and icons.
+├── styles/                   # SCSS and CSS modules for styling components.
+├── tests/                    # Unit and component tests using Jest and React Testing Library.
+├── API_ENDPOINTS.md          # Documentation for API endpoints.
+├── README.md                 # Project README with detailed setup instructions.
+├── babel.config.js           # Babel configuration for the project.
+├── cypress.config.ts         # Cypress configuration for E2E tests.
+├── jest.config.js            # Jest configuration for unit and component tests.
+├── next.config.mjs           # Next.js configuration file.
+├── package.json              # NPM package configuration and dependencies.
+├── postcss.config.mjs        # PostCSS configuration for handling CSS.
+├── setupTests.ts             # Setup file for configuring Jest tests.
+├── tailwind.config.ts        # Tailwind CSS configuration.
+└── tsconfig.json             # TypeScript configuration file.
 ```
 
 ## Setup
@@ -204,6 +133,7 @@ To execute the tests, use:
 ```bash
 npm test
 ```
+
 Tests are located in the tests/ folder and cover both API and component functionality.
 
 ### Running E2E Tests

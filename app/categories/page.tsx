@@ -1,5 +1,6 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from 'react';
+import { checkAuth } from '@/lib/auth'; // Import function to check authentication
 
 export interface Category {
   _id: string;
@@ -11,45 +12,100 @@ const CategoriesPage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryDescription, setNewCategoryDescription] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Fetch existing categories from the API
-    const fetchCategories = async () => {
-      const response = await fetch('/api/categories');
-      const data = await response.json();
-      if (data.success) {
-        setCategories(data.categories);
+    const verifyAuth = async () => {
+      try {
+        const authenticated = await checkAuth();
+        setIsAuthenticated(authenticated);
+        if (authenticated) {
+          await fetchCategories(); // Fetch categories if user is authenticated
+        }
+      } catch (error) {
+        console.error('Failed to check authentication:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchCategories();
+    verifyAuth();
   }, []);
 
-  const addCategory = async () => {
-    if (newCategoryName.trim() !== '') {
+  const fetchCategories = async () => {
+    try {
+      const token = document.cookie.split('authToken=')[1]; // Extract token from cookies
       const response = await fetch('/api/categories', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newCategoryName, description: newCategoryDescription }),
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`, // Pass the token in the Authorization header
+        },
       });
       const data = await response.json();
       if (data.success) {
-        setCategories([...categories, data.category]);
-        setNewCategoryName('');
-        setNewCategoryDescription('');
+        setCategories(data.categories);
+      } else {
+        console.error('Failed to fetch categories:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const addCategory = async () => {
+    if (newCategoryName.trim() !== '') {
+      try {
+        const token = document.cookie.split('authToken=')[1];
+        const response = await fetch('/api/categories', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`, // Pass the token in the Authorization header
+          },
+          body: JSON.stringify({ name: newCategoryName, description: newCategoryDescription }),
+        });
+        const data = await response.json();
+        if (data.success) {
+          setCategories([...categories, data.category]);
+          setNewCategoryName('');
+          setNewCategoryDescription('');
+        } else {
+          console.error('Failed to add category:', data.message);
+        }
+      } catch (error) {
+        console.error('Error adding category:', error);
       }
     }
   };
 
   const deleteCategory = async (id: string) => {
-    const response = await fetch(`/api/categories/${id}`, {
-      method: 'DELETE',
-    });
-    const data = await response.json();
-    if (data.success) {
-      setCategories(categories.filter(category => category._id !== id));
+    try {
+      const token = document.cookie.split('authToken=')[1];
+      const response = await fetch(`/api/categories/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`, // Pass the token in the Authorization header
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setCategories(categories.filter(category => category._id !== id));
+      } else {
+        console.error('Failed to delete category:', data.message);
+      }
+    } catch (error) {
+      console.error('Error deleting category:', error);
     }
   };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!isAuthenticated) {
+    return <p>Please log in to manage your categories.</p>;
+  }
 
   return (
     <div className="p-4 bg-white shadow-lg rounded-lg">

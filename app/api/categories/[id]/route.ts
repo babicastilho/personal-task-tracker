@@ -1,11 +1,9 @@
-// app/api/categories/route.ts
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
-import { createCategory } from '@/models/Category';
 import { verifyToken } from '@/lib/auth';
 import { ObjectId } from 'mongodb';
 
-export async function GET(req: Request) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const db = await dbConnect();
     const token = req.headers.get('Authorization')?.split(' ')[1];
@@ -17,15 +15,20 @@ export async function GET(req: Request) {
     const decoded = verifyToken(token);
     const userId = new ObjectId(decoded.userId);
 
-    // Fetch categories only for the authenticated user
-    const categories = await db.collection('categories').find({ userId }).toArray();
-    return NextResponse.json({ success: true, categories }, { status: 200 });
+    // Fetch the category by ID and ensure it belongs to the authenticated user
+    const category = await db.collection('categories').findOne({ _id: new ObjectId(params.id), userId });
+
+    if (!category) {
+      return NextResponse.json({ success: false, message: 'Category not found or does not belong to the user' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, category }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ success: false, message: 'Internal server error', error: (error as Error).message }, { status: 500 });
   }
 }
 
-export async function POST(req: Request) {
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
     const db = await dbConnect();
     const token = req.headers.get('Authorization')?.split(' ')[1];
@@ -36,17 +39,15 @@ export async function POST(req: Request) {
 
     const decoded = verifyToken(token);
     const userId = new ObjectId(decoded.userId);
-    const { name, description } = await req.json();
 
-    if (!name) {
-      return NextResponse.json({ success: false, message: 'Category name is required' }, { status: 400 });
+    // Ensure the category to be deleted belongs to the authenticated user
+    const deleteResult = await db.collection('categories').deleteOne({ _id: new ObjectId(params.id), userId });
+
+    if (deleteResult.deletedCount === 0) {
+      return NextResponse.json({ success: false, message: 'Category not found or does not belong to the user' }, { status: 404 });
     }
 
-    // Create category and associate it with the authenticated user
-    const newCategory = createCategory({ name, description, userId });
-    await db.collection('categories').insertOne(newCategory);
-
-    return NextResponse.json({ success: true, category: newCategory }, { status: 201 });
+    return NextResponse.json({ success: true, message: 'Category deleted successfully' }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ success: false, message: 'Internal server error', error: (error as Error).message }, { status: 500 });
   }

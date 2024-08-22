@@ -25,21 +25,22 @@ describe('DELETE /api/users/delete', () => {
 
     (verifyToken as jest.Mock).mockImplementation(() => ({ userId }));
 
-    const { req } = createMocks({
+    // Create a new Headers object to simulate correct header structure
+    const headers = new Headers({
+      authorization: `Bearer ${token}`,
+    });
+
+    // Convert mocked request to the expected Request object
+    const request = new Request('http://localhost:3000/api/users/delete', {
       method: 'DELETE',
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
+      headers: headers,
     });
 
     mockDb.collection.mockReturnValue({
       deleteOne: mockDb.deleteOne.mockResolvedValue({ deletedCount: 1 }),
     });
 
-    const response = await DELETE(new Request('http://localhost:3000/api/users/delete', {
-      method: 'DELETE',
-      headers: req.headers as HeadersInit,
-    }));
+    const response = await DELETE(request);
 
     expect(response.status).toBe(200);
     const json = await response.json();
@@ -50,14 +51,16 @@ describe('DELETE /api/users/delete', () => {
   });
 
   it('should return 401 if no token is provided', async () => {
-    const { req } = createMocks({
+    // Create an empty Headers object for no token
+    const headers = new Headers();
+
+    // Convert mocked request to the expected Request object
+    const request = new Request('http://localhost:3000/api/users/delete', {
       method: 'DELETE',
+      headers: headers,
     });
 
-    const response = await DELETE(new Request('http://localhost:3000/api/users/delete', {
-      method: 'DELETE',
-      headers: req.headers as HeadersInit,
-    }));
+    const response = await DELETE(request);
 
     expect(response.status).toBe(401);
     const json = await response.json();
@@ -73,21 +76,22 @@ describe('DELETE /api/users/delete', () => {
 
     (verifyToken as jest.Mock).mockImplementation(() => ({ userId }));
 
-    const { req } = createMocks({
+    // Create a new Headers object to simulate correct header structure
+    const headers = new Headers({
+      authorization: `Bearer ${token}`,
+    });
+
+    // Convert mocked request to the expected Request object
+    const request = new Request('http://localhost:3000/api/users/delete', {
       method: 'DELETE',
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
+      headers: headers,
     });
 
     mockDb.collection.mockReturnValue({
       deleteOne: mockDb.deleteOne.mockRejectedValue(new Error('Internal server error')),
     });
 
-    const response = await DELETE(new Request('http://localhost:3000/api/users/delete', {
-      method: 'DELETE',
-      headers: req.headers as HeadersInit,
-    }));
+    const response = await DELETE(request);
 
     expect(response.status).toBe(500);
     const json = await response.json();

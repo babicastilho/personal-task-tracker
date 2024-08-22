@@ -1,9 +1,8 @@
 import { createMocks } from 'node-mocks-http';
-import handler from '@/app/api/tasks/route';
+import { GET, POST } from '@/app/api/tasks/route';
 import dbConnect from '@/lib/mongodb';
-import { MongoClient, ObjectId } from 'mongodb';
-import { generateToken, verifyToken } from '@/lib/auth';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { verifyToken } from '@/lib/auth';
+import { ObjectId } from 'mongodb';
 
 jest.mock('@/lib/mongodb');
 jest.mock('@/lib/auth');
@@ -12,32 +11,16 @@ const mockDb = {
   collection: jest.fn().mockReturnThis(),
   find: jest.fn(),
   insertOne: jest.fn(),
-  findOne: jest.fn(),
 };
 
 (dbConnect as jest.Mock).mockResolvedValue(mockDb);
 
 describe('/api/tasks API Endpoint', () => {
-  let client: MongoClient | null = null;
   const userId = new ObjectId().toHexString();
-  const token = generateToken(userId);
+  const token = `Bearer ${userId}`;
 
-  beforeAll(async () => {
-    client = new MongoClient(process.env.MONGODB_URI as string);
-    await client.connect();
-    await dbConnect();
-  });
-
-  afterAll(async () => {
-    if (client) {
-      await client.close();
-      client = null;
-    }
-  });
-
-  afterEach(async () => {
-    const db = client!.db();
-    await db.collection('tasks').deleteMany({});
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should return a list of tasks', async () => {
@@ -50,17 +33,21 @@ describe('/api/tasks API Endpoint', () => {
       ]),
     });
 
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-      method: 'GET',
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
+    // Cria o objeto Headers corretamente
+    const headers = new Headers({
+      authorization: `Bearer ${token}`,
     });
 
-    await handler(req, res);
+    // Cria o Request para o teste
+    const request = new Request('http://localhost:3000/api/tasks', {
+      method: 'GET',
+      headers: headers,
+    });
 
-    expect(res.statusCode).toBe(200);
-    const json = JSON.parse(res._getData());
+    const response = await GET(request);
+
+    expect(response.status).toBe(200);
+    const json = await response.json();
     expect(json.success).toBe(true);
     expect(Array.isArray(json.tasks)).toBe(true);
     expect(json.tasks).toEqual(
@@ -89,20 +76,20 @@ describe('/api/tasks API Endpoint', () => {
       insertedId: newTaskId,
     });
 
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-      body: {
-        title: 'New Task',
-      },
+    const headers = new Headers({
+      authorization: `Bearer ${token}`,
     });
 
-    await handler(req, res);
+    const request = new Request('http://localhost:3000/api/tasks', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ title: 'New Task' }),
+    });
 
-    expect(res.statusCode).toBe(201);
-    const json = JSON.parse(res._getData());
+    const response = await POST(request);
+
+    expect(response.status).toBe(201);
+    const json = await response.json();
     expect(json.success).toBe(true);
     expect(json.task).toEqual(
       expect.objectContaining({
@@ -111,11 +98,5 @@ describe('/api/tasks API Endpoint', () => {
         userId: userId,
       })
     );
-
-    // Mock the findOne function to return the newly created task
-    mockDb.findOne.mockResolvedValue(mockTask);
-
-    const taskInDb = await mockDb.collection('tasks').findOne({ title: 'New Task' });
-    expect(taskInDb).not.toBeNull();
   });
 });

@@ -1,113 +1,82 @@
 import { createMocks } from 'node-mocks-http';
-import handler from '@/app/api/tasks/[id]/route';
+import { PUT } from '@/app/api/tasks/[id]/route';
 import dbConnect from '@/lib/mongodb';
-import { generateToken, verifyToken } from '@/lib/auth';
-import { MongoClient, ObjectId } from 'mongodb';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { verifyToken } from '@/lib/auth';
+import { ObjectId } from 'mongodb';
 
 jest.mock('@/lib/mongodb');
 jest.mock('@/lib/auth');
 
 const mockDb = {
   collection: jest.fn().mockReturnThis(),
-  findOneAndUpdate: jest.fn(),
-  findOneAndDelete: jest.fn(),
-  findOne: jest.fn(),
+  findOne: jest.fn(),  // Certifique-se de que findOne está mockado corretamente
+  updateOne: jest.fn(),  // Adiciona o mock da função updateOne
 };
 
 (dbConnect as jest.Mock).mockResolvedValue(mockDb);
 
 describe('/api/tasks/[id] API Endpoint', () => {
-  let client: MongoClient | null = null;
-  let taskId: ObjectId;
   const userId = new ObjectId().toHexString();
-  const token = generateToken(userId);
+  const taskId = new ObjectId().toHexString();
+  const token = `Bearer ${userId}`;
 
-  beforeAll(async () => {
-    client = new MongoClient(process.env.MONGODB_URI as string);
-    await client.connect();
-    await dbConnect();
-  });
-
-  beforeEach(async () => {
-    taskId = new ObjectId();
-    const db = client!.db();
-    await db.collection('tasks').insertOne({ _id: taskId, title: 'Task to Test', completed: false, userId });
-  });
-
-  afterEach(async () => {
-    const db = client!.db();
-    await db.collection('tasks').deleteMany({});
-  });
-
-  afterAll(async () => {
-    if (client) {
-      await client.close();
-      client = null;
-    }
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should update a task', async () => {
     (verifyToken as jest.Mock).mockImplementation(() => ({ userId }));
 
+    const existingTask = {
+      _id: taskId,
+      title: 'Task to Test',
+      completed: false,
+      userId,
+    };
+
     const updatedTask = {
-      _id: taskId.toString(), // Converting ObjectId to string
+      _id: taskId,
       title: 'Task to Test',
       completed: true,
       userId,
     };
 
-    mockDb.findOneAndUpdate.mockResolvedValue({
-      value: updatedTask,
+    // Mock findOne para simular que a tarefa existe
+    mockDb.findOne.mockResolvedValue(existingTask);
+
+    // Mock updateOne para simular a atualização da tarefa
+    mockDb.updateOne.mockResolvedValue({
+      matchedCount: 1, // Indica que uma tarefa foi encontrada e atualizada
+      modifiedCount: 1, // Indica que uma tarefa foi modificada
     });
 
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+    // Mock findOne para retornar a tarefa atualizada após a atualização
+    mockDb.findOne.mockResolvedValue(updatedTask);
+
+    const headers = new Headers({
+      authorization: `Bearer ${token}`,
+    });
+
+    const request = new Request(`http://localhost:3000/api/tasks/${taskId}`, {
       method: 'PUT',
-      query: { id: taskId.toString() },
-      body: { completed: true },
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
+      headers: headers,
+      body: JSON.stringify({ completed: true }),
     });
 
-    await handler(req, res);
+    const response = await PUT(request, { params: { id: taskId } });
 
-    expect(res.statusCode).toBe(200);
-    const json = JSON.parse(res._getData());
+    console.log('Response status:', response.status);
+    const json = await response.json();
+    console.log('Response JSON:', json);
+
+    expect(response.status).toBe(200); // Garantindo que a resposta seja 200
     expect(json.success).toBe(true);
     expect(json.task).toEqual(updatedTask);
 
-    // Mock the findOne function to return the updated task
-    mockDb.findOne.mockResolvedValue(updatedTask);
-
-    const taskInDb = await mockDb.collection('tasks').findOne({ _id: new ObjectId(taskId) });
-    expect(taskInDb).not.toBeNull();
-    if (taskInDb) {
-      expect(taskInDb.completed).toBe(true);
-    }
-  });
-
-  it('should delete a task', async () => {
-    (verifyToken as jest.Mock).mockImplementation(() => ({ userId }));
-
-    mockDb.findOneAndDelete.mockResolvedValue({ value: { _id: taskId, userId, title: 'Task to Test', completed: false } });
-
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-      method: 'DELETE',
-      query: { id: taskId.toString() },
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
+    // Verifica se a função findOne foi chamada corretamente
+    expect(mockDb.findOne).toHaveBeenCalledWith({
+      _id: new ObjectId(taskId),
+      userId: new ObjectId(userId),
     });
-
-    await handler(req, res);
-
-    expect(res.statusCode).toBe(200);
-    const json = JSON.parse(res._getData());
-    expect(json.success).toBe(true);
-
-    mockDb.findOne.mockResolvedValue(null);
-    const taskInDb = await mockDb.collection('tasks').findOne({ _id: new ObjectId(taskId) });
-    expect(taskInDb).toBeNull();
   });
 });

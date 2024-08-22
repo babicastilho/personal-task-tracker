@@ -1,8 +1,7 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import TodoList from '@/components/TodoList';
-import { checkAuth } from '@/lib/auth';
+import { checkAuth } from '@/lib/auth'; // Import authentication function
 
 export default function TasksPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -31,16 +30,16 @@ export default function TasksPage() {
     );
   }
 
+  if (!isAuthenticated) {
+    return <p>Please sign in to view your tasks.</p>;
+  }
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center p-4">
-      {isAuthenticated ? (
-        <div className="w-full max-w-4xl">
-          <h2 className="text-lg font-bold mb-4">Your To-Do List</h2>
-          <TodoList />
-        </div>
-      ) : (
-        <p>Please sign in to view your tasks.</p>
-      )}
+      <div className="w-full max-w-4xl">
+        <h2 className="text-lg font-bold mb-4">Your To-Do List</h2>
+        <TodoList /> {/* This component is responsible for displaying and managing tasks */}
+      </div>
     </div>
   );
 }

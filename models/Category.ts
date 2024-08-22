@@ -6,6 +6,7 @@ export interface ICategory {
   name: string;
   slug: string;
   description?: string;
+  userId: ObjectId; // Associate the category with a user
 }
 
 export function createCategory(data: Partial<ICategory>): ICategory {
@@ -18,5 +19,6 @@ export function createCategory(data: Partial<ICategory>): ICategory {
     name: data.name,
     slug: data.slug || data.name.toLowerCase().replace(/ /g, '-'),
     description: data.description || '',
+    userId: data.userId!, // Ensure userId is provided when creating a category
   };
 }

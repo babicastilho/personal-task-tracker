@@ -1,10 +1,11 @@
+// models/Task.ts
 import { ObjectId } from 'mongodb';
 
 export interface ITask {
   _id?: ObjectId;
   title: string;
   completed: boolean;
-  userId: ObjectId; // Add userId to associate task with a user
+  userId: ObjectId; // Associate the task with a user
 }
 
 export function createTask(data: Partial<ITask>): ITask {
@@ -16,6 +17,6 @@ export function createTask(data: Partial<ITask>): ITask {
     _id: data._id || new ObjectId(),
     title: data.title,
     completed: data.completed ?? false,
-    userId: data.userId!,
+    userId: data.userId!, // Ensure userId is provided when creating a task
   };
 }

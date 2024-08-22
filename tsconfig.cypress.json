@@ -1,0 +1,23 @@
+// tsconfig.cypress.json
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "types": ["cypress", "node"], // Cypress types only
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["cypress/**/*.ts", "cypress/**/*.tsx"],
+  "exclude": ["node_modules", "tests"]
+}

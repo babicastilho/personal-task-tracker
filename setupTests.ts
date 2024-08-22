@@ -1,6 +1,4 @@
-// setupTests.ts
 import '@testing-library/jest-dom';
-
 import { TextEncoder, TextDecoder } from 'util';
 import dotenv from 'dotenv';
 
@@ -18,35 +16,21 @@ jest.mock('bcryptjs', () => ({
 // Mock jsonwebtoken
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(() => 'mocked_token'),
+  verify: jest.fn(() => ({ userId: 'mocked_user_id' })),
 }));
 
-// Mock next/navigation
-jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    back: jest.fn(),
-    prefetch: jest.fn(),
-    query: {},
-    pathname: '/',
-  }),
-}));
 
-// Mock mongoose
-jest.mock('mongoose', () => {
-  const actualMongoose = jest.requireActual('mongoose');
-  return {
-    __esModule: true,
-    ...actualMongoose,
-    connect: jest.fn(),
-    connection: {
-      on: jest.fn(),
-      once: jest.fn(),
+
+// Mock global fetch to return a Response-like object
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve({ message: 'mocked response' }),
+    headers: {
+      get: jest.fn().mockReturnValue('application/json'),
     },
-    Types: {
-      ObjectId: jest.fn(() => 'mocked_id'),
-    },
-  };
-});
+  } as unknown as Response)
+);
 
 // Additional global setups can be added here if needed

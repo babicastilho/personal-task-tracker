@@ -1,7 +1,6 @@
 // lib/mongodb.test.ts
 import dotenv from 'dotenv';
 dotenv.config();
-import dbConnect from '@/lib/mongodb';
 import { MongoClient, Db } from 'mongodb';
 
 let client: MongoClient | null = null;

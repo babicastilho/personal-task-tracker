@@ -1,7 +1,3 @@
-/**
- * @jest-environment node
- */
-
 import { createMocks } from 'node-mocks-http';
 import handler from '@/app/api/tasks/route';
 import dbConnect from '@/lib/mongodb';

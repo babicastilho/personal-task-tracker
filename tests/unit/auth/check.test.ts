@@ -1,7 +1,3 @@
-/**
- * @jest-environment node
- */
-
 import { createMocks } from 'node-mocks-http';
 import { GET } from '@/app/api/auth/check/route';
 import { verifyToken } from '@/lib/auth';

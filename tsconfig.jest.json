@@ -1,0 +1,24 @@
+// tsconfig.jest.json
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "types": ["jest", "node"], // Import only Jest types here
+    "baseUrl": ".", // Base directory is the project root
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["tests/**/*.ts", "tests/**/*.tsx", "setupTests.ts"],
+  "exclude": ["node_modules"]
+}

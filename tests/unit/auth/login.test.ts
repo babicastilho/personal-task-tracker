@@ -1,7 +1,3 @@
-/**
- * @jest-environment node
- */
-
 import { createMocks } from 'node-mocks-http';
 import { POST } from '@/app/api/auth/login/route';
 import dbConnect from '@/lib/mongodb';

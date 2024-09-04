@@ -65,8 +65,9 @@ export const checkAuth = async (): Promise<boolean> => {
     }
 
     const data = await response.json();
-    return data.success;
-  } catch {
+    return data.success; // Returns true if the user is authenticated
+  } catch (error) {
+    console.error('Failed to check authentication:', error);
     return false;
   }
 };

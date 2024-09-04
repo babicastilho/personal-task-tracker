@@ -1,46 +1,27 @@
 "use client";
-import React, { ReactNode, useState, useEffect } from "react";
+import React, { ReactNode, useState } from "react";
 import "./globals.scss";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useTheme } from "@/hooks/useTheme";
-import { checkAuth } from "@/lib/auth";
 import Sidebar from "@/components/Sidebar";
+import { useTheme } from "@/hooks/useTheme";
+import { useAuth } from "@/hooks/useAuth"; // Import the authentication hook
 
 interface RootLayoutProps {
   children: ReactNode;
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
-  const { theme, toggleTheme } = useTheme();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [mounted, setMounted] = useState<boolean>(false);
+  const { theme, toggleTheme } = useTheme(); // Theme management hook
+  const { isAuthenticated, loading, logout } = useAuth(); // Using authentication hook
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false); // State to control menu visibility
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    const verifyAuth = async () => {
-      try {
-        const authenticated = await checkAuth();
-        setIsAuthenticated(authenticated);
-      } catch (error) {
-        console.error("Failed to check authentication:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    verifyAuth();
-  }, []);
-
+  // Toggle the mobile menu
   const handleMenuToggle = () => {
-    setIsMenuOpen(!isMenuOpen); // Function to toggle the menu state
+    setIsMenuOpen(!isMenuOpen);
   };
 
+  // If still verifying authentication, show loading screen
   if (loading) {
     return (
       <html lang="en">
@@ -53,28 +34,33 @@ export default function RootLayout({ children }: RootLayoutProps) {
     );
   }
 
+  // Render the authenticated layout
   return (
-    <html lang="en" className={mounted ? theme : undefined}>
+    <html lang="en" className={theme}>
       <body className="transition-all duration-100 ease-in tracking-tight antialiased bg-gray-50 text-gray-800 dark:bg-gray-800 dark:text-gray-300">
-      <Header
+        <Header
           toggleTheme={toggleTheme}
           theme={theme}
           isAuthenticated={isAuthenticated}
           handleMenuToggle={handleMenuToggle}
           isMenuOpen={isMenuOpen}
+          logout={logout} // Pass logout function to Header
         />
         <div className="flex flex-1">
           {isAuthenticated && (
             <>
               <Sidebar
-                isOpen={isMenuOpen} // Passing the state of the menu to Sidebar
-                handleClose={handleMenuToggle} // Function to close the menu
+                isOpen={isMenuOpen}
+                handleClose={handleMenuToggle}
                 toggleTheme={toggleTheme}
                 theme={theme}
+                logout={logout} // Pass logout function to Sidebar
               />
+
+              {/* Only show the overlay for mobile view (when lg:hidden applies) */}
               {isMenuOpen && (
                 <div
-                  className="fixed inset-0 bg-black bg-opacity-50 z-20"
+                  className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden" // Ensure overlay only appears on small screens
                   onClick={handleMenuToggle}
                 ></div>
               )}

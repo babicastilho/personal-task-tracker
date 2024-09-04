@@ -3,15 +3,17 @@ import Link from 'next/link';
 import { FaCalendarAlt, FaTasks, FaGithub, FaPowerOff, FaBookmark, FaSun, FaMoon } from 'react-icons/fa';
 import Title from '@/components/Title';
 
+// Extending SidebarProps to include 'logout' property
 interface SidebarProps {
   isOpen: boolean;
   handleClose: () => void;
   toggleTheme: () => void;
   theme: string;
-  className?: string; 
+  className?: string;
+  logout: () => void; // Added logout function here
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, theme }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, theme, logout }) => {
   return (
     <aside
       className={`fixed lg:relative top-0 left-0 w-64 min-h-screen bg-gray-200 dark:bg-gray-900 p-4 z-30 transform transition-transform duration-300 ease-in-out ${
@@ -22,8 +24,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, the
       <hr className="my-6 border-gray-400" />
       <nav>
         <ul className="mt-8 space-y-4">
+          {/* Update the Dashboard link to /dashboard */}
           <li>
-            <Link href="/" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
+            <Link href="/dashboard" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
               <FaCalendarAlt className="w-5 h-5 mr-2" />
               Dashboard
             </Link>
@@ -44,6 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, the
         <hr className="my-4 border-gray-400" />
         {/* Icons visible only on smaller screens */}
         <div className="mt-6 space-y-4 lg:hidden">
+          {/* Theme Toggle */}
           <button
             onClick={() => {
               toggleTheme();
@@ -58,6 +62,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, the
             )}
             {theme.charAt(0).toUpperCase() + theme.slice(1)} Mode
           </button>
+
+          {/* GitHub Link */}
           <a
             href="https://github.com/babicastilho"
             target="_blank"
@@ -67,10 +73,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, the
             <FaGithub className="w-5 h-5 mr-2" />
             GitHub
           </a>
+
+          {/* Logout Button */}
           <button
             onClick={() => {
+              logout(); // Call the logout function to remove the token
               handleClose();
-              window.location.reload(); // Assuming this logs the user out
+              window.location.href = '/login'; // Redirect to login page after logout
             }}
             className="w-full flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
           >

@@ -1,29 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Dashboard from '@/components/Dashboard';
-import SignIn from '@/components/SignIn';
-import { checkAuth } from '@/lib/auth';
+import React from "react";
+import Dashboard from "@/components/Dashboard"; // Your dashboard component
+import SignIn from "@/components/SignIn"; // Your sign-in component
+import { useAuth } from "@/hooks/useAuth"; // Use the authentication hook
 
 export default function Home() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  const { isAuthenticated, loading } = useAuth(); // Get auth status from the custom hook
 
-  useEffect(() => {
-    const verifyAuth = async () => {
-      try {
-        const authenticated = await checkAuth();
-        setIsAuthenticated(authenticated);
-      } catch (error) {
-        console.error('Failed to check authentication:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    verifyAuth();
-  }, []);
-
+  // Show loading state during authentication check
   if (loading) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
@@ -32,9 +17,10 @@ export default function Home() {
     );
   }
 
+  // Render the dashboard if authenticated, otherwise render the sign-in form
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      {isAuthenticated ? <Dashboard /> : <SignIn />}
+      {isAuthenticated ? <Dashboard /> : <SignIn />} {/* Conditional rendering based on authentication */}
     </main>
   );
 }

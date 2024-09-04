@@ -2,16 +2,19 @@ import React from 'react';
 import { FaGithub, FaMoon, FaPowerOff, FaSun } from 'react-icons/fa';
 import { HiMenu, HiOutlineX } from 'react-icons/hi';
 import Title from '@/components/Title';
+import { logout } from '@/lib/auth';
 
+// Extending HeaderProps to include 'logout' property
 interface HeaderProps {
   toggleTheme: () => void;
   theme: string;
   isAuthenticated: boolean;
   handleMenuToggle: () => void;
   isMenuOpen: boolean;
+  logout: () => void; // Added logout function here
 }
 
-const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated, handleMenuToggle, isMenuOpen }) => {
+const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated, handleMenuToggle, isMenuOpen, logout }) => {
   return (
     <header className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 p-4 fixed top-0 w-full flex justify-between items-center z-50">
       <Title text="TO DO App" />
@@ -19,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated, ha
         <button
           onClick={handleMenuToggle}
           className="p-2"
-          data-cy="menu-toggle-button" 
+          data-cy="menu-toggle-button"
         >
           {isMenuOpen ? (
             <HiOutlineX className="w-6 h-6" />
@@ -29,6 +32,7 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated, ha
         </button>
       </div>
       <div className="hidden lg:flex items-center space-x-4">
+        {/* Theme toggle button */}
         <button onClick={toggleTheme} className="p-2">
           {theme === "light" ? (
             <FaSun className="w-6 h-6 text-yellow-500" />
@@ -40,7 +44,13 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated, ha
           <FaGithub className="w-6 h-6" />
         </a>
         {isAuthenticated && (
-          <button onClick={() => window.location.reload()} className="p-2">
+          <button
+            onClick={() => {
+              logout(); // Call the logout function to remove the token
+              window.location.href = '/login'; // Redirect to login page after logout
+            }}
+            className="p-2"
+          >
             <FaPowerOff className="w-6 h-6" />
           </button>
         )}

@@ -19,6 +19,7 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated, ha
         <button
           onClick={handleMenuToggle}
           className="p-2"
+          data-cy="menu-toggle-button" 
         >
           {isMenuOpen ? (
             <HiOutlineX className="w-6 h-6" />

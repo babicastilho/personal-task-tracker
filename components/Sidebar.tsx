@@ -23,19 +23,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, the
       <nav>
         <ul className="mt-8 space-y-4">
           <li>
-            <Link href="/" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded">
+            <Link href="/" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
               <FaCalendarAlt className="w-5 h-5 mr-2" />
               Dashboard
             </Link>
           </li>
           <li>
-            <Link href="/categories" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded">
-              <FaBookmark  className="w-5 h-5 mr-2" />
+            <Link href="/categories" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
+              <FaBookmark className="w-5 h-5 mr-2" />
               Categories
             </Link>
           </li>
           <li>
-            <Link href="/tasks" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded">
+            <Link href="/tasks" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
               <FaTasks className="w-5 h-5 mr-2" />
               Tasks
             </Link>
@@ -45,7 +45,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, the
         {/* Icons visible only on smaller screens */}
         <div className="mt-6 space-y-4 lg:hidden">
           <button
-            onClick={toggleTheme}
+            onClick={() => {
+              toggleTheme();
+              handleClose();
+            }}
             className="w-full flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
           >
             {theme === 'light' ? (
@@ -59,12 +62,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, the
             href="https://github.com/babicastilho"
             target="_blank"
             className="w-full flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
+            onClick={handleClose}
           >
             <FaGithub className="w-5 h-5 mr-2" />
             GitHub
           </a>
           <button
-            onClick={handleClose}
+            onClick={() => {
+              handleClose();
+              window.location.reload(); // Assuming this logs the user out
+            }}
             className="w-full flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
           >
             <FaPowerOff className="w-5 h-5 mr-2" />

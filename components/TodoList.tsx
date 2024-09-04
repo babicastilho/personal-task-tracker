@@ -130,6 +130,7 @@ const TodoList: React.FC = () => {
           placeholder="Enter new task"
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)} // Update state when task title is changed
+          data-cy="task-input" // Add data-cy for testing
         />
 
         {/* Dropdown for selecting category */}
@@ -137,10 +138,11 @@ const TodoList: React.FC = () => {
           className="mr-2 p-2 border border-gray-300 rounded"
           value={selectedCategoryId || ''}
           onChange={(e) => setSelectedCategoryId(e.target.value || null)} // Update state when category is changed
+          data-cy="category-select" // Add data-cy for testing
         >
           <option value="">Select category</option>
           {categories.map((category) => (
-            <option key={category._id} value={category._id}>
+            <option key={category._id} value={category._id} data-cy={`category-option-${category._id}`}>
               {category.name}
             </option>
           ))}
@@ -150,6 +152,7 @@ const TodoList: React.FC = () => {
         <button
           onClick={addTask}
           className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"
+          data-cy="add-task-button" // Add data-cy for testing
         >
           Add Task
         </button>
@@ -161,6 +164,7 @@ const TodoList: React.FC = () => {
           <li
             key={task._id}
             className={`flex justify-between items-center ${task.completed ? 'text-gray-400' : 'text-black'}`}
+            data-cy={`task-item-${task._id}`} // Add data-cy for testing
           >
             {/* Task title with line-through if completed */}
             <span className="flex-1" style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
@@ -172,6 +176,7 @@ const TodoList: React.FC = () => {
               onClick={() => toggleTaskCompletion(task._id)}
               className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"
               aria-label={`toggle-${task._id}`}
+              data-cy={`toggle-task-${task._id}`} // Add data-cy for testing
             >
               {task.completed ? <FaRegCheckSquare /> : <FaRegSquare />}
             </button>
@@ -181,6 +186,7 @@ const TodoList: React.FC = () => {
               onClick={() => removeTask(task._id)}
               className="ml-2 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-700 transition"
               aria-label={`remove-${task._id}`}
+              data-cy={`remove-task-${task._id}`} // Add data-cy for testing
             >
               <FaRegTrashAlt />
             </button>

@@ -1,36 +1,7 @@
 describe('Authentication', () => {
   before(() => {
-    // Clean up the user if it already exists
-    cy.request({
-      method: 'POST',
-      url: 'http://localhost:3000/api/auth/login',
-      body: {
-        email: 'test@example.com',
-        password: 'password123',
-      },
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200) {
-        const token = response.body.token;
-        cy.request({
-          method: 'DELETE',
-          url: `http://localhost:3000/api/users/delete`, // Ajuste a URL para o endpoint de deleção de usuário
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          failOnStatusCode: false,
-        });
-      }
-    });
-
-    // Create a new user via the API
-    cy.request('POST', 'http://localhost:3000/api/auth/register', {
-      username: 'testuser',
-      email: 'test@example.com',
-      password: 'password123',
-    }).then((response) => {
-      expect(response.status).to.eq(201);
-    });
+    // Use the resetUser command to clean up and create a new user for the tests
+    cy.resetUser('test@example.com', 'password123');
   });
 
   it('should login and redirect to dashboard', () => {
@@ -44,6 +15,6 @@ describe('Authentication', () => {
 
     // Check that the user is redirected to the dashboard
     cy.contains('Welcome,').should('be.visible');
-    cy.contains('Your To-Do List').should('be.visible');
+    cy.contains('Your Calendar').should('be.visible');
   });
 });

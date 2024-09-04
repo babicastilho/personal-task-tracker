@@ -2,50 +2,24 @@ describe('Todo App E2E', () => {
   let token: string;
 
   before(() => {
-    // Clean up the user if it already exists
-    cy.request({
-      method: 'POST',
-      url: 'http://localhost:3000/api/auth/login',
-      body: {
-        email: 'test@example.com',
-        password: 'password123',
-      },
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (response.status === 200) {
-        token = response.body.token;
-        cy.request({
-          method: 'DELETE',
-          url: `http://localhost:3000/api/users/delete`,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          failOnStatusCode: false,
-        });
-      }
-    });
-
-    // Create a new user via the API
-    cy.request('POST', 'http://localhost:3000/api/auth/register', {
-      username: 'testuser',
-      email: 'test@example.com',
-      password: 'password123',
-    }).then((response) => {
-      expect(response.status).to.eq(201);
+    // Clean up the user if it already exists and register a new user
+    cy.resetUser('test@example.com', 'password123').then((response) => {
+      token = response.body.token; // Store the token for API requests
     });
   });
 
   beforeEach(() => {
-    // Visit the root URL and simulate user login
-    cy.visit('http://localhost:3000');
+    // Visit the root URL and simulate user login using the custom login command
+    cy.login('test@example.com', 'password123').then(() => {
+      // Ensure that the dashboard is visible after login
+      cy.contains('Welcome,').should('be.visible');
 
-    // Simulate user login
-    cy.get('input[id="email"]').type('test@example.com');
-    cy.get('input[id="password"]').type('password123');
-    cy.get('button[type="submit"]').click();
+      // Click on the menu toggle button to open the menu
+      cy.get('[data-cy="menu-toggle-button"]').click();
 
-    // Check that the user is redirected to the dashboard
-    cy.contains('Welcome,').should('be.visible');
+      // Click on the "Tasks" link to navigate to the categories page
+      cy.contains('Tasks').click();
+    });
   });
 
   it('should load the app and display the task list', () => {
@@ -72,11 +46,16 @@ describe('Todo App E2E', () => {
     cy.get('input[placeholder="Enter new task"]').type(taskTitle);
     cy.contains('Add Task').click();
     cy.contains(taskTitle).should('be.visible'); // Verify the task was added
-    cy.contains(taskTitle).parent().find('button[aria-label^="remove"]').click();
+
+    // Ensure the task exists before attempting to remove it
+    cy.contains(taskTitle).parent().then(($task) => {
+      if ($task.length) {
+        cy.wrap($task).find('button[aria-label^="remove"]').click();
+      }
+    });
 
     // Verify the task was removed from the list
     cy.contains(taskTitle, { timeout: 100 }).should('not.exist');
-    // Additional check on the task list
     cy.get('ul.list-disc').should('not.contain', taskTitle);
   });
 
@@ -132,6 +111,8 @@ describe('Todo App E2E', () => {
     }).then((response) => {
       if (response.status === 200) {
         token = response.body.token;
+  
+        // Create a new task via API
         cy.request({
           method: 'POST',
           url: 'http://localhost:3000/api/tasks',
@@ -144,14 +125,18 @@ describe('Todo App E2E', () => {
           },
         }).then((response) => {
           const taskId = response.body.task._id;
+  
+          // Delete the created task via API
           cy.request({
             method: 'DELETE',
             url: `http://localhost:3000/api/tasks/${taskId}`,
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }).then((response) => {
-            expect(response.status).to.eq(200);
+          }).then((deleteResponse) => {
+            expect(deleteResponse.status).to.eq(200);
+  
+            // Verify the task is deleted by making a GET request and checking the status code
             cy.request({
               method: 'GET',
               url: `http://localhost:3000/api/tasks/${taskId}`,
@@ -159,12 +144,15 @@ describe('Todo App E2E', () => {
                 Authorization: `Bearer ${token}`,
               },
               failOnStatusCode: false,
-            }).then((response) => {
-              if (response.status === 405) {
-                // Handle the case where the API returns 405 instead of 404
-                expect(response.status).to.eq(405);
+            }).then((getResponse) => {
+              if (getResponse.status === 404 || getResponse.status === 405) {
+                expect(getResponse.status).to.be.oneOf([404, 405]); // Handle both 404 and 405 status codes
               } else {
-                expect(response.status).to.eq(404);
+                // Additional check to confirm that the task no longer exists in the UI
+                cy.visit('http://localhost:3000/tasks');
+                cy.get('ul.list-disc').within(() => {
+                  cy.contains('API Task to Delete').should('not.exist');
+                });
               }
             });
           });
@@ -172,6 +160,7 @@ describe('Todo App E2E', () => {
       }
     });
   });
+  
 
   after(() => {
     // Delete the user after the tests

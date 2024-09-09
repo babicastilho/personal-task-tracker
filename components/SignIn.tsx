@@ -1,13 +1,19 @@
-// components/SignIn.tsx
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Use next/navigation for router
+"use client";
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // Use useRouter from "next/navigation"
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter(); // Use the router from next/navigation
+  const router = useRouter(); // Initialize useRouter
+  const [isMounted, setIsMounted] = useState(false); // To check if the component is mounted
+
+  // Ensure the component is mounted before performing any router operations
+  useEffect(() => {
+    setIsMounted(true); // Mark the component as mounted
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,17 +33,15 @@ export default function SignIn() {
         throw new Error(data.message || 'Failed to login');
       }
 
-      // Set the authToken in cookies
+      // Store authToken in the cookie
       document.cookie = `authToken=${data.token}; path=/; max-age=3600; SameSite=Lax`;
 
-      // Redirect to /dashboard after successful login
-      router.push('/dashboard'); // Ensure redirection to dashboard
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message || 'An unexpected error occurred');
-      } else {
-        setError('An unexpected error occurred');
+      // Force a page refresh to ensure layout and state updates
+      if (isMounted) {
+        window.location.href = '/dashboard'; // Force refresh and navigate to dashboard
       }
+    } catch (error) {
+      setError('Login failed');
       console.error('Login failed:', error);
     }
   };
@@ -76,12 +80,6 @@ export default function SignIn() {
           Sign In
         </button>
       </form>
-      <p className="mt-4">
-        Don&#39;t have an account?{' '}
-        <Link className="text-red-500" href="/register">
-          Register here
-        </Link>
-      </p>
     </div>
   );
 }

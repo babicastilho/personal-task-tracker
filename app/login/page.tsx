@@ -8,7 +8,7 @@ import SignIn from '@/components/SignIn'; // Reusing the existing SignIn compone
  */
 export default function LoginPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen -my-20 p-4">
       <SignIn />
     </div>
   );

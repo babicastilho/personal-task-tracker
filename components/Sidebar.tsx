@@ -3,17 +3,23 @@ import Link from 'next/link';
 import { FaCalendarAlt, FaTasks, FaGithub, FaPowerOff, FaBookmark, FaSun, FaMoon } from 'react-icons/fa';
 import Title from '@/components/Title';
 
-// Extending SidebarProps to include 'logout' property
+// Define the props for the Sidebar component, including the logout function
 interface SidebarProps {
-  isOpen: boolean;
-  handleClose: () => void;
-  toggleTheme: () => void;
-  theme: string;
-  className?: string;
-  logout: () => void; // Added logout function here
+  isOpen: boolean;           // Whether the sidebar is open
+  handleClose: () => void;   // Function to close the sidebar
+  toggleTheme: () => void;   // Function to toggle the theme
+  theme: string;             // Current theme ('light' or 'dark')
+  className?: string;        // Optional additional className
+  logout: () => void;        // Logout function
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, theme, logout }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  isOpen,
+  handleClose,
+  toggleTheme,
+  theme,
+  logout
+}) => {
   return (
     <aside
       className={`fixed lg:relative top-0 left-0 w-64 min-h-screen bg-gray-200 dark:bg-gray-900 p-4 z-30 transform transition-transform duration-300 ease-in-out ${
@@ -22,21 +28,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, the
     >
       <Title text="TO DO App" />
       <hr className="my-6 border-gray-400" />
+
+      {/* Navigation links for different pages */}
       <nav>
         <ul className="mt-8 space-y-4">
-          {/* Update the Dashboard link to /dashboard */}
+          {/* Link to the dashboard */}
           <li>
             <Link href="/dashboard" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
               <FaCalendarAlt className="w-5 h-5 mr-2" />
               Dashboard
             </Link>
           </li>
+
+          {/* Link to the categories page */}
           <li>
             <Link href="/categories" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
               <FaBookmark className="w-5 h-5 mr-2" />
               Categories
             </Link>
           </li>
+
+          {/* Link to the tasks page */}
           <li>
             <Link href="/tasks" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
               <FaTasks className="w-5 h-5 mr-2" />
@@ -45,9 +57,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, the
           </li>
         </ul>
         <hr className="my-4 border-gray-400" />
-        {/* Icons visible only on smaller screens */}
+
+        {/* Mobile-only icons (theme toggle, GitHub link, logout button) */}
         <div className="mt-6 space-y-4 lg:hidden">
-          {/* Theme Toggle */}
+          {/* Theme Toggle button */}
           <button
             onClick={() => {
               toggleTheme();
@@ -78,7 +91,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, handleClose, toggleTheme, the
           <button
             onClick={() => {
               logout(); // Call the logout function to remove the token
-              handleClose();
+              handleClose(); // Close the sidebar
               window.location.href = '/login'; // Redirect to login page after logout
             }}
             className="w-full flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"

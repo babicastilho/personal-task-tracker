@@ -4,26 +4,37 @@ import { HiMenu, HiOutlineX } from 'react-icons/hi';
 import Title from '@/components/Title';
 import { logout } from '@/lib/auth';
 
-// Extending HeaderProps to include 'logout' property
+// Define the props for the Header component, including the logout function
 interface HeaderProps {
-  toggleTheme: () => void;
-  theme: string;
-  isAuthenticated: boolean;
-  handleMenuToggle: () => void;
-  isMenuOpen: boolean;
-  logout: () => void; // Added logout function here
+  toggleTheme: () => void;  // Function to toggle between themes
+  theme: string;            // Current theme ('light' or 'dark')
+  isAuthenticated: boolean; // User authentication status
+  handleMenuToggle: () => void; // Function to toggle the mobile menu
+  isMenuOpen: boolean;      // State for whether the mobile menu is open
+  logout: () => void;       // Logout function
 }
 
-const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated, handleMenuToggle, isMenuOpen, logout }) => {
+const Header: React.FC<HeaderProps> = ({
+  toggleTheme,
+  theme,
+  isAuthenticated,
+  handleMenuToggle,
+  isMenuOpen,
+  logout
+}) => {
   return (
     <header className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 p-4 fixed top-0 w-full flex justify-between items-center z-50">
+      {/* App title */}
       <Title text="TO DO App" />
+      
+      {/* Mobile menu toggle button */}
       <div className="lg:hidden relative z-50">
         <button
           onClick={handleMenuToggle}
           className="p-2"
           data-cy="menu-toggle-button"
         >
+          {/* Show the menu icon or close icon based on whether the menu is open */}
           {isMenuOpen ? (
             <HiOutlineX className="w-6 h-6" />
           ) : (
@@ -31,6 +42,8 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated, ha
           )}
         </button>
       </div>
+
+      {/* Header actions (theme toggle, GitHub link, logout button) */}
       <div className="hidden lg:flex items-center space-x-4">
         {/* Theme toggle button */}
         <button onClick={toggleTheme} className="p-2">
@@ -40,9 +53,13 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, theme, isAuthenticated, ha
             <FaMoon className="w-6 h-6 text-gray-300" />
           )}
         </button>
+
+        {/* Link to GitHub repository */}
         <a href="https://github.com/babicastilho" target="_blank" className="p-2">
           <FaGithub className="w-6 h-6" />
         </a>
+
+        {/* Show the logout button if the user is authenticated */}
         {isAuthenticated && (
           <button
             onClick={() => {

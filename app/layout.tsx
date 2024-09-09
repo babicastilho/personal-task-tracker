@@ -5,6 +5,7 @@ import "./globals.scss";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
+import { Spinner, Skeleton } from "@/components/Loading"; // Import spinner and skeleton
 import { useAuth } from "@/hooks/useAuth"; // Authentication hook
 import { ThemeProvider } from "@/context/ThemeContext"; // Theme Provider
 import { useTheme } from "@/hooks/useTheme"; // Theme hook
@@ -22,7 +23,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Render the layout wrapped with the ThemeProvider
   return (
     <ThemeProvider>
       <LayoutContent
@@ -58,11 +58,9 @@ function LayoutContent({
   return (
     <html lang="en" className={theme}>
       <body className="transition-all duration-100 ease-in tracking-tight antialiased bg-gray-50 text-gray-800 dark:bg-gray-800 dark:text-gray-300">
-        {/* Show loading screen if still verifying authentication */}
+        {/* Show spinner if still verifying authentication */}
         {loading ? (
-          <main className="flex min-h-screen flex-col items-center justify-center">
-            <p>Loading...</p>
-          </main>
+          <Spinner /> // Show spinner during authentication check
         ) : (
           <>
             <Header
@@ -74,7 +72,7 @@ function LayoutContent({
               logout={logout} // Pass logout function to Header
             />
             <div className="flex flex-1">
-              {isAuthenticated && (
+              {isAuthenticated ? (
                 <>
                   <Sidebar
                     isOpen={isMenuOpen} // Pass the menu open state to Sidebar
@@ -92,6 +90,14 @@ function LayoutContent({
                     ></div>
                   )}
                 </>
+              ) : (
+                <Skeleton
+                  repeatCount={5} // Number of times to repeat the entire set
+                  count={4} // Number of skeletons inside the set
+                  type="text" // Skeleton type
+                  widths={["w-full", "w-3/4", "w-3/4", "w-1/2"]} // Widths for each skeleton
+                  skeletonDuration={1000} // Delay before showing real content
+                />
               )}
               <main className="flex-1 p-4 my-20">{children}</main>
             </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from '@/components/Calendar';
 import { logout } from '@/lib/auth';
+import { Skeleton } from '@/components/Loading';
 
 const Dashboard = () => {
   const [user, setUser] = useState<{ username: string } | null>(null);
@@ -40,7 +41,13 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="flex flex-1 justify-center items-center">
-        <p>Loading...</p>
+        <Skeleton
+          repeatCount={3} // Number of times to repeat the entire set
+          count={2} // Number of skeletons inside the set
+          type="text" // Skeleton type
+          widths={["w-full", "w-3/4"]} // Widths for each skeleton
+          skeletonDuration={1000} // Delay before showing real content
+        />
       </div>
     );
   }

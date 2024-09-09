@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { checkAuth } from "@/lib/auth"; // Import function to check authentication
+import { Skeleton } from "@/components/Loading";
 
 export interface Category {
   _id: string;
@@ -103,7 +104,15 @@ const CategoriesPage: React.FC = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <Skeleton
+        repeatCount={3} // Number of times to repeat the entire set
+        count={4} // Number of skeletons inside the set
+        type="text" // Skeleton type
+        widths={["w-full", "w-3/4", "w-3/4", "w-1/2"]} // Widths for each skeleton
+        skeletonDuration={1000} // Delay before showing real content
+      />
+    );
   }
 
   if (!isAuthenticated) {

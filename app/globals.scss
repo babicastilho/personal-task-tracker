@@ -2,9 +2,19 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@import "../styles/Loading/Loading";
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  background-color: #f8f8f8; 
+  color: #333;
+  
+  &.dark {
+    background-color: #1a202c; 
+    color: #f8f8f8; 
+  }
 }
 
 footer {

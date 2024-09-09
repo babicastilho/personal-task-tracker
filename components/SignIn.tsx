@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Use useRouter from "next/navigation"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // Use useRouter from "next/navigation"
+import Link from "next/link";
 
 export default function SignIn() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter(); // Initialize useRouter
   const [isMounted, setIsMounted] = useState(false); // To check if the component is mounted
@@ -20,17 +21,17 @@ export default function SignIn() {
     setError(null);
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to login');
+        throw new Error(data.message || "Failed to login");
       }
 
       // Store authToken in the cookie
@@ -38,20 +39,22 @@ export default function SignIn() {
 
       // Force a page refresh to ensure layout and state updates
       if (isMounted) {
-        window.location.href = '/dashboard'; // Force refresh and navigate to dashboard
+        window.location.href = "/dashboard"; // Force refresh and navigate to dashboard
       }
     } catch (error) {
-      setError('Login failed');
-      console.error('Login failed:', error);
+      setError("Login failed");
+      console.error("Login failed:", error);
     }
   };
 
   return (
-    <div className="p-4 bg-white shadow-lg rounded-lg">
+    <div className="p-4 bg-white text-black shadow-lg rounded-lg">
       <h2 className="text-lg font-bold mb-4">Sign In</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium mb-2">Email:</label>
+          <label htmlFor="email" className="block text-sm font-medium mb-2">
+            Email:
+          </label>
           <input
             id="email"
             type="email"
@@ -62,7 +65,9 @@ export default function SignIn() {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="password" className="block text-sm font-medium mb-2">Password:</label>
+          <label htmlFor="password" className="block text-sm font-medium mb-2">
+            Password:
+          </label>
           <input
             id="password"
             type="password"
@@ -79,6 +84,12 @@ export default function SignIn() {
         >
           Sign In
         </button>
+        <p className="mt-4">
+          Don&#39;t have an account?{" "}
+          <Link className="text-red-500" href="/register">
+            Register here
+          </Link>
+        </p>
       </form>
     </div>
   );

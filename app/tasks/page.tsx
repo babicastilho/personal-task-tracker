@@ -42,12 +42,12 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
+    <div className="p-4 dark:text-gray-300">
+      
         <h2 className="text-lg font-bold mb-4">Your To-Do List</h2>
         <TodoList />{" "}
         {/* This component is responsible for displaying and managing tasks */}
-      </div>
+      
     </div>
   );
 }

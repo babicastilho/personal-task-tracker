@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { FaCalendarAlt, FaTasks, FaGithub, FaPowerOff, FaBookmark, FaSun, FaMoon } from 'react-icons/fa';
+import { FaCalendarAlt, FaTasks, FaUser, FaGithub, FaPowerOff, FaBookmark, FaSun, FaMoon } from 'react-icons/fa';
 import Title from '@/components/Title';
 
 // Define the props for the Sidebar component, including the logout function
@@ -53,6 +53,14 @@ const Sidebar: React.FC<SidebarProps> = ({
             <Link href="/tasks" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
               <FaTasks className="w-5 h-5 mr-2" />
               Tasks
+            </Link>
+          </li>
+
+          {/* Link to the profile page */}
+          <li>
+            <Link href="/profile" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
+            <FaUser className="w-5 h-5 mr-2" />
+              Profile
             </Link>
           </li>
         </ul>

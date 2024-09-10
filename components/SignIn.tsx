@@ -35,7 +35,10 @@ export default function SignIn() {
       }
 
       // Store authToken in the cookie
-      document.cookie = `authToken=${data.token}; path=/; max-age=3600; SameSite=Lax`;
+      document.cookie = `authToken=${data.token}; path=/; max-age=3600; SameSite=Lax`; // Store token in cookie
+
+      // Save the token in localStorage as well
+      localStorage.setItem('token', data.token); // Store token in localStorage
 
       // Force a page refresh to ensure layout and state updates
       if (isMounted) {

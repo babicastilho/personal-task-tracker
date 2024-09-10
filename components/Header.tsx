@@ -2,7 +2,6 @@ import React from 'react';
 import { FaGithub, FaMoon, FaPowerOff, FaSun } from 'react-icons/fa';
 import { HiMenu, HiOutlineX } from 'react-icons/hi';
 import Title from '@/components/Title';
-import { logout } from '@/lib/auth';
 
 // Define the props for the Header component, including the logout function
 interface HeaderProps {

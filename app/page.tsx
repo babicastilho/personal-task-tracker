@@ -9,7 +9,7 @@ export default function Home() {
   const { isAuthenticated, loading } = useAuth(); // Get authentication status and loading state from custom hook
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+    <div className="flex min-h-screen flex-col items-center justify-center -my-24">
       {/* Show loading screen if authentication is being verified */}
       {loading ? (
         <p>Loading...</p>
@@ -17,6 +17,6 @@ export default function Home() {
         // Conditionally render Dashboard if authenticated, otherwise render SignIn form
         isAuthenticated ? <Dashboard /> : <SignIn />
       )}
-    </main>
+    </div>
   );
 }

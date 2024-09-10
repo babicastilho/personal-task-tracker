@@ -3,10 +3,15 @@ import { Collection, Document, ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
-  _id?: ObjectId;
+  _id: ObjectId;
   username: string;
   email: string;
   password: string;
+  firstName?: string;  // New field: first name
+  lastName?: string;   // New field: last name
+  nickname?: string;   // New field: nickname
+  bio?: string;       // New field: bio (optional)
+  profilePicture?: string; // New field: profile picture (optional, URL to the image)
 }
 
 export const hashPassword = async (password: string): Promise<string> => {

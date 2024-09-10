@@ -120,7 +120,7 @@ const CategoriesPage: React.FC = () => {
   }
 
   return (
-    <div className="p-4 bg-white shadow-lg rounded-lg">
+    <div className="p-4 dark:text-gray-300">
       <h2 className="text-lg font-bold mb-4">Manage Categories</h2>
       <div className="mb-4">
         <input

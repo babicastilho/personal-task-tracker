@@ -19,7 +19,7 @@ const Calendar: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md w-full transition-all duration-300 ease-in-out">
+    <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-md w-full transition-all duration-300 ease-in-out">
       <div className="flex flex-col lg:flex-row justify-between mb-4">
         <h2 className="text-xl font-bold text-gray-800 dark:text-gray-300 mb-4 lg:mb-0 transition-all duration-300 ease-in-out">
           Calendar

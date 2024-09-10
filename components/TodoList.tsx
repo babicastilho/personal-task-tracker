@@ -119,7 +119,7 @@ const TodoList: React.FC = () => {
   };
 
   return (
-    <div className="p-4 bg-white shadow-lg rounded-lg">
+    <div className="p-4 dark:text-gray-300">
       <h2 className="text-lg font-bold mb-4">Task List</h2>
 
       {/* Input for new task title */}
@@ -163,7 +163,7 @@ const TodoList: React.FC = () => {
         {tasks.map(task => (
           <li
             key={task._id}
-            className={`flex justify-between items-center ${task.completed ? 'text-gray-400' : 'text-black'}`}
+            className={`flex justify-between items-center ${task.completed ? 'text-gray-500' : 'text-black dark:text-gray-300'}`}
             data-cy={`task-item-${task._id}`} // Add data-cy for testing
           >
             {/* Task title with line-through if completed */}

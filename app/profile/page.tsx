@@ -137,7 +137,7 @@ const ProfilePage = () => {
             <label
               htmlFor="username"
               className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10
-              bg-white dark:bg-slate-800           
+              bg-gray-50 dark:bg-slate-800           
                 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1
                 peer-focus:scale-75 peer-focus:-translate-y-3
                 peer-focus:bg-transparent"
@@ -162,7 +162,7 @@ const ProfilePage = () => {
             <label
               htmlFor="preferredNameOption"
               className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10
-              bg-white dark:bg-slate-800           
+              bg-gray-50 dark:bg-slate-800           
                 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1
                 peer-focus:scale-75 peer-focus:-translate-y-3
                 peer-focus:bg-transparent"
@@ -186,7 +186,7 @@ const ProfilePage = () => {
             <label
               htmlFor="firstName"
               className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10
-              bg-white dark:bg-slate-800           
+              bg-gray-50 dark:bg-slate-800           
                 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1
                 peer-focus:scale-75 peer-focus:-translate-y-3
                 peer-focus:bg-transparent"
@@ -207,7 +207,7 @@ const ProfilePage = () => {
             <label
               htmlFor="lastName"
               className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10
-              bg-white dark:bg-slate-800           
+              bg-gray-50 dark:bg-slate-800           
                 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1
                 peer-focus:scale-75 peer-focus:-translate-y-3
                 peer-focus:bg-transparent"
@@ -230,7 +230,7 @@ const ProfilePage = () => {
           <label
             htmlFor="nickname"
             className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10
-              bg-white dark:bg-slate-800           
+              bg-gray-50 dark:bg-slate-800           
                 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1
                 peer-focus:scale-75 peer-focus:-translate-y-3
                 peer-focus:bg-transparent"
@@ -252,7 +252,7 @@ const ProfilePage = () => {
           <label
             htmlFor="bio"
             className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10
-              bg-white dark:bg-slate-800           
+              bg-gray-50 dark:bg-slate-800           
                 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-4
                 peer-focus:scale-75 peer-focus:-translate-y-3
                 peer-focus:bg-transparent"

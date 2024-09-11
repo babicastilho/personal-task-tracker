@@ -1,11 +1,5 @@
 // cypress/e2e/categories.cy.ts
 
-interface Category {
-  userId: string;
-  name: string;
-  description?: string;
-}
-
 describe("Categories Page", () => {
   let userId: string; // Variable to store the logged-in user's userId
 
@@ -38,11 +32,15 @@ describe("Categories Page", () => {
     );
     cy.contains("Add Category").click();
 
+    // Wait for the UI to update
+    cy.wait(1000); // Add a small wait to ensure that the UI updates
+
     cy.get('input[placeholder="Category name"]').type("Personal");
     cy.get('input[placeholder="Category description"]').type("Personal tasks");
     cy.contains("Add Category").click();
 
     // Wait for the UI to update and check if the correct categories are displayed on the page
+    cy.wait(1000); // Wait for DOM update
     cy.get(`[data-cy="category-tests-Work"]`).should("exist");
     cy.get(`[data-cy="category-tests-Personal"]`).should("exist");
   });
@@ -55,6 +53,7 @@ describe("Categories Page", () => {
     cy.contains("Add Category").click();
 
     // Check if the new category is added to the list by waiting for the DOM update
+    cy.wait(1000); // Wait for DOM update
     cy.get(`[data-cy="category-tests-New Category"]`).should("exist");
   });
 
@@ -66,6 +65,9 @@ describe("Categories Page", () => {
     );
     cy.contains("Add Category").click();
 
+    // Wait for the UI to update
+    cy.wait(1000); // Wait for DOM update
+
     // Delete the newly created category
     cy.get("li")
       .contains("span", "Category to Delete")
@@ -75,10 +77,7 @@ describe("Categories Page", () => {
       });
 
     // Verify that the category is deleted by waiting for the DOM update
-    cy.get("ul")
-      .first()
-      .within(() => {
-        cy.get(`[data-cy="category-tests-Category to Delete"]`).should("not.exist");
-      });
+    cy.wait(1000); // Wait for DOM update
+    cy.get(`[data-cy="category-tests-Category to Delete"]`).should("not.exist");
   });
 });

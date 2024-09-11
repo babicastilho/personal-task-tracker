@@ -97,7 +97,7 @@ const Dashboard = () => {
           />
         ) : (
           <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-            <span className="text-gray-500">?</span>
+            <span className="font-bold text-gray-500">?</span>
           </div>
         )}
         <div className="flex-col items-center mx-5">

@@ -141,10 +141,10 @@ const CategoriesPage: React.FC = () => {
     return (
       <Skeleton
         data-testid="skeleton-loader" // Component identifier for tests
-        repeatCount={3} // Number of times to repeat the entire set
-        count={4} // Number of skeletons inside the set
+        repeatCount={4} // Number of times to repeat the entire set
+        count={5} // Number of skeletons inside the set
         type="text" // Skeleton type
-        widths={["w-1/2", "w-full", "w-full", "w-1/2"]} // Widths for each skeleton
+        widths={["w-1/2", "w-full", "w-full", "w-full", "w-1/2"]} // Widths for each skeleton
         skeletonDuration={1000} // Delay before showing real content
       />
     );

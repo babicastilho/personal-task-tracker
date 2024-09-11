@@ -6,6 +6,7 @@
     "dev": "next dev",
     "unit tests": "jest --selectProjects unit",
     "components tests": "jest --selectProjects components",
+    "e2e tests": "npx cypress open",
     "build": "next build",
     "lint": "next lint"
   },

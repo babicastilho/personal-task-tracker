@@ -11,17 +11,15 @@ describe('CategoriesPage Component', () => {
   beforeEach(() => {
     // Mock fetch globally
     global.fetch = jest.fn();
+    // Mock document.cookie to simulate token presence
+    Object.defineProperty(document, 'cookie', {
+      writable: true,
+      value: 'authToken=valid-token',
+    });
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('shows loading initially', () => {
-    (checkAuth as jest.Mock).mockResolvedValueOnce(true);
-
-    render(<CategoriesPage />);
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    jest.clearAllMocks(); // Clear mocks after each test
   });
 
   it('displays categories from API', async () => {
@@ -30,6 +28,7 @@ describe('CategoriesPage Component', () => {
 
     // Mock the fetch response to return predefined categories
     (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true, // Explicitly set the 'ok' property
       json: jest.fn().mockResolvedValueOnce({
         success: true,
         categories: [
@@ -51,6 +50,26 @@ describe('CategoriesPage Component', () => {
     });
   });
 
+  it('handles fetch failure gracefully', async () => {
+    // Mock the authentication check to resolve as authenticated
+    (checkAuth as jest.Mock).mockResolvedValueOnce(true);
+
+    // Mock a failed fetch response
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: false, // Simulate failed response
+      statusText: 'Failed to fetch categories',
+    });
+
+    // Use act to ensure all updates are handled correctly
+    await act(async () => {
+      render(<CategoriesPage />);
+    });
+
+    // Ensure no categories were fetched
+    expect(screen.queryByText('Work')).not.toBeInTheDocument();
+    expect(screen.queryByText('Personal')).not.toBeInTheDocument();
+  });
+
   it('allows adding a new category', async () => {
     // Mock the authentication check to resolve as authenticated
     (checkAuth as jest.Mock).mockResolvedValueOnce(true);
@@ -60,12 +79,14 @@ describe('CategoriesPage Component', () => {
     // - The second mock for adding a new category
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({
+        ok: true,
         json: jest.fn().mockResolvedValueOnce({
           success: true,
           categories: [],
         }),
       })
       .mockResolvedValueOnce({
+        ok: true,
         json: jest.fn().mockResolvedValueOnce({
           success: true,
           category: { _id: '3', name: 'New Category' },

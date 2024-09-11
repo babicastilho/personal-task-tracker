@@ -144,7 +144,7 @@ const CategoriesPage: React.FC = () => {
         repeatCount={3} // Number of times to repeat the entire set
         count={4} // Number of skeletons inside the set
         type="text" // Skeleton type
-        widths={["w-full", "w-3/4", "w-3/4", "w-1/2"]} // Widths for each skeleton
+        widths={["w-1/2", "w-full", "w-full", "w-1/2"]} // Widths for each skeleton
         skeletonDuration={1000} // Delay before showing real content
       />
     );

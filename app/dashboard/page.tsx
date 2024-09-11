@@ -16,7 +16,8 @@ const DashboardPage: React.FC = () => {
     const verifyAuth = async () => {
       const isAuthenticated = await checkAuth(); // Check if user is authenticated
       if (!isAuthenticated) {
-        router.push('/login'); // Redirect to login page if not authenticated
+        // Redirect to login page if token expired or invalid
+        router.push('/login?session=expired'); // Show message about session expiration
       }
     };
 

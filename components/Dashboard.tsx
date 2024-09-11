@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Calendar from "@/components/Calendar";
-import { Skeleton } from "@/components/Loading";
+import { Spinner } from "@/components/Loading";
 import Image from "next/image";
+import { fetchProfile } from "@/lib/user"; // Import the fetchProfile function
 
 const Dashboard = () => {
   const [user, setUser] = useState<{
@@ -21,25 +22,9 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("authToken="))
-          ?.split("=")[1];
-
-        if (token) {
-          const response = await fetch("/api/auth/check", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          const data = await response.json();
-
-          setUser(data.user);
-        } else {
-          console.error("No token found");
-        }
+        // Use the same fetchProfile function used in ProfilePage
+        const data = await fetchProfile(); 
+        setUser(data.profile); // Set user data from the fetched profile
       } catch (error) {
         console.error("Failed to fetch user:", error);
       } finally {
@@ -84,14 +69,8 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-1 justify-center items-center">
-        <Skeleton
-          repeatCount={3}
-          count={2}
-          type="text"
-          widths={["w-full", "w-3/4"]}
-          skeletonDuration={1000}
-        />
+      <div className="flex flex-col items-center justify-center min-h-screen -my-20 p-4">
+        <Spinner />
       </div>
     );
   }

@@ -47,7 +47,7 @@ const SkeletonLoader: React.FC<SkeletonProps> = ({
     return (
       <div className="skeleton-container space-y-4 p-4">
         {Array.from({ length: repeatCount }).map((_, idx) => (
-          <div key={idx} className="skeleton-set space-y-4 mb-10">
+          <div key={idx} className="skeleton-set space-y-4 pb-5">
             {Array.from({ length: count }).map((_, innerIdx) => (
               <div key={innerIdx} className="skeleton-item">
                 {renderSkeleton(innerIdx)}

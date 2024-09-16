@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb';
 import dbConnect from '@/lib/mongodb';
 import { ITask, createTask } from '@/models/Task';
 
+// Fetch all todos from the database
 export async function getTodos(): Promise<ITask[]> {
   const db = await dbConnect();
   const todos = await db.collection('todos').find({}).toArray();
@@ -14,6 +15,7 @@ export async function getTodos(): Promise<ITask[]> {
   })) as ITask[];
 }
 
+// Fetch a specific todo by ID
 export async function getTodoById(id: string): Promise<ITask | null> {
   const db = await dbConnect();
   const todo = await db.collection('todos').findOne({ _id: new ObjectId(id) });
@@ -25,6 +27,7 @@ export async function getTodoById(id: string): Promise<ITask | null> {
   } as ITask;
 }
 
+// Add a new todo
 export async function addTodo(data: Partial<ITask>): Promise<ITask> {
   const db = await dbConnect();
   const todo = createTask(data);
@@ -32,12 +35,14 @@ export async function addTodo(data: Partial<ITask>): Promise<ITask> {
   return { ...todo, _id: result.insertedId };
 }
 
+// Update a todo
 export async function updateTodo(id: string, data: Partial<ITask>): Promise<boolean> {
   const db = await dbConnect();
   const result = await db.collection('todos').updateOne({ _id: new ObjectId(id) }, { $set: data });
   return result.modifiedCount > 0;
 }
 
+// Delete a todo
 export async function deleteTodo(id: string): Promise<boolean> {
   const db = await dbConnect();
   const result = await db.collection('todos').deleteOne({ _id: new ObjectId(id) });

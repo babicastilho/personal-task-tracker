@@ -1,27 +1,33 @@
+// cypress/support/index.d.ts
+
 /// <reference types="cypress" />
 
 declare namespace Cypress {
-  interface Chainable<Subject = any> {
+  interface Chainable {
     /**
      * Custom command to log in a user.
      * @example cy.login('user@example.com', 'password123')
+     * @param email - The email of the user to log in.
+     * @param password - The password of the user to log in.
+     * @returns {Chainable<any>} - The chainable Cypress object.
      */
-    login(email: string, password: string): Chainable<void>;
-  }
-}
+    login(email: string, password: string): Chainable<any>;
 
-declare namespace Cypress {
-  interface Chainable<Subject> {
     /**
-     * Custom command to reset a user by deleting if exists and re-registering.
+     * Custom command to log out a user.
+     * @example cy.logout()
+     * @returns {Chainable<any>} - The chainable Cypress object.
+     */
+    logout(): Chainable<any>;
+
+    /**
+     * Custom command to reset a user (delete and recreate).
      * @example cy.resetUser('user@example.com', 'password123')
+     * @param email - The email of the user to reset.
+     * @param password - The password of the user to reset.
+     * @param profileData - Custom profile data, such firstName, lastName, ...
+     * @returns {Chainable<any>} - The chainable Cypress object.
      */
-    resetUser(email: string, password: string): Chainable<any>; 
-    
-    /**
-     * Custom command to log in a user.
-     * @example cy.login('user@example.com', 'password123')
-     */
-    login(email: string, password: string): Chainable<any>; 
+    resetUser(email: string, password: string, profileData: any): Chainable<any>;
   }
 }

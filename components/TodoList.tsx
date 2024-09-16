@@ -1,194 +1,134 @@
-import React, { useState, useEffect } from 'react';
-import { FaRegTrashAlt, FaRegCheckSquare, FaRegSquare } from "react-icons/fa";
+"use client";
+import React, { useState, useEffect } from "react";
+import { apiFetch } from "@/lib/apiFetch"; // Using apiFetch function to handle requests
+import { Skeleton } from "@/components/Loading"; // Skeleton component for loading state
 
-// Define the Task and Category interfaces
 export interface Task {
   _id: string;
   title: string;
   completed: boolean;
 }
 
-interface Category {
-  _id: string;
-  name: string;
-}
+const TodoListPage: React.FC = () => {
+  const [tasks, setTasks] = useState<Task[]>([]); // State to store the tasks
+  const [newTask, setNewTask] = useState(""); // State for new task input
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // State to show error messages
 
-const TodoList: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]); // State to store tasks
-  const [newTaskTitle, setNewTaskTitle] = useState(''); // State to store new task title
-  const [categories, setCategories] = useState<Category[]>([]); // State to store categories
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null); // State to store selected category ID
-
-  // useEffect to fetch tasks and categories from the API when the component mounts
+  // useEffect to load tasks when the component is mounted
   useEffect(() => {
-    const fetchTasksAndCategories = async () => {
+    const fetchTasks = async () => {
       try {
-        // Fetch tasks
-        const taskResponse = await fetch('/api/tasks', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${document.cookie.split('authToken=')[1]}`, // Add token to request
-          },
+        const data = await apiFetch("/api/tasks", {
+          method: "GET",
         });
-        const taskData = await taskResponse.json();
-        if (taskData.success) {
-          setTasks(taskData.tasks); // Set tasks in state if request is successful
-        }
-
-        // Fetch categories
-        const categoryResponse = await fetch('/api/categories', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${document.cookie.split('authToken=')[1]}`, // Add token to request
-          },
-        });
-        const categoryData = await categoryResponse.json();
-        if (categoryData.success) {
-          setCategories(categoryData.categories); // Set categories in state if request is successful
+        if (data && data.success) {
+          setTasks(data.tasks); // Set tasks in the state
+        } else {
+          setErrorMessage("Failed to fetch tasks."); // Show error message if fetch fails
         }
       } catch (error) {
-        console.error('Error fetching data:', error); // Log any error that occurs
+        console.error("Error fetching tasks:", error); // Log any errors
+        setErrorMessage("Failed to load tasks. Please try again."); // Show a generic error message
+      } finally {
+        setLoading(false); // Stop loading once tasks are fetched
       }
     };
 
-    fetchTasksAndCategories(); // Call the function to fetch tasks and categories
+    fetchTasks(); // Trigger fetching of tasks
   }, []);
 
   // Function to add a new task
   const addTask = async () => {
-    if (newTaskTitle.trim() !== '') {
+    if (newTask.trim() !== "") {
       try {
-        const response = await fetch('/api/tasks', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${document.cookie.split('authToken=')[1]}`, // Add token to request
-          },
-          body: JSON.stringify({ title: newTaskTitle, categoryId: selectedCategoryId }), // Send the title and categoryId to the API
+        const data = await apiFetch("/api/tasks", {
+          method: "POST",
+          body: JSON.stringify({
+            title: newTask, // Send new task title
+            completed: false,
+          }),
         });
-        const data = await response.json();
-        if (data.success) {
-          setTasks([...tasks, data.task]); // Add the new task to the state
-          setNewTaskTitle(''); // Clear the input field
+        if (data && data.success) {
+          setTasks([...tasks, data.task]); // Add the new task to the list
+          setNewTask(""); // Clear the input field after adding the task
+        } else {
+          setErrorMessage("Failed to add task."); // Show error if task addition fails
         }
       } catch (error) {
-        console.error('Error adding task:', error); // Log any error that occurs
+        console.error("Error adding task:", error); // Log any errors
+        setErrorMessage("Error adding task. Please try again."); // Show a generic error message
       }
     }
   };
 
-  // Function to toggle task completion
-  const toggleTaskCompletion = async (id: string) => {
+  // Function to delete a task
+  const deleteTask = async (id: string) => {
     try {
-      const task = tasks.find(task => task._id === id); // Find the task to be toggled
-      if (task) {
-        const response = await fetch(`/api/tasks/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${document.cookie.split('authToken=')[1]}`, // Add token to request
-          },
-          body: JSON.stringify({ completed: !task.completed }), // Toggle the completion status
-        });
-        const data = await response.json();
-        if (data.success) {
-          setTasks(tasks.map(task => (task._id === id ? data.task : task))); // Update the task in the state
-        }
-      }
-    } catch (error) {
-      console.error('Error updating task:', error); // Log any error that occurs
-    }
-  };
-
-  // Function to remove a task
-  const removeTask = async (id: string) => {
-    try {
-      const response = await fetch(`/api/tasks/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${document.cookie.split('authToken=')[1]}`, // Add token to request
-        },
+      const data = await apiFetch(`/api/tasks/${id}`, {
+        method: "DELETE",
       });
-      const data = await response.json();
-      if (data.success) {
-        setTasks(tasks.filter(task => task._id !== id)); // Remove the task from the state
+      if (data && data.success) {
+        setTasks(tasks.filter((task) => task._id !== id)); // Remove the task from the list
+      } else {
+        setErrorMessage("Failed to delete task."); // Show error if task deletion fails
       }
     } catch (error) {
-      console.error('Error deleting task:', error); // Log any error that occurs
+      console.error("Error deleting task:", error); // Log any errors
+      setErrorMessage("Error deleting task. Please try again."); // Show a generic error message
     }
   };
+
+  // Render the loading state
+  if (loading) {
+    return (
+      <Skeleton
+        data-testid="skeleton-loader" // Identifier for tests
+        repeatCount={4} // Number of times to repeat the skeleton set
+        count={5} // Number of skeletons in the set
+        type="text" // Type of skeleton
+        widths={["w-1/2", "w-full", "w-full", "w-full", "w-1/2"]} // Widths of each skeleton
+        skeletonDuration={1000} // Duration before showing real content
+      />
+    );
+  }
+
+  // Render an error message if there is one
+  if (errorMessage) {
+    return <p className="text-red-500">{errorMessage}</p>;
+  }
 
   return (
     <div className="p-4 dark:text-gray-300">
-      <h2 className="text-lg font-bold mb-4">Task List</h2>
+      <h2 className="text-lg font-bold mb-4" data-cy="categories-header">Categories</h2>
 
-      {/* Input for new task title */}
-      <div className="mb-4">
+      {/* Form to add a new task */}
+      <div className="mb-4" data-cy="task-form">
         <input
           type="text"
           className="mr-2 p-2 border border-gray-300 rounded"
           placeholder="Enter new task"
-          value={newTaskTitle}
-          onChange={(e) => setNewTaskTitle(e.target.value)} // Update state when task title is changed
-          data-cy="task-input" // Add data-cy for testing
+          value={newTask}
+          onChange={(e) => setNewTask(e.target.value)} // Update new task state when input changes
         />
-
-        {/* Dropdown for selecting category */}
-        <select
-          className="mr-2 p-2 border border-gray-300 rounded"
-          value={selectedCategoryId || ''}
-          onChange={(e) => setSelectedCategoryId(e.target.value || null)} // Update state when category is changed
-          data-cy="category-select" // Add data-cy for testing
-        >
-          <option value="">Select category</option>
-          {categories.map((category) => (
-            <option key={category._id} value={category._id} data-cy={`category-option-${category._id}`}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-
-        {/* Button to add new task */}
         <button
           onClick={addTask}
           className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"
-          data-cy="add-task-button" // Add data-cy for testing
         >
           Add Task
         </button>
       </div>
 
       {/* List of tasks */}
-      <ul className="list-disc space-y-2 pl-5">
-        {tasks.map(task => (
-          <li
-            key={task._id}
-            className={`flex justify-between items-center ${task.completed ? 'text-gray-500' : 'text-black dark:text-gray-300'}`}
-            data-cy={`task-item-${task._id}`} // Add data-cy for testing
-          >
-            {/* Task title with line-through if completed */}
-            <span className="flex-1" style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
-              {task.title}
-            </span>
-
-            {/* Button to toggle task completion */}
+      <ul className="list-disc space-y-2 pl-5" data-cy="task-list">
+        {tasks.map((task) => (
+          <li key={task._id} className="flex justify-between items-center">
+            <span data-cy={`task-${task.title}`}>{task.title}</span>
             <button
-              onClick={() => toggleTaskCompletion(task._id)}
-              className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"
-              aria-label={`toggle-${task._id}`}
-              data-cy={`toggle-task-${task._id}`} // Add data-cy for testing
-            >
-              {task.completed ? <FaRegCheckSquare /> : <FaRegSquare />}
-            </button>
-
-            {/* Button to remove task */}
-            <button
-              onClick={() => removeTask(task._id)}
+              onClick={() => deleteTask(task._id)}
               className="ml-2 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-700 transition"
-              aria-label={`remove-${task._id}`}
-              data-cy={`remove-task-${task._id}`} // Add data-cy for testing
             >
-              <FaRegTrashAlt />
+              Delete
             </button>
           </li>
         ))}
@@ -197,4 +137,4 @@ const TodoList: React.FC = () => {
   );
 };
 
-export default TodoList;
+export default TodoListPage;

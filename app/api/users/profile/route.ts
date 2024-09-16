@@ -1,3 +1,5 @@
+// app/api/users/profile/route.ts
+
 import { NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth'; // Function to verify JWT
 import dbConnect from '@/lib/mongodb'; // Function to connect to MongoDB

@@ -23,11 +23,6 @@ const Header: React.FC<HeaderProps> = ({
   // Function to render GitHub and theme toggle buttons
   const renderGitHubAndThemeToggle = () => (
     <>
-      {/* GitHub link */}
-      <a href="https://github.com/babicastilho" target="_blank" className="p-2">
-        <FaGithub className="w-6 h-6" />
-      </a>
-
       {/* Theme toggle button */}
       <button onClick={toggleTheme} className="p-2" data-cy="toggle-button">
         {theme === "light" ? (
@@ -36,6 +31,11 @@ const Header: React.FC<HeaderProps> = ({
           <FaMoon className="w-6 h-6 text-gray-300" />
         )}
       </button>
+
+      {/* GitHub link */}
+      <a href="https://github.com/babicastilho" target="_blank" className="p-2">
+        <FaGithub className="w-6 h-6" />
+      </a>
     </>
   );
 

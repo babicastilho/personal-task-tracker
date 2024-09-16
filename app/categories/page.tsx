@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { checkAuth } from "@/lib/auth"; // Import function to check authentication
-import { Skeleton } from "@/components/Loading";
+import { useAuth } from "@/hooks/useAuth"; // Custom hook to manage authentication state
+import { apiFetch } from "@/lib/apiFetch"; // Import the apiFetch function for handling requests
+import { Skeleton } from "@/components/Loading"; // Import your loading skeleton
 
 export interface Category {
   _id: string;
@@ -10,133 +11,36 @@ export interface Category {
 }
 
 const CategoriesPage: React.FC = () => {
+  const { isAuthenticated, loading } = useAuth(); // Use the custom hook to check authentication state
   const [categories, setCategories] = useState<Category[]>([]); // State to hold the categories
   const [newCategoryName, setNewCategoryName] = useState(""); // State for the new category name input
   const [newCategoryDescription, setNewCategoryDescription] = useState(""); // State for the new category description input
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // State to track user authentication
-  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // State to store error messages
 
-  // useEffect to handle authentication and fetch categories on component mount
+  // useEffect to fetch categories when the component mounts
   useEffect(() => {
-    const verifyAuth = async () => {
+    const fetchCategories = async () => {
       try {
-        const authenticated = await checkAuth(); // Check if the user is authenticated
-        setIsAuthenticated(authenticated);
-        if (authenticated) {
-          await fetchCategories(); // Fetch categories if the user is authenticated
+        const data = await apiFetch("/api/categories", {
+          method: "GET",
+        });
+        if (data && data.success) {
+          setCategories(data.categories);
+        } else {
+          setErrorMessage("Failed to fetch categories.");
         }
       } catch (error) {
-        console.error("Failed to check authentication:", error); // Log authentication errors
-      } finally {
-        setLoading(false); // Set loading to false after the process completes
+        console.error("Error fetching categories:", error);
+        setErrorMessage("Failed to load categories. Please try again.");
       }
     };
 
-    verifyAuth();
-  }, []);
-
-  // Function to fetch categories from the server
-  const fetchCategories = async () => {
-    try {
-      const token = document.cookie.split("authToken=")[1]; // Extract token from cookies
-      if (!token) {
-        throw new Error("No token found");
-      }
-      const response = await fetch("/api/categories", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
-        },
-      });
-
-      // Handle response
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-
-      const data = await response.json(); // Parse response JSON
-      if (data.success) {
-        setCategories(data.categories); // Update state with fetched categories
-      } else {
-        console.error("Failed to fetch categories:", data.message); // Log any errors from the response
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error); // Log any errors during fetching
+    if (isAuthenticated) {
+      fetchCategories(); // Only fetch categories if authenticated
     }
-  };
+  }, [isAuthenticated]);
 
-  // Function to add a new category
-  const addCategory = async () => {
-    if (newCategoryName.trim() !== "") {
-      try {
-        const token = document.cookie.split("authToken=")[1];
-        if (!token) {
-          throw new Error("No token found");
-        }
-
-        const response = await fetch("/api/categories", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
-          },
-          body: JSON.stringify({
-            name: newCategoryName,
-            description: newCategoryDescription,
-          }),
-        });
-
-        // Handle response
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-
-        const data = await response.json(); // Parse response JSON
-        if (data.success) {
-          setCategories([...categories, data.category]); // Add new category to the state
-          setNewCategoryName("");
-          setNewCategoryDescription(""); // Clear input fields after successful addition
-        } else {
-          console.error("Failed to add category:", data.message); // Log any errors from the response
-        }
-      } catch (error) {
-        console.error("Error adding category:", error); // Log any errors during adding
-      }
-    }
-  };
-
-  // Function to delete a category
-  const deleteCategory = async (id: string) => {
-    try {
-      const token = document.cookie.split("authToken=")[1];
-      if (!token) {
-        throw new Error("No token found");
-      }
-
-      const response = await fetch(`/api/categories/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
-        },
-      });
-
-      // Handle response
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-
-      const data = await response.json(); // Parse response JSON
-      if (data.success) {
-        setCategories(categories.filter((category) => category._id !== id)); // Update state by filtering out deleted category
-      } else {
-        console.error("Failed to delete category:", data.message); // Log any errors from the response
-      }
-    } catch (error) {
-      console.error("Error deleting category:", error); // Log any errors during deletion
-    }
-  };
-
-  // Render the loading state
+  // Render the loading state while authentication check is in progress
   if (loading) {
     return (
       <Skeleton
@@ -150,17 +54,64 @@ const CategoriesPage: React.FC = () => {
     );
   }
 
-  // Render a message if the user is not authenticated
+  // If the user is not authenticated, show a sign-in message
   if (!isAuthenticated) {
-    return <p>Please log in to manage your categories.</p>;
+    return <p>Please sign in to manage categories.</p>;
+  }
+
+  // Function to add a new category
+  const addCategory = async () => {
+    if (newCategoryName.trim() !== "") {
+      try {
+        const data = await apiFetch("/api/categories", {
+          method: "POST",
+          body: JSON.stringify({
+            name: newCategoryName,
+            description: newCategoryDescription,
+          }),
+        });
+        if (data && data.success) {
+          setCategories([...categories, data.category]);
+          setNewCategoryName("");
+          setNewCategoryDescription("");
+        } else {
+          setErrorMessage("Failed to add category.");
+        }
+      } catch (error) {
+        console.error("Error adding category:", error);
+        setErrorMessage("Error adding category. Please try again.");
+      }
+    }
+  };
+
+  // Function to delete a category
+  const deleteCategory = async (id: string) => {
+    try {
+      const data = await apiFetch(`/api/categories/${id}`, {
+        method: "DELETE",
+      });
+      if (data && data.success) {
+        setCategories(categories.filter((category) => category._id !== id));
+      } else {
+        setErrorMessage("Failed to delete category.");
+      }
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      setErrorMessage("Error deleting category. Please try again.");
+    }
+  };
+
+  // Render a message if there is an error
+  if (errorMessage) {
+    return <p className="text-red-500">{errorMessage}</p>;
   }
 
   return (
     <div className="p-4 dark:text-gray-300">
-      <h2 className="text-lg font-bold mb-4">Manage Categories</h2>
+      <h2 className="text-lg font-bold mb-4" data-cy="category-tests">Manage Categories</h2>
 
       {/* Form to add a new category */}
-      <div className="mb-4">
+      <div className="mb-4" data-cy="categories-form">
         <input
           type="text"
           className="mr-2 p-2 border border-gray-300 rounded"
@@ -184,7 +135,7 @@ const CategoriesPage: React.FC = () => {
       </div>
 
       {/* List of categories */}
-      <ul className="list-disc space-y-2 pl-5">
+      <ul className="list-disc space-y-2 pl-5" data-cy="category-list">
         {categories.map((category) => (
           <li key={category._id} className="flex justify-between items-center">
             <span data-cy={`category-tests-${category.name}`}>{category.name}</span>

@@ -23,7 +23,7 @@ const Dashboard = () => {
     const fetchUser = async () => {
       try {
         // Use the same fetchProfile function used in ProfilePage
-        const data = await fetchProfile(); 
+        const data = await fetchProfile();
         setUser(data.profile); // Set user data from the fetched profile
       } catch (error) {
         console.error("Failed to fetch user:", error);
@@ -69,7 +69,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen -my-20 p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen -my-24">
         <Spinner />
       </div>
     );
@@ -101,11 +101,15 @@ const Dashboard = () => {
           </div>
         )}
         <div className="flex-col items-center mx-5">
-        {/* Preferred name or username */}
-        <h2 className="text-lg font-bold">Welcome, {getPreferredName()}!</h2>
+          {/* Preferred name or username */}
+          <h2 className="text-lg font-bold" data-cy="welcome-message">
+            Welcome, <span data-cy="preferred-name">{getPreferredName()}</span>!
+          </h2>
 
-        {/* Display current date and time */}
-        <h3 className="text-base font-medium">{currentDateTime}</h3>
+          {/* Display current date and time */}
+          <h3 className="text-base font-medium" data-cy="current-datetime">
+            {currentDateTime}
+          </h3>
         </div>
       </div>
 

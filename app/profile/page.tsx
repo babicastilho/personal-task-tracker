@@ -122,6 +122,27 @@ const ProfilePage = () => {
     <div className="p-4 dark:text-gray-300">
       <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Profile Picture */}
+        <div className="space-y-4">
+          <label className="block mb-1 font-bold">Profile Picture</label>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
+            {imagePreview ? (
+              <Image
+                src={imagePreview}
+                alt="User Profile Picture"
+                width={100}
+                height={100}
+                className="rounded-full"
+              />
+            ) : (
+              <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
+                <span className="font-bold text-gray-500">?</span>
+              </div>
+            )}
+            <input type="file" onChange={handleFileChange} />
+          </div>
+        </div>
+        <hr />
         {/* Username and Preferred Name fields side by side */}
         <div className="flex flex-col space-y-2 md:flex-row md:space-x-4 md:space-y-0">
           <div className="relative flex flex-col w-full md:w-1/2 space-y-2">
@@ -132,7 +153,7 @@ const ProfilePage = () => {
               value={profile.username} // Display the username
               readOnly
               placeholder=" "
-              className="p-3 border border-gray-300 rounded w-full bg-transparent cursor-not-allowed peer focus:outline-none"
+              className="p-3 text-gray-400 dark:text-gray-600 border border-gray-300 rounded w-full bg-transparent cursor-not-allowed peer focus:outline-none"
             />
             <label
               htmlFor="username"
@@ -261,21 +282,7 @@ const ProfilePage = () => {
           </label>
         </div>
 
-        {/* Profile Picture */}
-        <div className="relative flex flex-col space-y-2">
-          <label className="block mb-1 font-bold">Profile Picture</label>
-          <input type="file" onChange={handleFileChange} />
-          {imagePreview && (
-            <Image
-              src={imagePreview}
-              alt="Profile Picture Preview"
-              width={100}
-              height={100}
-              className="mt-2 rounded-full"
-            />
-          )}
-        </div>
-
+        
         <button
           type="submit"
           className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"

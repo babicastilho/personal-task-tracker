@@ -3,6 +3,7 @@ import Calendar from "@/components/Calendar";
 import { Spinner } from "@/components/Loading";
 import Image from "next/image";
 import { fetchProfile } from "@/lib/user"; // Import the fetchProfile function
+import { apiFetch } from "@/lib/apiFetch"; // Import apiFetch to fetch dashboard data
 
 const Dashboard = () => {
   const [user, setUser] = useState<{
@@ -14,7 +15,15 @@ const Dashboard = () => {
     profilePicture?: string;
   } | null>(null); // Include preferredNameOption and profilePicture in user state
 
+  const [dashboardData, setDashboardData] = useState<{
+    tasksCompleted: number;
+    tasksPending: number;
+    dueToday: number;
+    unreadMessages: number;
+  } | null>(null); // State to store dashboard data
+
   const [loading, setLoading] = useState(true);
+  const [loadingDashboard, setLoadingDashboard] = useState(true);
 
   // State to store current date and time
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
@@ -32,7 +41,23 @@ const Dashboard = () => {
       }
     };
 
+    const fetchDashboardData = async () => {
+      try {
+        const data = await apiFetch("/api/dashboard", {
+          method: "GET",
+        });
+        if (data && data.success) {
+          setDashboardData(data.dashboard);
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoadingDashboard(false);
+      }
+    };
+
     fetchUser();
+    fetchDashboardData();
 
     // Update date and time every second
     const intervalId = setInterval(() => {
@@ -67,7 +92,7 @@ const Dashboard = () => {
     }
   };
 
-  if (loading) {
+  if (loading || loadingDashboard) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen -my-24">
         <Spinner />
@@ -75,10 +100,10 @@ const Dashboard = () => {
     );
   }
 
-  if (!user) {
+  if (!user || !dashboardData) {
     return (
       <div className="flex flex-1 justify-center items-center">
-        <p>User not found.</p>
+        <p>User or dashboard data not found.</p>
       </div>
     );
   }
@@ -111,6 +136,17 @@ const Dashboard = () => {
             {currentDateTime}
           </h3>
         </div>
+      </div>
+
+      {/* Dashboard stats */}
+      <div className="mt-6">
+        <h3 className="text-md font-semibold mb-2" data-cy="dashboard-status">Your Stats</h3>
+        <ul>
+          <li>Tasks Completed: {dashboardData.tasksCompleted}</li>
+          <li>Tasks Pending: {dashboardData.tasksPending}</li>
+          <li>Tasks Due Today: {dashboardData.dueToday}</li>
+          <li>Unread Messages: {dashboardData.unreadMessages}</li>
+        </ul>
       </div>
 
       <div className="mt-6">

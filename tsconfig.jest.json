@@ -13,7 +13,7 @@
     "isolatedModules": true,
     "jsx": "react",
     "incremental": true,
-    "types": ["jest", "node"], // Import only Jest types here
+    "types": ["jest", "@testing-library/jest-dom"], // Import only Jest types here
     "baseUrl": ".", // Base directory is the project root
     "paths": {
       "@/*": ["./*"]

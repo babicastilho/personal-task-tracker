@@ -1,18 +1,21 @@
 /* eslint-disable react/display-name */
+import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import Home from '@/app/page';
-import { checkAuth } from '@/lib/auth';
+import { useAuth } from '@/hooks/useAuth'; // Import the useAuth hook
+import { useRouter } from 'next/navigation'; // Import useRouter for mocking
 
-// Mock the checkAuth function
-jest.mock('@/lib/auth', () => ({
-  checkAuth: jest.fn(),
+// Mock the useAuth hook and useRouter
+jest.mock('@/hooks/useAuth');
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(),
 }));
 
 // Mock the Dashboard and SignIn components
 jest.mock('@/components/Dashboard', () => {
   return () => (
     <div>
-      <h2 className="text-lg font-bold mb-4">Welcome, </h2>
+      <h2 className="text-lg font-bold mb-4">Welcome,</h2>
     </div>
   );
 });
@@ -26,27 +29,36 @@ jest.mock('@/components/SignIn', () => {
 });
 
 describe('Home Page', () => {
+  const mockPush = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
+    // Mock useRouter to prevent actual navigation
+    (useRouter as jest.Mock).mockReturnValue({
+      push: mockPush,
+    });
   });
 
   it('renders SignIn component when not authenticated', async () => {
-    (checkAuth as jest.Mock).mockResolvedValueOnce(false);
+    (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: false, loading: false });
+
     await act(async () => {
       render(<Home />);
     });
+
     await waitFor(() => {
       expect(screen.getByText('Sign In')).toBeInTheDocument();
     });
   });
 
   it('renders Dashboard component when authenticated', async () => {
-    (checkAuth as jest.Mock).mockResolvedValueOnce(true);
+    (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, loading: false });
+
     await act(async () => {
       render(<Home />);
     });
-    await waitFor(() => {
-      expect(screen.getByText('Welcome,')).toBeInTheDocument();
-    });
+
+    // Assert that push to /dashboard was called
+    expect(mockPush).toHaveBeenCalledWith('/dashboard');
   });
 });

@@ -1,34 +1,38 @@
-'use client'
+"use client";
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Import next/router for navigation
-import Dashboard from '@/components/Dashboard'; // Import your existing Dashboard component
-import { checkAuth } from '@/lib/auth'; // Import authentication check function
+import React from "react";
+import { useProtectedPage } from "@/hooks/useProtectedPage"; // Custom hook for protected pages
+import Dashboard from "@/components/Dashboard"; // Import the dashboard component
+import { Skeleton } from "@/components/Loading"; // Import Skeleton component for loading state
 
-/**
- * Dashboard Page that reuses the Dashboard component.
- * Protects the route to make sure only authenticated users can access it.
- */
-const DashboardPage: React.FC = () => {
-  const router = useRouter();
+export default function DashboardPage() {
+  const { isAuthenticated, loading } = useProtectedPage(); // Use the new useProtectedPage hook
 
-  useEffect(() => {
-    const verifyAuth = async () => {
-      const isAuthenticated = await checkAuth(); // Check if user is authenticated
-      if (!isAuthenticated) {
-        // Redirect to login page if token expired or invalid
-        router.push('/login?session=expired'); // Show message about session expiration
-      }
-    };
+  // Display skeleton while authentication is being verified
+  if (loading) {
+    return (
+      <div className="flex flex-1 justify-center items-center">
+        <Skeleton
+          repeatCount={3} // Number of times to repeat the skeleton set
+          count={2} // Number of skeletons in the set
+          type="text" // Type of skeleton (text-based in this case)
+          widths={["w-full", "w-3/4"]} // Widths for each skeleton
+          skeletonDuration={1000} // Duration of the skeleton before showing actual content
+        />
+      </div>
+    );
+  }
 
-    verifyAuth(); // Call authentication check on component mount
-  }, [router]);
+  // If the user is authenticated, render the dashboard
+  if (isAuthenticated) {
+    return (
+      <div className="p-4 dark:text-gray-300">
+        <h2 className="text-3xl font-bold mb-8">Dashboard</h2>
+        <Dashboard /> {/* Render the Dashboard component */}
+      </div>
+    );
+  }
 
-  return (
-    <div className="p-4">
-      <Dashboard /> {/* Render the existing Dashboard component */}
-    </div>
-  );
-};
-
-export default DashboardPage;
+  // Return null if redirection is in progress
+  return null;
+}

@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth"; // Custom hook to manage authentication state
+import { useProtectedPage } from "@/hooks/useProtectedPage"; // Custom hook for protected pages
 import { apiFetch } from "@/lib/apiFetch"; // Import the apiFetch function for handling requests
 import { Skeleton } from "@/components/Loading"; // Import your loading skeleton
+import { FaRegTrashAlt } from "react-icons/fa";
 
 export interface Category {
   _id: string;
@@ -11,13 +12,12 @@ export interface Category {
 }
 
 const CategoriesPage: React.FC = () => {
-  const { isAuthenticated, loading } = useAuth(); // Use the custom hook to check authentication state
+  const { isAuthenticated, loading } = useProtectedPage(); // Use the new useProtectedPage hook to handle auth
   const [categories, setCategories] = useState<Category[]>([]); // State to hold the categories
   const [newCategoryName, setNewCategoryName] = useState(""); // State for the new category name input
   const [newCategoryDescription, setNewCategoryDescription] = useState(""); // State for the new category description input
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // State to store error messages
 
-  // useEffect to fetch categories when the component mounts
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -38,7 +38,7 @@ const CategoriesPage: React.FC = () => {
     if (isAuthenticated) {
       fetchCategories(); // Only fetch categories if authenticated
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated]); // Dependency array ensures effect runs when auth state changes
 
   // Render the loading state while authentication check is in progress
   if (loading) {
@@ -54,9 +54,9 @@ const CategoriesPage: React.FC = () => {
     );
   }
 
-  // If the user is not authenticated, show a sign-in message
+  // Return null if the user is not authenticated (handled in useProtectedPage hook)
   if (!isAuthenticated) {
-    return <p>Please sign in to manage categories.</p>;
+    return null;
   }
 
   // Function to add a new category
@@ -107,8 +107,10 @@ const CategoriesPage: React.FC = () => {
   }
 
   return (
-    <div className="p-4 dark:text-gray-300">
-      <h2 className="text-lg font-bold mb-4" data-cy="category-tests">Manage Categories</h2>
+    <div data-cy="categories-list" className="p-4 dark:text-gray-300">
+      <h2 className="text-lg font-bold mb-4" data-cy="category-tests">
+        Manage Categories
+      </h2>
 
       {/* Form to add a new category */}
       <div className="mb-4" data-cy="categories-form">
@@ -143,7 +145,7 @@ const CategoriesPage: React.FC = () => {
               onClick={() => deleteCategory(category._id)}
               className="ml-2 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-700 transition"
             >
-              Delete
+              <FaRegTrashAlt />
             </button>
           </li>
         ))}

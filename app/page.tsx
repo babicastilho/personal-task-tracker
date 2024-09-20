@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Dashboard from "@/components/Dashboard"; // Dashboard component
 import SignIn from "@/components/SignIn"; // Sign-in component
 import { useAuth } from "@/hooks/useAuth"; // Authentication hook
 import { useRouter } from "next/navigation"; // UseRouter from next/navigation for redirection

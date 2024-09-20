@@ -2,28 +2,40 @@ describe("Todo App E2E", () => {
   let token: string;
 
   before(() => {
-    // Clean up the user if it already exists and register a new user
-    cy.resetUser("test@example.com", "password123").then((response) => {
-      token = response.body.token; // Store the token for API requests
+    // Reset the user before tests, this could be a custom command that clears and recreates the user
+    cy.resetUser("test@example.com", "password123", {
+      firstName: "Jane",
+      lastName: "Smith",
+      nickname: "JaneS",
+      username: "janesmith",
     });
   });
 
   beforeEach(() => {
-    // Visit the root URL and simulate user login using the custom login command
-    cy.login("test@example.com", "password123").then(() => {
-      // Ensure that the dashboard is visible after login
-      cy.contains("Welcome,").should("be.visible");
+    // Intercept the login request before the test
+    cy.intercept("POST", "/api/auth/login").as("loginRequest");
 
-      // Click on the menu toggle button to open the menu
-      cy.get('[data-cy="menu-toggle-button"]').click();
+    // Use the custom login function
+    cy.login("test@example.com", "password123");
 
-      // Click on the "Tasks" link to navigate to the categories page
-      cy.contains("Tasks").click();
+    // Wait for the intercepted login request and assert the response
+    cy.wait("@loginRequest").then((interception) => {
+      // Ensure the login response was successful
+      expect(interception.response.statusCode).to.equal(200);
     });
+
+    // Open the menu to access the Tasks page
+    cy.get('[data-cy="menu-toggle-button"]').click(); // Open the menu
+
+    // Click on the "Tasks" link to navigate to the tasks page
+    cy.contains("Tasks").click();
   });
 
   it("should load the app and display the task list", () => {
-    cy.contains("Task List").should("be.visible");
+    // Verify if the To-Do list is displayed on the dashboard
+    cy.contains("Your To-Do List").should("be.visible");
+    cy.wait(1000);
+    cy.get('[data-cy="todo-list"]').should("exist");
   });
 
   it("should allow users to add a new task", () => {

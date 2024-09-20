@@ -1,6 +1,7 @@
 import React from "react";
 import { FaGithub, FaMoon, FaSun, FaPowerOff } from "react-icons/fa";
 import { HiMenu, HiOutlineX } from "react-icons/hi";
+import { logout } from "@/lib/auth";
 import Title from "@/components/Title";
 
 interface HeaderProps {
@@ -9,7 +10,6 @@ interface HeaderProps {
   isAuthenticated: boolean; // User authentication status
   handleMenuToggle: () => void; // Function to toggle the mobile menu
   isMenuOpen: boolean; // State for whether the mobile menu is open
-  logout: () => void; // Logout function
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -18,7 +18,6 @@ const Header: React.FC<HeaderProps> = ({
   isAuthenticated,
   handleMenuToggle,
   isMenuOpen,
-  logout,
 }) => {
   // Function to render GitHub and theme toggle buttons
   const renderGitHubAndThemeToggle = () => (
@@ -74,7 +73,6 @@ const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => {
                 logout(); // Call the logout function to remove the token
-                window.location.href = "/login"; // Redirect to login page after logout
               }}
               className="p-2"
             >

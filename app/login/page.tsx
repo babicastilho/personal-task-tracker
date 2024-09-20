@@ -33,6 +33,12 @@ export default function LoginPage({ searchParams }: { searchParams: { message?: 
           {message === 'session_expired' && (
             <p className="text-red-500 mb-4">Your session has expired. Please log in again.</p>
           )}
+
+          {/* Display login required message if the query parameter is set */}
+          {message === 'login_required' && (
+            <p className="text-blue-500 mb-4">You need to log in to continue.</p>
+          )}
+
           <SignIn /> {/* Render the sign-in form if not authenticated */}
         </>
       )}

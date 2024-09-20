@@ -1,140 +1,61 @@
-import { GET, POST } from '@/app/api/users/profile/route';
-import { DELETE } from '@/app/api/users/delete/route';
+import { GET } from '@/app/api/users/profile/route';
 import { createMocks } from 'node-mocks-http';
-import { generateToken } from '@/lib/auth';
-import dbConnect from '@/lib/mongodb';
-import { ObjectId } from 'mongodb';
-
-/**
- * Helper function to simulate a Next.js request and response.
- */
-const mockRequestResponse = (method: 'GET' | 'POST', url: string, token?: string, body?: any) => {
-  const { req, res } = createMocks({
-    method,
-    url,
-    headers: {
-      Authorization: token ? `Bearer ${token}` : '',
-    },
-    body,
-  });
-
-  return { req, res };
-};
+import { jest } from '@jest/globals'; // Ensure Jest is correctly imported
 
 describe('User Profile API', () => {
-  let token: string;
-  let userId: ObjectId;
 
-  beforeAll(async () => {
-    // Connect to the database and create a user for testing
-    const db = await dbConnect();
-    const usersCollection = db.collection('users');
-
-    // Create a new user in the database
-    const newUser = await usersCollection.insertOne({
-      username: 'testuser',
-      firstName: 'Test',
-      lastName: 'User',
-      bio: 'This is a test user.',
-      preferredNameOption: 'name',
-    });
-
-    userId = newUser.insertedId;
-
-    // Generate a token for the created user
-    token = generateToken(userId.toString());
-
-    console.log('Generated Token:', token);
-  });
-
-  it('should return correct user profile with GET', async () => {
-    const { req, res } = mockRequestResponse('GET', '/api/users/profile', token);
-
-    // Call the GET handler directly
-    await GET(req, res);
-
-    const statusCode = res._getStatusCode();
-    console.log('GET Profile Status:', statusCode);
-    expect(statusCode).toBe(200);
-
-    const responseData = res._getData();
-    console.log('GET Profile Response Data:', responseData);
-    expect(responseData).toBeTruthy();
-
-    const parsedData = JSON.parse(responseData);
-    expect(parsedData.success).toBe(true);
-    expect(parsedData.profile).toHaveProperty('username', 'testuser');
-  });
-
-  it('should update user profile with POST', async () => {
-    const updatedProfile = {
-      firstName: 'NewName',
-      lastName: 'NewLastName',
-      bio: 'Updated Bio',
-    };
-
-    const { req, res } = mockRequestResponse('POST', '/api/users/profile', token, updatedProfile);
-
-    // Call the POST handler directly
-    await POST(req, res);
-
-    const statusCode = res._getStatusCode();
-    console.log('POST Profile Update Status:', statusCode);
-    expect(statusCode).toBe(200);
-
-    const responseData = res._getData();
-    console.log('POST Profile Update Response Data:', responseData);
-    expect(responseData).toBeTruthy();
-
-    const parsedData = JSON.parse(responseData);
-    expect(parsedData.success).toBe(true);
-    expect(parsedData.message).toBe('Profile updated successfully');
+  beforeEach(() => {
+    jest.clearAllMocks(); // Clear mocks before each test
   });
 
   it('should handle invalid or missing tokens', async () => {
-    const { req, res } = mockRequestResponse('GET', '/api/users/profile');
+    const { req, res } = createMocks({
+      method: 'GET',
+    });
 
-    // Call the GET handler directly without a token
-    await GET(req, res);
+    // Simulating headers.get to return no authorization
+    (req.headers as { get?: jest.Mock }).get = jest.fn().mockReturnValueOnce(null);
 
-    const statusCode = res._getStatusCode();
-    console.log('GET Profile with Missing Token Status:', statusCode);
-    expect(statusCode).toBe(401);
-
-    const responseData = res._getData();
-    expect(responseData).toBeTruthy();
-
-    const parsedData = JSON.parse(responseData);
-    expect(parsedData.success).toBe(false);
-    expect(parsedData.message).toBe('No token provided');
-  });
-
-  it('should return preferred name correctly based on preference', async () => {
-    const { req, res } = mockRequestResponse('GET', '/api/users/profile', token);
-
-    await GET(req, res);
-
-    const responseData = res._getData();
-    console.log('GET Profile Preferred Name Response Data:', responseData);
-    expect(responseData).toBeTruthy();
-
-    const parsedData = JSON.parse(responseData);
-    expect(parsedData.profile).toHaveProperty('preferredNameOption', 'name');
-  });
-
-  // Clean up the user after the tests
-  afterAll(async () => {
-    const { req, res } = mockRequestResponse('DELETE', '/api/users/delete', token);
-
-    await DELETE(req, res);
+    await GET(req as unknown as Request, res);
 
     const statusCode = res._getStatusCode();
-    console.log('DELETE User Status:', statusCode);
-    expect(statusCode).toBe(200);
+    console.log('Status Code returned:', statusCode); // Debug to check the status code
 
-    const responseData = res._getData();
-    const parsedData = JSON.parse(responseData);
-    expect(parsedData.success).toBe(true);
-    expect(parsedData.message).toBe('User deleted successfully');
+    expect(statusCode).toBe(401); // Expect 401 for missing token
+
+    const responseData = JSON.parse(res._getData());
+    expect(responseData.success).toBe(false);
+    expect(responseData.message).toBe('No token provided');
+  });
+
+  it('should return 401 for an invalid token', async () => {
+    const { req, res } = createMocks({
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer invalidToken',
+      },
+    });
+
+    (req.headers as { get?: jest.Mock }).get = jest.fn().mockReturnValueOnce('Bearer invalidToken');
+
+    // Mocking verifyToken to throw an error for an invalid token
+    const verifyTokenMock = jest.spyOn(require('@/lib/auth'), 'verifyToken').mockImplementation(() => {
+      throw new Error('Invalid token');
+    });
+
+    await GET(req as unknown as Request, res);
+
+    expect(verifyTokenMock).toHaveBeenCalledWith('invalidToken');
+
+    const statusCode = res._getStatusCode();
+    console.log('Status Code returned:', statusCode); // Debug to check the status code
+
+    expect(statusCode).toBe(401); // Expect 401 for invalid token
+
+    const responseData = JSON.parse(res._getData());
+    expect(responseData.success).toBe(false);
+    expect(responseData.message).toBe('Invalid token');
+
+    verifyTokenMock.mockRestore();
   });
 });

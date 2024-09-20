@@ -1,5 +1,3 @@
-// cypress/support/index.d.ts
-
 /// <reference types="cypress" />
 
 declare namespace Cypress {
@@ -25,9 +23,18 @@ declare namespace Cypress {
      * @example cy.resetUser('user@example.com', 'password123')
      * @param email - The email of the user to reset.
      * @param password - The password of the user to reset.
-     * @param profileData - Custom profile data, such firstName, lastName, ...
+     * @param profileData - Custom profile data, such firstName, lastName, etc.
      * @returns {Chainable<any>} - The chainable Cypress object.
      */
     resetUser(email: string, password: string, profileData: any): Chainable<any>;
+
+    /**
+     * Custom command to delete a user.
+     * @example cy.deleteUser('user@example.com', 'password123')
+     * @param email - The email of the user to delete.
+     * @param password - The password of the user to delete.
+     * @returns {Chainable<any>} - The chainable Cypress object.
+     */
+    deleteUser(email: string, password: string): Chainable<any>;
   }
 }

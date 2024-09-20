@@ -30,9 +30,18 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
     // Perform the API request
     const response = await fetch(url, fetchOptions);
 
-    // If the token is invalid or expired, redirect to login page with message
+    // Handle unauthorized response
     if (response.status === 401) {
-      window.location.href = '/login?message=session_expired'; // Redirect to login with expired session message
+      const path = window.location.pathname;
+
+      // Only redirect to /login?message=session_expired if it's a protected route
+      if (!['/', '/login'].includes(path) && !path.startsWith('/public')) {
+        // Ensure only token expiration or unauthorized access triggers the message
+        window.location.href = '/login?message=session_expired';
+      } else {
+        // If not a protected route, just redirect to login without the message
+        window.location.href = '/login';
+      }
       return null;
     }
 
@@ -44,7 +53,6 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
     // Parse and return the JSON response
     return await response.json();
   } catch (error) {
-    // Log any errors encountered during the fetch
     console.error('Error in apiFetch:', error);
     throw error;
   }

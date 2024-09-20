@@ -8,26 +8,52 @@ export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
+    // Verificar se os campos estão presentes
     if (!email || !password) {
-      return NextResponse.json({ success: false, message: 'Email and password are required' }, { status: 400 });
+      return NextResponse.json({
+        success: false,
+        message: 'Email and password are required',
+      }, { status: 400 });
     }
 
+    // Conectar ao banco de dados
     const db = await dbConnect();
     const usersCollection = db.collection<IUser>('users');
 
+    // Encontrar o usuário no banco de dados
     const user = await usersCollection.findOne({ email });
     if (!user) {
-      return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
+      return NextResponse.json({
+        success: false,
+        message: 'User not found',
+      }, { status: 404 });
     }
 
+    // Verificar se a senha é válida
     const isMatch = await verifyPassword(password, user.password);
     if (!isMatch) {
-      return NextResponse.json({ success: false, message: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json({
+        success: false,
+        message: 'Invalid credentials',
+      }, { status: 401 });
     }
 
+    // Gerar o token JWT
     const token = generateToken(user._id.toString());
-    return NextResponse.json({ success: true, token, message: 'Logged in successfully' }, { status: 200 });
+
+    // Retornar sucesso com o token
+    return NextResponse.json({
+      success: true,
+      token,
+      message: 'Logged in successfully',
+    }, { status: 200 });
+
   } catch (error) {
-    return NextResponse.json({ success: false, message: 'Internal server error', error: (error as Error).message }, { status: 500 });
+    // Tratar erros inesperados e retornar 500
+    return NextResponse.json({
+      success: false,
+      message: 'Internal server error',
+      error: (error as Error).message,
+    }, { status: 500 });
   }
 }

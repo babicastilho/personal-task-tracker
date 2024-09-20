@@ -6,6 +6,7 @@ export interface ITask {
   title: string;
   completed: boolean;
   userId: ObjectId; // Associate the task with a user
+  dueDate?: Date; // Optional due date for the task
 }
 
 export function createTask(data: Partial<ITask>): ITask {
@@ -18,5 +19,6 @@ export function createTask(data: Partial<ITask>): ITask {
     title: data.title,
     completed: data.completed ?? false,
     userId: data.userId!, // Ensure userId is provided when creating a task
+    dueDate: data.dueDate, // Optional due date
   };
 }

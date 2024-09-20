@@ -1,30 +1,50 @@
 import { useState, useEffect } from 'react';
-import { checkAuth, logout } from '@/lib/auth';
+import { useRouter } from 'next/navigation';
+import { apiFetch } from '@/lib/apiFetch'; // Import the apiFetch function
 
-/**
- * Hook for managing authentication state across the app.
- * It verifies the authentication status and provides functions to logout.
- */
 export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // State to track if the user is authenticated
+  const [loading, setLoading] = useState(true); // State to track if authentication check is still loading
+  const [authError, setAuthError] = useState<string | null>(null); // State to track if there's an authentication error
+  const router = useRouter(); // Next.js router for handling navigation
 
-  // Runs once when the component using the hook is mounted
   useEffect(() => {
-    const verifyAuth = async () => {
+    const checkAuth = async () => {
       try {
-        const authenticated = await checkAuth();
-        setIsAuthenticated(authenticated); // Set the auth state
+        // Get the auth token from localStorage
+        const token = window.localStorage.getItem('token');
+
+        // If no token is found, mark as not authenticated but without an error
+        if (!token) {
+          setIsAuthenticated(false);
+          setAuthError("no_token"); // This means no token exists (attempt to access directly)
+          return;
+        }
+
+        // Call the API to check if the token is valid
+        const response = await apiFetch('/api/auth/check', { method: 'GET' });
+
+        // If the API response indicates success, set the user as authenticated
+        if (response && response.success) {
+          setIsAuthenticated(true);
+        } else {
+          // If the token is invalid or expired, clear the token and set the error to "token_expired"
+          window.localStorage.removeItem('token');
+          setIsAuthenticated(false);
+          setAuthError("token_expired"); // Token has expired
+        }
       } catch (error) {
-        console.error('Failed to check authentication:', error);
+        // Any other error, consider the user unauthenticated and set a generic error
+        setIsAuthenticated(false);
+        setAuthError("auth_failed");
       } finally {
-        setLoading(false); // Stop loading after verification
+        setLoading(false); // Stop the loading spinner after check
       }
     };
 
-    verifyAuth(); // Call the authentication check function
-  }, []);
+    // Run authentication check when the component mounts
+    checkAuth();
+  }, [router]);
 
-  // Return the authentication state, loading state, and logout function
-  return { isAuthenticated, loading, logout };
+  return { isAuthenticated, loading, authError };
 };

@@ -74,10 +74,19 @@ export const checkAuth = async (): Promise<boolean> => {
 };
 
 /**
- * Logs out the user by removing the JWT token from cookies.
+ * Logs out the user by removing the JWT token from localStorage and cookies.
+ * It then redirects the user to the login page.
  */
 export const logout = (): void => {
-  if (typeof document !== 'undefined') {
-    document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  if (typeof window !== 'undefined') {
+    // Remove the authToken from both localStorage and cookies
+    window.localStorage.removeItem('token'); // Remove token from localStorage
+    document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'; // Remove token from cookies
+    
+    // Redirect to login page without session_expired message
+    window.location.href = '/login';
   }
 };
+
+
+

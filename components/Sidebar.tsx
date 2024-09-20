@@ -2,15 +2,14 @@ import React from 'react';
 import Link from 'next/link';
 import { FaCalendarAlt, FaTasks, FaUser, FaGithub, FaPowerOff, FaBookmark, FaSun, FaMoon } from 'react-icons/fa';
 import Title from '@/components/Title';
+import { logout } from '@/lib/auth'; // Import the logout function
 
-// Define the props for the Sidebar component, including the logout function
+// Define the props for the Sidebar component
 interface SidebarProps {
   isOpen: boolean;           // Whether the sidebar is open
   handleClose: () => void;   // Function to close the sidebar
   toggleTheme: () => void;   // Function to toggle the theme
   theme: string;             // Current theme ('light' or 'dark')
-  className?: string;        // Optional additional className
-  logout: () => void;        // Logout function
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -18,7 +17,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   handleClose,
   toggleTheme,
   theme,
-  logout
 }) => {
   return (
     <aside
@@ -59,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           {/* Link to the profile page */}
           <li>
             <Link href="/profile" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
-            <FaUser className="w-5 h-5 mr-2" />
+              <FaUser className="w-5 h-5 mr-2" />
               Profile
             </Link>
           </li>
@@ -100,7 +98,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             onClick={() => {
               logout(); // Call the logout function to remove the token
               handleClose(); // Close the sidebar
-              window.location.href = '/login'; // Redirect to login page after logout
             }}
             className="w-full flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
           >

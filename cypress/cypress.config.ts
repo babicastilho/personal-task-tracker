@@ -13,6 +13,7 @@ export default defineConfig({
     devServer: {
       framework: 'next',  // Use Next.js framework
       bundler: 'webpack',  // Bundler is Webpack by default with Next.js
+
     },
     specPattern: 'cypress/component/**/*.cy.ts',  // Pattern for component test files
     supportFile: 'cypress/support/component.ts',  // Optional: different support file for component tests

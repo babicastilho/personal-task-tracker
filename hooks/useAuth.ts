@@ -1,3 +1,5 @@
+// hooks/useAuth.ts
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/apiFetch'; // Import the apiFetch function
@@ -11,8 +13,9 @@ export const useAuth = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Get the auth token from localStorage
-        const token = window.localStorage.getItem('token');
+        // Get the auth token from cookies
+        const cookie = document.cookie.split('; ').find(row => row.startsWith('authToken='));
+        const token = cookie?.split('=')[1];
 
         // If no token is found, mark as not authenticated but without an error
         if (!token) {
@@ -28,8 +31,8 @@ export const useAuth = () => {
         if (response && response.success) {
           setIsAuthenticated(true);
         } else {
-          // If the token is invalid or expired, clear the token and set the error to "token_expired"
-          window.localStorage.removeItem('token');
+          // If the token is invalid or expired, clear the cookie and set the error to "token_expired"
+          document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
           setIsAuthenticated(false);
           setAuthError("token_expired"); // Token has expired
         }

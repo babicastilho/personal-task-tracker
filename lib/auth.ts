@@ -1,4 +1,5 @@
 // lib/auth.ts
+
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
@@ -35,20 +36,12 @@ export const verifyToken = (token: string): JwtPayload => {
 };
 
 /**
- * Checks if the user is authenticated by verifying the JWT token stored in cookies.
+ * Checks if the user is authenticated by verifying the JWT token stored in localStorage.
  * @returns True if the user is authenticated, false otherwise.
  */
 export const checkAuth = async (): Promise<boolean> => {
-  if (typeof document === 'undefined') {
-    return false;
-  }
+  const token = window.localStorage.getItem('token'); // Fetch token from localStorage
 
-  const cookie = document.cookie.split('; ').find(row => row.startsWith('authToken='));
-  if (!cookie) {
-    return false;
-  }
-
-  const token = cookie.split('=')[1];
   if (!token) {
     return false;
   }
@@ -74,19 +67,18 @@ export const checkAuth = async (): Promise<boolean> => {
 };
 
 /**
- * Logs out the user by removing the JWT token from localStorage and cookies.
- * It then redirects the user to the login page.
+ * Logs out the user by removing the JWT token from localStorage.
+ * It then redirects the user to the login page without session_expired message.
  */
 export const logout = (): void => {
   if (typeof window !== 'undefined') {
-    // Remove the authToken from both localStorage and cookies
-    window.localStorage.removeItem('token'); // Remove token from localStorage
-    document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'; // Remove token from cookies
+    // Remove the authToken from localStorage
+    window.localStorage.removeItem('token'); 
     
+    // Clear the auth cookie in case it's still being used
+    document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
     // Redirect to login page without session_expired message
-    window.location.href = '/login';
+    window.location.href = '/login'; // Ensure no message is passed here
   }
 };
-
-
-

@@ -1,6 +1,6 @@
 describe('Authentication', () => {
   before(() => {
-    // Reset the user before tests, this could be a custom command that clears and recreates the user
+    // Reset the user before tests
     cy.resetUser('test@example.com', 'password123', {
       firstName: 'Jane',
       lastName: 'Smith',
@@ -31,20 +31,26 @@ describe('Authentication', () => {
   });
 
   it('should handle session expiration gracefully', () => {
-    // Simulate session expiration by clearing the authToken from localStorage
+    // Login and navigate to the dashboard
+    cy.login('test@example.com', 'password123');
     cy.visit('http://localhost:3000/dashboard');
-    cy.clearLocalStorage('authToken');
-  
-    // Wait a little to ensure the session expiration is processed before reloading
-    cy.wait(1000);
-  
-    // Reload the page after the session has expired
+
+    // Intercept the session check request to simulate session expiration
+    cy.intercept('GET', '/api/auth/check', {
+      statusCode: 401, // Simulate a 401 Unauthorized response
+      body: { success: false, message: 'Token expired' },
+    }).as('expiredSession');
+
+    // Reload the page to trigger the session check
     cy.reload();
-  
-    // Increase the wait time to ensure the redirection happens
+
+    // Wait for the session check request to occur
+    cy.wait('@expiredSession');
+    
+    // Ensure the user is redirected to the login page with a session expired message
     cy.url({ timeout: 10000 }).should('include', '/login?message=session_expired');
     
     // Verify that the session expired message is visible
     cy.contains('Your session has expired. Please log in again.').should('be.visible');
-  });  
+  });
 });

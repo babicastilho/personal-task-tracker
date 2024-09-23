@@ -73,12 +73,13 @@ export const checkAuth = async (): Promise<boolean> => {
 export const logout = (): void => {
   if (typeof window !== 'undefined') {
     // Remove the authToken from localStorage
-    window.localStorage.removeItem('token'); 
+    window.localStorage.removeItem('token');
     
     // Clear the auth cookie in case it's still being used
     document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
 
-    // Redirect to login page without session_expired message
-    window.location.href = '/login'; // Ensure no message is passed here
+    // Redirect to login page with a message indicating successful logout
+    window.location.href = '/login?message=logout_successful'; // Use window.location to handle redirection
   }
 };
+

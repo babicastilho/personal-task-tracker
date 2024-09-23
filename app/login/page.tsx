@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import SignIn from '@/components/SignIn'; // Reusing the existing SignIn component
-import { useRouter } from 'next/navigation'; // Import useRouter for redirection
-import { useAuth } from '@/hooks/useAuth'; // Import the authentication hook
-import { Spinner } from '@/components/Loading';
+import React, { useEffect } from "react";
+import SignIn from "@/components/SignIn"; // Reusing the existing SignIn component
+import { useRouter } from "next/navigation"; // Import useRouter for redirection
+import { useAuth } from "@/hooks/useAuth"; // Import the authentication hook
+import { Spinner } from "@/components/Loading";
 
-/**
- * Login page that renders the SignIn component.
- * It also displays session expiration message if the session has expired.
- */
-export default function LoginPage({ searchParams }: { searchParams: { message?: string } }) {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: { message?: string };
+}) {
   const { message } = searchParams; // Capture the query parameter from Next.js 13+ "searchParams" prop
   const { isAuthenticated, loading } = useAuth(); // Get authentication status and loading state
   const router = useRouter(); // Initialize useRouter for redirection
@@ -18,7 +18,7 @@ export default function LoginPage({ searchParams }: { searchParams: { message?: 
   useEffect(() => {
     if (!loading && isAuthenticated) {
       // If authenticated and not loading, redirect to /dashboard
-      router.push('/dashboard');
+      router.push("/dashboard");
     }
   }, [isAuthenticated, loading, router]);
 
@@ -30,15 +30,24 @@ export default function LoginPage({ searchParams }: { searchParams: { message?: 
       ) : (
         <>
           {/* Display session expired message if the query parameter is set */}
-          {message === 'session_expired' && (
-            <p className="text-red-500 mb-4">Your session has expired. Please log in again.</p>
+          {message === "session_expired" && (
+            <p className="text-red-500 mb-4">
+              Your session has expired. Please log in again.
+            </p>
           )}
-
           {/* Display login required message if the query parameter is set */}
-          {message === 'login_required' && (
-            <p className="text-blue-500 mb-4">You need to log in to continue.</p>
+          {message === "login_required" && (
+            <p className="text-blue-500 mb-4">
+              You need to log in to continue.
+            </p>
           )}
-
+          {/* Display logout successful message if the query parameter is set */}
+          {message === "logout_successful" && (
+            <p className="text-center text-green-500 mb-4">
+              <span>Logout successful.</span>
+              <span className="block">Please log in again to continue.</span>
+            </p>
+          )}
           <SignIn /> {/* Render the sign-in form if not authenticated */}
         </>
       )}

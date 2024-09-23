@@ -67,18 +67,21 @@ describe("Categories Page", () => {
     cy.get('input[placeholder="Category name"]').type("Category to Delete");
     cy.get('input[placeholder="Category description"]').type("Description to Delete");
     cy.contains("Add Category").click();
-
-    cy.wait(1000); 
-
-    // Delete the newly created category
+  
+    // Wait for the category to be added
+    cy.wait(2000); 
+  
+    // Ensure the category was added and the delete button is available
     cy.get('li')
       .contains('span', 'Category to Delete')
       .parent()
       .within(() => {
-        cy.contains('button', 'Delete').click();
+        cy.get('button').click(); // Click the button directly
       });
-
-    cy.wait(5000); 
+  
+    // Verify that the category has been deleted
+    cy.wait(1000); 
     cy.get('[data-cy="category-tests-Category to Delete"]').should('not.exist');
   });
+  
 });

@@ -11,7 +11,7 @@
 import { handleAuthRedirection } from '@/lib/redirection';
 
 export const apiFetch = async (url: string, options: RequestInit = {}) => {
-  const token = window.localStorage.getItem('token'); // Usando localStorage para o token
+  const token = window.localStorage.getItem('token'); // Using localStorage for the token
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -32,9 +32,9 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
   try {
     const response = await fetch(url, fetchOptions);
 
-    // Se o token estiver expirado ou inválido, redireciona usando a função centralizada
+    // If the token is expired or invalid, redirect using the centralized function
     if (response.status === 401) {
-      handleAuthRedirection("token_expired", window); // Usa a função para gerenciar o redirecionamento
+      handleAuthRedirection("token_expired", window); // Use the function to manage redirection
       return null;
     }
 

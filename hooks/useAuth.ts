@@ -47,7 +47,8 @@ export const useAuth = () => {
 
     // Run authentication check when the component mounts
     checkAuth();
-  }, [router]);
+  }, [authError, router]); // Added 'authError' as a dependency
 
   return { isAuthenticated, loading, authError };
 };
+

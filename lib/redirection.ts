@@ -6,36 +6,36 @@
  * @param authError - The error state from the authentication process.
  * @param routerOrWindow - The Next.js router instance or window object for navigation.
  */
+
 export const handleAuthRedirection = (
   authError: string | null,
   routerOrWindow: any
 ) => {
-  const currentPath = routerOrWindow.pathname
-    ? routerOrWindow.pathname // For Next.js router
-    : routerOrWindow.location?.pathname; // For window object
+  let currentPath: string | undefined;
 
-  // Avoid unnecessary redirects by checking for the right error context
-  if (authError === "token_expired") {
-    // Only redirect if the token has actually expired, and not during logout
-    if (currentPath && !["/login"].includes(currentPath)) {
-      routerOrWindow.replace
-        ? routerOrWindow.replace("/login?message=session_expired")
-        : (routerOrWindow.location.href = "/login?message=session_expired");
-    }
-  } else if (authError === "no_token") {
-    // Only redirect to login page if there's no token, and user is trying to access a protected page
-    if (currentPath && !["/login"].includes(currentPath)) {
-      routerOrWindow.replace
-        ? routerOrWindow.replace("/login?message=login_required")
-        : (routerOrWindow.location.href = "/login?message=login_required");
-    }
+  // Check if we are using the Next.js router
+  if (routerOrWindow && routerOrWindow.asPath) {
+    currentPath = routerOrWindow.asPath || routerOrWindow.pathname;
+  } else if (typeof window !== 'undefined') {
+    currentPath = window.location.pathname;
   }
 
-  // Handle logout success and redirect to login with a "logged out" message
-  else if (authError === "logout") {
-    // Redirect to login page with a "logout successful" message
+  console.log('Auth Error:', authError); // Debug log to check the authentication error
+  console.log('Current Path:', currentPath); // Debug log to check the current path
+
+  if (authError === 'token_expired' || authError === 'no_token') {
+    if (currentPath && !['/login'].includes(currentPath)) {
+      console.log('Redirecting due to no token or token expired'); 
+      const redirectUrl = `/login?message=${authError}&redirect=${encodeURIComponent(currentPath)}`;
+      routerOrWindow.replace
+        ? routerOrWindow.replace(redirectUrl)
+        : (window.location.href = redirectUrl);
+    }
+  } else if (authError === 'logout') {
+    console.log('Redirecting due to logout');
     routerOrWindow.replace
-      ? routerOrWindow.replace("/login?message=logout_successful")
-      : (routerOrWindow.location.href = "/login?message=logout_successful");
+      ? routerOrWindow.replace('/login?message=logout_successful')
+      : (window.location.href = '/login?message=logout_successful');
   }
 };
+

@@ -1,19 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // Use useRouter from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuthContext } from "@/context/AuthProvider";
 import Link from "next/link";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter(); // Initialize useRouter
-  const [isMounted, setIsMounted] = useState(false); // To check if the component is mounted
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/dashboard";
+  const { login } = useAuthContext();
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Ensure the component is mounted before performing any router operations
   useEffect(() => {
-    setIsMounted(true); // Mark the component as mounted
+    setIsMounted(true);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,15 +37,10 @@ export default function SignIn() {
         throw new Error(data.message || "Failed to login");
       }
 
-      // Store authToken in the cookie
-      document.cookie = `authToken=${data.token}; path=/; max-age=3600; SameSite=Lax`; // Store token in cookie
+      login(data.token); // Use localStorage token to manage login
 
-      // Save the token in localStorage as well
-      localStorage.setItem("token", data.token); // Store token in localStorage
-
-      // Force a page refresh to ensure layout and state updates
       if (isMounted) {
-        window.location.href = "/dashboard"; // Force refresh and navigate to dashboard
+        router.push(redirectUrl); // Redirect after login
       }
     } catch (error) {
       setError("Login failed");

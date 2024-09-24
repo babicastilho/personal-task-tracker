@@ -1,16 +1,25 @@
+// Header.tsx
+
 import React from "react";
 import { FaGithub, FaMoon, FaSun, FaPowerOff } from "react-icons/fa";
 import { HiMenu, HiOutlineX } from "react-icons/hi";
-import { logout } from "@/lib/auth";
 import Title from "@/components/Title";
+import { logout } from "@/lib/auth"; // Import the logout function
 
 interface HeaderProps {
-  toggleTheme: () => void; // Function to toggle between themes
-  theme: string; // Current theme ('light' or 'dark')
-  isAuthenticated: boolean; // User authentication status
-  handleMenuToggle: () => void; // Function to toggle the mobile menu
-  isMenuOpen: boolean; // State for whether the mobile menu is open
+  toggleTheme: () => void;
+  theme: string;
+  isAuthenticated: boolean;
+  handleMenuToggle: () => void;
+  isMenuOpen: boolean;
 }
+
+// Function to handle logout and redirect
+const logoutAndRedirect = () => {
+  logout();
+  console.log("Redirecting to login after logout"); 
+  window.location.href = '/login?message=logout_successful'; // Force redirection
+};
 
 const Header: React.FC<HeaderProps> = ({
   toggleTheme,
@@ -19,10 +28,8 @@ const Header: React.FC<HeaderProps> = ({
   handleMenuToggle,
   isMenuOpen,
 }) => {
-  // Function to render GitHub and theme toggle buttons
   const renderGitHubAndThemeToggle = () => (
     <>
-      {/* Theme toggle button */}
       <button onClick={toggleTheme} className="p-2" data-cy="toggle-button">
         {theme === "light" ? (
           <FaSun className="w-6 h-6 text-yellow-500" />
@@ -31,7 +38,6 @@ const Header: React.FC<HeaderProps> = ({
         )}
       </button>
 
-      {/* GitHub link */}
       <a href="https://github.com/babicastilho" target="_blank" className="p-2">
         <FaGithub className="w-6 h-6" />
       </a>
@@ -40,46 +46,38 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 p-4 fixed top-0 w-full flex justify-between items-center z-50">
-      {/* App title (Always visible) */}
       <Title text="TO DO App" />
 
-      {/* Actions for all screen sizes */}
       <div className="flex items-center space-x-4 justify-end flex-1">
-        {/* Show GitHub and theme toggle when not authenticated */}
         {!isAuthenticated && renderGitHubAndThemeToggle()}
 
-        {/* Mobile menu toggle button (only for authenticated users on smaller screens) */}
-        {isAuthenticated && (
-          <div className="lg:hidden relative z-50">
-            <button
-              onClick={handleMenuToggle}
-              className="p-2"
-              data-cy="menu-toggle-button"
-            >
-              {isMenuOpen ? (
-                <HiOutlineX className="w-6 h-6" />
-              ) : (
-                <HiMenu className="w-6 h-6" />
-              )}
-            </button>
-          </div>
-        )}
-
-        {/* Logout button, GitHub, and theme toggle (only for authenticated users on larger screens) */}
         {isAuthenticated && (
           <div className="hidden lg:flex">
             {renderGitHubAndThemeToggle()}
 
+            {/* Logout button */}
             <button
-              onClick={() => {
-                logout(); // Call the logout function to remove the token
-              }}
+              onClick={logoutAndRedirect} // Call the new function here
               className="p-2"
             >
               <FaPowerOff className="w-6 h-6" />
             </button>
           </div>
         )}
+
+        <div className="lg:hidden relative z-50">
+          <button
+            onClick={handleMenuToggle}
+            className="p-2"
+            data-cy="menu-toggle-button"
+          >
+            {isMenuOpen ? (
+              <HiOutlineX className="w-6 h-6" />
+            ) : (
+              <HiMenu className="w-6 h-6" />
+            )}
+          </button>
+        </div>
       </div>
     </header>
   );

@@ -1,7 +1,11 @@
+//
 /**
  * lib/apiFetch.ts
+ * Utility function to perform authenticated API requests.
  * 
- * Performs an API request and handles authentication errors, including token expiration.
+ * Retrieves the token from localStorage and includes it in the request headers.
+ * Handles authentication errors like token expiration and redirects if necessary.
+ * 
  * @param url - The API endpoint URL.
  * @param options - Request options, such as method, headers, and body.
  * @returns A promise resolving to the API response, or null if authentication fails.
@@ -11,7 +15,7 @@
 import { handleAuthRedirection } from '@/lib/redirection';
 
 export const apiFetch = async (url: string, options: RequestInit = {}) => {
-  const token = window.localStorage.getItem('token'); // Using localStorage for the token
+  const token = window.localStorage.getItem('token'); // Retrieve the token from localStorage
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -32,9 +36,9 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
   try {
     const response = await fetch(url, fetchOptions);
 
-    // If the token is expired or invalid, redirect using the centralized function
+    // Handle unauthorized response by redirecting
     if (response.status === 401) {
-      handleAuthRedirection("token_expired", window); // Use the function to manage redirection
+      handleAuthRedirection("token_expired", window); 
       return null;
     }
 
@@ -48,3 +52,4 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
     throw error;
   }
 };
+

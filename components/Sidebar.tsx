@@ -1,16 +1,24 @@
+// Sidebar.tsx
+
 import React from 'react';
 import Link from 'next/link';
 import { FaCalendarAlt, FaTasks, FaUser, FaGithub, FaPowerOff, FaBookmark, FaSun, FaMoon } from 'react-icons/fa';
 import Title from '@/components/Title';
 import { logout } from '@/lib/auth'; // Import the logout function
 
-// Define the props for the Sidebar component
 interface SidebarProps {
-  isOpen: boolean;           // Whether the sidebar is open
-  handleClose: () => void;   // Function to close the sidebar
-  toggleTheme: () => void;   // Function to toggle the theme
-  theme: string;             // Current theme ('light' or 'dark')
+  isOpen: boolean;
+  handleClose: () => void;
+  toggleTheme: () => void;
+  theme: string;
 }
+
+// Function to handle logout and redirect
+const logoutAndRedirect = () => {
+  logout();
+  console.log("Redirecting to login after logout"); 
+  window.location.href = '/login?message=logout_successful'; // Force redirection
+};
 
 const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
@@ -27,10 +35,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       <Title text="TO DO App" />
       <hr className="my-6 border-gray-400" />
 
-      {/* Navigation links for different pages */}
       <nav>
         <ul className="mt-8 space-y-4">
-          {/* Link to the dashboard */}
           <li>
             <Link href="/dashboard" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
               <FaCalendarAlt className="w-5 h-5 mr-2" />
@@ -38,7 +44,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             </Link>
           </li>
 
-          {/* Link to the categories page */}
           <li>
             <Link href="/categories" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
               <FaBookmark className="w-5 h-5 mr-2" />
@@ -46,7 +51,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             </Link>
           </li>
 
-          {/* Link to the tasks page */}
           <li>
             <Link href="/tasks" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
               <FaTasks className="w-5 h-5 mr-2" />
@@ -54,7 +58,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             </Link>
           </li>
 
-          {/* Link to the profile page */}
           <li>
             <Link href="/profile" className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded" onClick={handleClose}>
               <FaUser className="w-5 h-5 mr-2" />
@@ -64,9 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </ul>
         <hr className="my-4 border-gray-400" />
 
-        {/* Mobile-only icons (theme toggle, GitHub link, logout button) */}
         <div className="mt-6 space-y-4 lg:hidden">
-          {/* Theme Toggle button */}
           <button
             onClick={() => {
               toggleTheme();
@@ -82,7 +83,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             {theme.charAt(0).toUpperCase() + theme.slice(1)} Mode
           </button>
 
-          {/* GitHub Link */}
           <a
             href="https://github.com/babicastilho"
             target="_blank"
@@ -93,10 +93,10 @@ const Sidebar: React.FC<SidebarProps> = ({
             GitHub
           </a>
 
-          {/* Logout Button */}
+          {/* Logout button */}
           <button
             onClick={() => {
-              logout(); // Call the logout function to remove the token
+              logoutAndRedirect(); // Call the new function here
               handleClose(); // Close the sidebar
             }}
             className="w-full flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"

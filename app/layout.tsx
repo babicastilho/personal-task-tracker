@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import { Spinner, Skeleton } from "@/components/Loading"; // Import spinner and skeleton
-import { useAuth } from "@/hooks/useAuth"; // Authentication hook
+import { useAuthContext, AuthProvider } from "@/context/AuthProvider"; // Authentication hook and provider
 import { ThemeProvider } from "@/context/ThemeContext"; // Theme Provider
 import { useTheme } from "@/hooks/useTheme"; // Theme hook
 
@@ -15,45 +15,25 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  return (
+    <AuthProvider>
+      <ThemeProvider>
+        <LayoutContent>{children}</LayoutContent>
+      </ThemeProvider>
+    </AuthProvider>
+  );
+}
+
+// LayoutContent manages the main content of the layout, including the loading state
+function LayoutContent({ children }: { children: ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false); // State to control menu visibility
-  const { isAuthenticated, loading, logout } = useAuth(); // Access authentication state and functions
+  const { theme, toggleTheme } = useTheme(); // Use theme from ThemeProvider
+  const { isAuthenticated, loading, logout } = useAuthContext(); // Use authentication context
 
   // Toggle the mobile menu
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-
-  return (
-    <ThemeProvider>
-      <LayoutContent
-        isAuthenticated={isAuthenticated}
-        handleMenuToggle={handleMenuToggle}
-        isMenuOpen={isMenuOpen}
-        logout={logout}
-        loading={loading} // Pass loading state to LayoutContent
-      >
-        {children}
-      </LayoutContent>
-    </ThemeProvider>
-  );
-}
-
-// LayoutContent manages the main content of the layout, including the loading state
-function LayoutContent({
-  isAuthenticated,
-  handleMenuToggle,
-  isMenuOpen,
-  logout,
-  loading,
-  children,
-}: RootLayoutProps & {
-  isAuthenticated: boolean;
-  handleMenuToggle: () => void;
-  isMenuOpen: boolean;
-  logout: () => void;
-  loading: boolean;
-}) {
-  const { theme, toggleTheme } = useTheme(); // Use theme from ThemeProvider
 
   return (
     <html lang="en" className={theme}>

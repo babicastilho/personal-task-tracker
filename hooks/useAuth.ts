@@ -1,54 +1,60 @@
-// hooks/useAuth.ts
+//
+/**
+ * hooks/useAuth.ts
+ * Custom hook to manage user authentication state.
+ * 
+ * Checks if the user is authenticated by validating the token with the API.
+ * Tracks authentication status, loading state, and any authentication errors.
+ * 
+ * @returns An object with isAuthenticated, loading, and authError states.
+ */
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/apiFetch'; // Import the apiFetch function
 
 export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // State to track if the user is authenticated
-  const [loading, setLoading] = useState(true); // State to track if authentication check is still loading
-  const [authError, setAuthError] = useState<string | null>(null); // State to track if there's an authentication error
-  const router = useRouter(); // Next.js router for handling navigation
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track if the user is authenticated
+  const [loading, setLoading] = useState(true); // Track loading state
+  const [authError, setAuthError] = useState<string | null>(null); // Track authentication errors
+  const router = useRouter(); // Router for navigation
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Get the auth token from cookies
-        const cookie = document.cookie.split('; ').find(row => row.startsWith('authToken='));
-        const token = cookie?.split('=')[1];
+        // Get the auth token from localStorage
+        const token = window.localStorage.getItem('token'); 
 
-        // If no token is found, mark as not authenticated but without an error
+        // If no token is found, set authError to 'no_token'
         if (!token) {
           setIsAuthenticated(false);
-          setAuthError("no_token"); // This means no token exists (attempt to access directly)
+          setAuthError("no_token"); 
           return;
         }
 
-        // Call the API to check if the token is valid
+        // Check the token with the API
         const response = await apiFetch('/api/auth/check', { method: 'GET' });
 
-        // If the API response indicates success, set the user as authenticated
+        // If valid, set isAuthenticated to true
         if (response && response.success) {
           setIsAuthenticated(true);
         } else {
-          // If the token is invalid or expired, clear the cookie and set the error to "token_expired"
-          document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          // If invalid, clear localStorage and set authError to 'token_expired'
+          window.localStorage.removeItem('token'); 
           setIsAuthenticated(false);
-          setAuthError("token_expired"); // Token has expired
+          setAuthError("token_expired"); 
         }
       } catch (error) {
-        // Any other error, consider the user unauthenticated and set a generic error
+        // On any error, mark authentication as failed
         setIsAuthenticated(false);
         setAuthError("auth_failed");
       } finally {
-        setLoading(false); // Stop the loading spinner after check
+        setLoading(false); // Stop loading after the check
       }
     };
 
-    // Run authentication check when the component mounts
     checkAuth();
-  }, [authError, router]); // Added 'authError' as a dependency
+  }, [authError, router]);
 
   return { isAuthenticated, loading, authError };
 };
-

@@ -109,14 +109,14 @@ Cypress.Commands.add("deleteUser", (email: string, password: string) => {
 /**
  * Custom command to log in a user.
  * Stores the authentication token in localStorage for session management.
- * @example cy.login('user@example.com', 'password123')
+ * @example cy.login('user@example.com', 'password123', '/categories')
  */
-Cypress.Commands.add("login", (email: string, password: string) => {
+Cypress.Commands.add("login", (email: string, password: string, redirectUrl: string = "/") => {
   // Intercept the login request
   cy.intercept("POST", "/api/auth/login").as("loginRequest");
 
   // Visit the login page or homepage where the login form is present
-  cy.visit("http://localhost:3000/");
+  cy.visit("http://localhost:3000/login");
 
   // Fill in the email and password fields
   cy.get('input[id="email"]').type(email);
@@ -129,8 +129,12 @@ Cypress.Commands.add("login", (email: string, password: string) => {
   // Wait for the login request and check if it succeeds
   cy.wait("@loginRequest").then((interception) => {
     expect(interception.response.statusCode).to.equal(200);
+    
+    // After login, navigate to the redirectUrl if provided, otherwise to '/'
+    cy.visit(`http://localhost:3000${redirectUrl}`);
   });
 });
+
 
 /**
  * Custom command to log out a user.

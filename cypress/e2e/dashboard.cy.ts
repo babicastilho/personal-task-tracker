@@ -20,7 +20,7 @@ describe("Dashboard Page E2E", () => {
     cy.intercept("POST", "/api/auth/login").as("loginRequest");
 
     // Use the custom login function
-    cy.login("test@example.com", "password123");
+    cy.login("test@example.com", "password123", "/login");
 
     // Wait for the intercepted login request and assert the response
     cy.wait("@loginRequest").then((interception) => {

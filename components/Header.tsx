@@ -4,7 +4,7 @@ import React from "react";
 import { FaGithub, FaMoon, FaSun, FaPowerOff } from "react-icons/fa";
 import { HiMenu, HiOutlineX } from "react-icons/hi";
 import Title from "@/components/Title";
-import { logout } from "@/lib/auth"; // Import the logout function
+import { logoutAndRedirect } from "@/lib/auth"; // Use the new function
 
 interface HeaderProps {
   toggleTheme: () => void;
@@ -13,13 +13,6 @@ interface HeaderProps {
   handleMenuToggle: () => void;
   isMenuOpen: boolean;
 }
-
-// Function to handle logout and redirect
-const logoutAndRedirect = () => {
-  logout();
-  console.log("Redirecting to login after logout"); 
-  window.location.href = '/login?message=logout_successful'; // Force redirection
-};
 
 const Header: React.FC<HeaderProps> = ({
   toggleTheme,
@@ -57,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({
 
             {/* Logout button */}
             <button
-              onClick={logoutAndRedirect} // Call the new function here
+              onClick={logoutAndRedirect} // Use the new function here
               className="p-2"
             >
               <FaPowerOff className="w-6 h-6" />

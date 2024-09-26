@@ -11,6 +11,6 @@
   ],
   "exclude": [
     "../node_modules",  // Exclude node_modules
-    "../tests"  // Exclude test files outside Cypress folder
+    "../tests",  // Exclude test files outside Cypress folder 
   ]
 }

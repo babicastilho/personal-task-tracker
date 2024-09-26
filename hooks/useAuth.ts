@@ -11,46 +11,20 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiFetch } from '@/lib/apiFetch'; // Import the apiFetch function
+import { verifyTokenWithAPI } from '@/lib/tokenUtils'; // Import the new utility function
 
 export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track if the user is authenticated
-  const [loading, setLoading] = useState(true); // Track loading state
-  const [authError, setAuthError] = useState<string | null>(null); // Track authentication errors
-  const router = useRouter(); // Router for navigation
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const checkAuth = async () => {
-      try {
-        // Get the auth token from localStorage
-        const token = window.localStorage.getItem('token'); 
-
-        // If no token is found, set authError to 'no_token'
-        if (!token) {
-          setIsAuthenticated(false);
-          setAuthError("no_token"); 
-          return;
-        }
-
-        // Check the token with the API
-        const response = await apiFetch('/api/auth/check', { method: 'GET' });
-
-        // If valid, set isAuthenticated to true
-        if (response && response.success) {
-          setIsAuthenticated(true);
-        } else {
-          // If invalid, clear localStorage and set authError to 'token_expired'
-          window.localStorage.removeItem('token'); 
-          setIsAuthenticated(false);
-          setAuthError("token_expired"); 
-        }
-      } catch (error) {
-        // On any error, mark authentication as failed
-        setIsAuthenticated(false);
-        setAuthError("auth_failed");
-      } finally {
-        setLoading(false); // Stop loading after the check
-      }
+      const { valid, error } = await verifyTokenWithAPI(); // Call the centralized function
+      setIsAuthenticated(valid);
+      setAuthError(error);
+      setLoading(false);
     };
 
     checkAuth();

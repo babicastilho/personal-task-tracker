@@ -20,7 +20,7 @@ describe("Profile Page E2E", () => {
     cy.intercept("POST", "/api/auth/login").as("loginRequest");
 
     // Use the custom login function
-    cy.login("test@example.com", "password123");
+    cy.login("test@example.com", "password123", "/login");
 
     // Wait for the intercepted login request and assert the response
     cy.wait("@loginRequest").then((interception) => {
@@ -66,6 +66,6 @@ describe("Profile Page E2E", () => {
     // Try to access the profile page without being logged in
     cy.visit("http://localhost:3000/profile");
     // Increase the wait time to ensure the redirection happens
-    cy.url({ timeout: 10000 }).should('include', '/login?message=session_expired'); 
+    cy.url({ timeout: 5000 }).should('include', '/login?message=no_token'); 
   });
 });

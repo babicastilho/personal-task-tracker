@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { FaCalendarAlt, FaTasks, FaUser, FaGithub, FaPowerOff, FaBookmark, FaSun, FaMoon } from 'react-icons/fa';
 import Title from '@/components/Title';
-import { logout } from '@/lib/auth'; // Import the logout function
+import { logoutAndRedirect } from '@/lib/auth'; // Use the new function
 
 interface SidebarProps {
   isOpen: boolean;
@@ -12,13 +12,6 @@ interface SidebarProps {
   toggleTheme: () => void;
   theme: string;
 }
-
-// Function to handle logout and redirect
-const logoutAndRedirect = () => {
-  logout();
-  console.log("Redirecting to login after logout"); 
-  window.location.href = '/login?message=logout_successful'; // Force redirection
-};
 
 const Sidebar: React.FC<SidebarProps> = ({
   isOpen,

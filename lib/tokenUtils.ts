@@ -1,9 +1,16 @@
-// lib/tokenUtils.ts
+// 
+/**
+ * lib/tokenUtils.ts
+ * Utility functions to handle token operations such as getting, clearing, and verifying with the API.
+ */
+
+import { apiFetch } from '@/lib/apiFetch';
+
 export const getToken = () => localStorage.getItem('token');
 
 export const clearToken = () => localStorage.removeItem('token');
 
-// Centralize a chamada para a API de verificação de token
+// Centralize token verification with the API
 export const verifyTokenWithAPI = async () => {
   const token = getToken();
   if (!token) return { valid: false, error: 'no_token' };

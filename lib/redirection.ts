@@ -10,26 +10,41 @@
  * @param routerOrWindow - Either the Next.js router or window object to handle navigation.
  */
 
+export const redirectToLogin = (message: string = 'login_required') => {
+  window.location.href = `/login?message=${message}`;
+};
+
 export const handleAuthRedirection = (authError: string | null, routerOrWindow: any) => {
   let currentPath: string | undefined;
 
-  // Check if using Next.js router, otherwise use window.location
+  console.log('Auth Error Passed to handleAuthRedirection:', authError);
+
   if (routerOrWindow && routerOrWindow.asPath) {
     currentPath = routerOrWindow.asPath || routerOrWindow.pathname;
   } else if (typeof window !== 'undefined') {
     currentPath = window.location.pathname;
   }
 
-  console.log('Auth Error:', authError); 
-  console.log('Current Path:', currentPath); 
+  console.log('Current Path:', currentPath);
 
-  // Handle redirection if token is expired or not present
-  if (authError === 'token_expired' || authError === 'no_token') {
+  // Separa os cenários de redirecionamento por token_expired e no_token
+  if (authError === 'token_expired') {
     if (currentPath && !['/login'].includes(currentPath)) {
-      console.log('Redirecting due to no token or token expired');
-      routerOrWindow.replace
-        ? routerOrWindow.replace(`/login?message=${authError}&redirect=${encodeURIComponent(currentPath)}`)
-        : (window.location.href = `/login?message=${authError}&redirect=${encodeURIComponent(currentPath)}`);
+      console.log('Redirecting due to token expired');
+      if (routerOrWindow.replace) {
+        routerOrWindow.replace(`/login?message=session_expired`); // Redireciona para session_expired
+      } else {
+        window.location.href = `/login?message=session_expired`;
+      }
+    }
+  } else if (authError === 'no_token') {
+    if (currentPath && !['/login'].includes(currentPath)) {
+      console.log('Redirecting due to no token');
+      if (routerOrWindow.replace) {
+        routerOrWindow.replace(`/login?message=no_token`); // Redireciona para no_token
+      } else {
+        window.location.href = `/login?message=no_token`;
+      }
     }
   }
 };

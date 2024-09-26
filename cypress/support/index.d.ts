@@ -9,7 +9,7 @@ declare namespace Cypress {
      * @param password - The password of the user to log in.
      * @returns {Chainable<any>} - The chainable Cypress object.
      */
-    login(email: string, password: string): Chainable<any>;
+    login(email: string, password: string, redirectUrl: string): Chainable<any>;
 
     /**
      * Custom command to log out a user.

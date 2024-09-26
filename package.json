@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "unit tests": "jest --selectProjects unit",
+    "unit tests": "jest --selectProjects unit --coverage",
     "components tests": "jest --selectProjects components",
     "e2e tests": "npx cypress open",
     "build": "next build",
@@ -47,6 +47,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "nyc": "^17.1.0",
     "postcss": "^8",
     "supertest": "^7.0.0",
     "tailwindcss": "^3.4.1",

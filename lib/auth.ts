@@ -6,6 +6,9 @@
  * Handles generating a token for a user and verifying its validity using JWT.
  * Includes functions for generating tokens, verifying tokens, checking authentication, and logging out.
  */
+
+import { clearToken } from '@/lib/tokenUtils';
+import { redirectToLogin } from '@/lib/redirection';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
@@ -67,6 +70,17 @@ export const logout = (): void => {
 
     // Redirect to login page with a message indicating successful logout
     window.location.href = '/login?message=logout_successful'; // Use window.location to handle redirection
+  }
+};
+
+/**
+ * Combines logout functionality with redirection to the login page.
+ */
+
+export const logoutAndRedirect = (): void => {
+  if (typeof window !== 'undefined') {
+    clearToken(); // Remove the token
+    redirectToLogin('logout_successful'); // Redirect to the login page with a success message
   }
 };
 

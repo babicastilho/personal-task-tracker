@@ -15,16 +15,28 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     const decoded = verifyToken(token);
     const userId = new ObjectId(decoded.userId);
-    const { completed } = await req.json();
+    const { completed, priority, dueDate } = await req.json();
 
-    // Ensure the task belongs to the authenticated user before updating
     const task = await db.collection('tasks').findOne({ _id: new ObjectId(params.id), userId });
 
     if (!task) {
       return NextResponse.json({ success: false, message: 'Task not found or does not belong to the user' }, { status: 404 });
     }
 
-    await db.collection('tasks').updateOne({ _id: new ObjectId(params.id), userId }, { $set: { completed } });
+    // Build the update object, omitting `dueDate` if not provided
+    const updateFields: any = {
+      completed,
+      priority,
+    };
+
+    if (dueDate) {
+      updateFields.dueDate = new Date(dueDate); // Only update dueDate if it is provided
+    }
+
+    await db.collection('tasks').updateOne(
+      { _id: new ObjectId(params.id), userId },
+      { $set: updateFields }
+    );
 
     const updatedTask = await db.collection('tasks').findOne({ _id: new ObjectId(params.id), userId });
 

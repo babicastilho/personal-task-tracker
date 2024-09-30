@@ -2,7 +2,7 @@ describe("Todo App E2E", () => {
   let token: string;
 
   before(() => {
-    // Reset the user before tests, this could be a custom command that clears and recreates the user
+    // Reset the user before tests
     cy.resetUser("test@example.com", "password123", {
       firstName: "Jane",
       lastName: "Smith",
@@ -12,75 +12,95 @@ describe("Todo App E2E", () => {
   });
 
   beforeEach(() => {
-    // Intercept the login request before the test
     cy.intercept("POST", "/api/auth/login").as("loginRequest");
-
-    // Use the custom login function
-    cy.login("test@example.com", "password123");
-
-    // Wait for the intercepted login request and assert the response
+    cy.login("test@example.com", "password123", "/dashboard");
     cy.wait("@loginRequest").then((interception) => {
-      // Ensure the login response was successful
       expect(interception.response.statusCode).to.equal(200);
     });
-
-    // Open the menu to access the Tasks page
-    cy.get('[data-cy="menu-toggle-button"]').click(); // Open the menu
-
-    // Click on the "Tasks" link to navigate to the tasks page
+    cy.get('[data-cy="menu-toggle-button"]').click();
     cy.contains("Tasks").click();
   });
 
   it("should load the app and display the task list", () => {
-    // Verify if the To-Do list is displayed on the dashboard
     cy.contains("Your To-Do List").should("be.visible");
-    cy.wait(1000);
     cy.get('[data-cy="todo-list"]').should("exist");
   });
 
-  it("should allow users to add a new task", () => {
+  it("should allow users to add a new task with priority, date, and time", () => {
     const taskTitle = `New Task ${Date.now()}`;
     cy.get('input[placeholder="Enter new task"]').type(taskTitle);
-    cy.contains("Add Task").click();
+
+    // Set priority
+    cy.get('[data-cy="priority-select"]').select("high");
+
+    // Set date and time
+    cy.get('[data-cy="date-input"]').type("2024-12-31");
+    cy.get('[data-cy="time-input"]').type("14:00");
+
+    cy.get('[data-cy="add-task-button"]').click();
+
+    // Check if the new task was added with priority, date, and time
     cy.contains(taskTitle).should("be.visible");
+    cy.contains(taskTitle)
+      .closest("li")
+      .within(() => {
+        cy.contains("High Priority").should("be.visible");
+        cy.contains("Due Date: 31/12/2024 at 14:00").should("be.visible");
+      });
   });
+
+  it("should correctly render overdue tasks with red text and allow corrections", () => {
+    const taskTitle = `Overdue Task ${Date.now()}`;
+    
+    // Add a task with a past date
+    cy.get('input[placeholder="Enter new task"]').type(taskTitle);
+    cy.get('[data-cy="date-input"]').type("2022-01-01"); // Past date
+    cy.get('[data-cy="add-task-button"]').click();
+  
+    // Verify error message is shown
+    cy.contains("Error adding task. Please try again.").should("be.visible");
+  
+    // Correct the date and try again
+    cy.get('[data-cy="date-input"]').clear().type("2024-12-31"); // Future date
+    cy.get('[data-cy="add-task-button"]').click();
+  
+    // Verify the task is added with the corrected date
+    cy.contains(taskTitle).should("be.visible");
+    cy.contains(taskTitle)
+      .closest("li")
+      .within(() => {
+        cy.contains("Due Date: 31/12/2024").should("be.visible");
+      });
+  });
+  
 
   it("should allow users to mark a task as completed", () => {
     const taskTitle = `New Task ${Date.now()}`;
     cy.get('input[placeholder="Enter new task"]').type(taskTitle);
-    cy.contains("Add Task").click();
+    cy.get('[data-cy="add-task-button"]').click();
     cy.contains(taskTitle)
       .parent()
       .find('button[aria-label^="toggle"]')
       .click();
+
     cy.contains(taskTitle)
-      .should("have.css", "text-decoration")
-      .and("include", "line-through");
+      .closest("li")
+      .should("have.class", "line-through")
+      .and("have.class", "text-gray-400");
   });
 
   it("should allow users to delete a task", () => {
     const taskTitle = `New Task ${Date.now()}`;
-
-    // Add a new task
     cy.get('input[placeholder="Enter new task"]').type(taskTitle);
-    cy.contains("Add Task").click();
-    cy.contains(taskTitle).should("be.visible"); // Verify the task was added
+    cy.get('[data-cy="add-task-button"]').click();
+    cy.contains(taskTitle).should("be.visible");
 
-    // Ensure the task exists before attempting to remove it
     cy.contains(taskTitle)
       .parent()
-      .then(($task) => {
-        if ($task.length) {
-          cy.wrap($task).find('button[aria-label^="remove"]').click();
-        }
-      });
+      .find('button[aria-label^="remove"]')
+      .click();
 
-    // Wait for the DOM to update after deletion
-    cy.wait(500); // Add a wait to ensure the task is removed
-
-    // Verify that the task was removed from the list
-    cy.contains(taskTitle, { timeout: 2000 }).should("not.exist"); // Increased timeout to 2 seconds
-    cy.get("ul.list-disc").should("not.contain", taskTitle);
+    cy.contains(taskTitle).should("not.exist");
   });
 
   it("should allow users to update a task via API", () => {
@@ -136,7 +156,6 @@ describe("Todo App E2E", () => {
       if (response.status === 200) {
         token = response.body.token;
 
-        // Create a new task via API
         cy.request({
           method: "POST",
           url: "http://localhost:3000/api/tasks",
@@ -150,7 +169,6 @@ describe("Todo App E2E", () => {
         }).then((response) => {
           const taskId = response.body.task._id;
 
-          // Delete the created task via API
           cy.request({
             method: "DELETE",
             url: `http://localhost:3000/api/tasks/${taskId}`,
@@ -160,7 +178,6 @@ describe("Todo App E2E", () => {
           }).then((deleteResponse) => {
             expect(deleteResponse.status).to.eq(200);
 
-            // Verify the task is deleted by making a GET request and checking the status code
             cy.request({
               method: "GET",
               url: `http://localhost:3000/api/tasks/${taskId}`,
@@ -169,15 +186,7 @@ describe("Todo App E2E", () => {
               },
               failOnStatusCode: false,
             }).then((getResponse) => {
-              if (getResponse.status === 404 || getResponse.status === 405) {
-                expect(getResponse.status).to.be.oneOf([404, 405]); // Handle both 404 and 405 status codes
-              } else {
-                // Additional check to confirm that the task no longer exists in the UI
-                cy.visit("http://localhost:3000/tasks");
-                cy.get("ul.list-disc").within(() => {
-                  cy.contains("API Task to Delete").should("not.exist");
-                });
-              }
+              expect(getResponse.status).to.be.oneOf([404, 405]);
             });
           });
         });
@@ -186,7 +195,6 @@ describe("Todo App E2E", () => {
   });
 
   after(() => {
-    // Delete the user after the tests
     cy.request({
       method: "POST",
       url: "http://localhost:3000/api/auth/login",

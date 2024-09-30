@@ -172,10 +172,6 @@ const TodoList: React.FC = () => {
     );
   }
 
-  if (errorMessage) {
-    return <p className="text-red-500">{errorMessage}</p>;
-  }
-
   return (
     <div data-cy="todo-list" data-testid="todo-list" className="p-4">
       <div className="mb-4">
@@ -189,7 +185,7 @@ const TodoList: React.FC = () => {
           data-cy="task-input"
           data-testid="task-input"
         />
-
+  
         {/* Category selection */}
         <select
           value={selectedCategoryId || ""}
@@ -205,7 +201,7 @@ const TodoList: React.FC = () => {
             </option>
           ))}
         </select>
-
+  
         {/* Priority selection */}
         <select
           value={priority}
@@ -218,27 +214,27 @@ const TodoList: React.FC = () => {
           <option value="medium">Medium Priority</option>
           <option value="high">High Priority</option>
         </select>
-
+  
         {/* Date input */}
         <input
           type="date"
-          value={dateInput || ""} // Send "" if not filled
-          onChange={(e) => setDateInput(e.target.value)} // This should update dateInput
+          value={dateInput || ""} 
+          onChange={(e) => setDateInput(e.target.value)}
           className="border p-2 mr-2"
           data-cy="date-input"
           data-testid="date-input"
         />
-
+  
         {/* Time input */}
         <input
           type="time"
-          value={timeInput || ""} // Send "" if not filled
-          onChange={(e) => setTimeInput(e.target.value)} // This should update timeInput
+          value={timeInput || ""}
+          onChange={(e) => setTimeInput(e.target.value)}
           className="border p-2 mr-2"
           data-cy="time-input"
           data-testid="time-input"
         />
-
+  
         {/* Add Task Button */}
         <button
           onClick={addTask}
@@ -249,20 +245,18 @@ const TodoList: React.FC = () => {
           Add Task
         </button>
       </div>
-
+  
+      {/* Error message should be shown here, without blocking the form */}
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+  
       {/* List of tasks */}
-      <ul
-        className="list-disc space-y-2 pl-5"
-        data-cy="task-list"
-        data-testid="task-list"
-      >
+      <ul className="list-disc space-y-2 pl-5" data-cy="task-list" data-testid="task-list">
         {tasks.map((task) => {
-          // Ensure task and dueDate are valid before attempting to access them
           const dueDate = task.dueDate
             ? new Date(task.dueDate).toLocaleDateString()
             : "No due date";
           const dueTime = task.dueTime ? `at ${task.dueTime}` : "";
-
+  
           return (
             <li
               key={task._id}
@@ -273,16 +267,12 @@ const TodoList: React.FC = () => {
               data-testid={`task-${task._id}`}
               onClick={() => toggleTaskCompletion(task._id)}
             >
-              <span>{`${task.title} - ${
-                task.priority.charAt(0).toUpperCase() + task.priority.slice(1)
-              } Priority`}</span>
-
+              <span>{`${task.title} - ${task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : "No"} Priority`}</span>
+  
               {task.dueDate && (
-                <span className="text-sm">
-                  - Due Date: {dueDate} {dueTime}
-                </span>
+                <span className="text-sm">- Due Date: {dueDate} {dueTime}</span>
               )}
-
+  
               <div>
                 {/* Toggle task completion button */}
                 <button
@@ -294,7 +284,7 @@ const TodoList: React.FC = () => {
                 >
                   {task.completed ? <FaRegCheckSquare /> : <FaRegSquare />}
                 </button>
-
+  
                 {/* Delete task button */}
                 <button
                   onClick={() => deleteTask(task._id)}
@@ -311,7 +301,7 @@ const TodoList: React.FC = () => {
         })}
       </ul>
     </div>
-  );
+  );  
 };
 
 export default TodoList;

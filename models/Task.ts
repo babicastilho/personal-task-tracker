@@ -17,22 +17,27 @@ export function createTask(data: Partial<ITask>): ITask {
     throw new Error('Title is required');
   }
 
-  console.log("Creating task with data:", data); // Log the task data received
+  // Validate if the due date is in the past
+  if (data.dueDate && data.dueDate < new Date()) {
+    throw new Error("Cannot set a due date in the past");
+  }
+
+  // If dueDate is provided but no dueTime, set default time to 23:59
+  if (data.dueDate && !data.dueTime) {
+    data.dueDate.setHours(23, 59, 0, 0); // Set default time to 23:59
+  }
 
   const task: ITask = {
     _id: data._id || new ObjectId(),
     title: data.title,
     completed: data.completed ?? false,
     userId: data.userId!,
-    dueDate: data.dueDate ?? undefined, // Log this value
-    dueTime: data.dueTime ?? undefined, // Log this value
+    dueDate: data.dueDate ?? undefined,
+    dueTime: data.dueTime ?? undefined,
     priority: data.priority || 'medium',
     createdAt: new Date(),
   };
 
-  console.log("Task created:", task); // Log the final task object being inserted
-
   return task;
 }
-
 

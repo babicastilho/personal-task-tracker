@@ -69,7 +69,6 @@ export async function POST(req: Request) {
     const decoded = verifyToken(token);
     const userId = new ObjectId(decoded.userId);
     
-    // Corrigir a desestruturação: use dueDate e dueTime em vez de dateInput e timeInput
     const { title, dueDate, dueTime, priority } = await req.json();
 
     if (!title) {
@@ -82,35 +81,31 @@ export async function POST(req: Request) {
     // Process dueDate and dueTime
     let processedDueDate: Date | undefined = undefined;
     if (dueDate) {
-      processedDueDate = new Date(dueDate); // Converta a string em objeto Date
+      processedDueDate = new Date(dueDate);
 
       if (dueTime) {
         const [hours, minutes] = dueTime.split(":").map(Number);
-        processedDueDate.setHours(hours, minutes, 0); // Defina horas e minutos, se fornecido
+        processedDueDate.setHours(hours, minutes, 0);
       } else {
-        // Defina o horário padrão para 23:59 se não houver hora fornecida
+        // Set default time to 23:59 if no time is provided
         processedDueDate.setHours(23, 59, 0);
       }
     }
 
-    // Certifique-se de que dueDate e dueTime estão corretos
-    console.log("Processed dueDate:", processedDueDate);
-    console.log("Processed dueTime:", dueTime);
-
     const newTask = createTask({
       title,
       userId,
-      dueDate: processedDueDate, // Passe a data processada
-      dueTime: dueTime || undefined, // Passe dueTime ou undefined
+      dueDate: processedDueDate, // Pass processed date
+      dueTime: dueTime || undefined, // Pass dueTime or undefined
       priority
     });
 
-    // Log da tarefa criada
-    console.log("Task to be inserted:", newTask);
-
     await db.collection('tasks').insertOne(newTask);
 
-    return NextResponse.json({ success: true, task: newTask }, { status: 201 });
+    return NextResponse.json(
+      { success: true, task: { ...newTask, dueDate: newTask.dueDate || null, dueTime: newTask.dueTime || null } }, 
+      { status: 201 }
+    );
   } catch (error) {
     return NextResponse.json(
       {
@@ -122,3 +117,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

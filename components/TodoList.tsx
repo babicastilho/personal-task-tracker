@@ -116,20 +116,24 @@ const TodoList: React.FC = () => {
         const data = await apiFetch(`/api/tasks/${id}`, {
           method: "PUT",
           body: JSON.stringify({
-            completed: !task.completed,
-            priority: task.priority, // Keep the priority while updating
-            dueDate: task.dueDate, // Keep the due date while updating
-            dueTime: task.dueTime, // Keep the due time while updating
+            completed: !task.completed, // Toggle the completed state
+            priority: task.priority,
+            dueDate: task.dueDate,
+            dueTime: task.dueTime,
           }),
         });
         if (data && data.success) {
-          setTasks(tasks.map((t) => (t._id === id ? data.task : t))); // Update task in the list
-        } else {
-          setErrorMessage("Failed to toggle task completion.");
+          console.log("Task completion toggled:", data.task); // Log the task after toggle
+          setTasks((prevTasks) => {
+            const updatedTasks = prevTasks.map((t) =>
+              t._id === id ? data.task : t
+            );
+            console.log("Updated tasks:", updatedTasks); // Log the updated tasks array
+            return updatedTasks;
+          });
         }
       } catch (error) {
         console.error("Error toggling task completion:", error);
-        setErrorMessage("Error toggling task completion. Please try again.");
       }
     }
   };
@@ -173,8 +177,9 @@ const TodoList: React.FC = () => {
   }
 
   return (
-    <div data-cy="todo-list" className="p-4">
+    <div data-cy="todo-list" data-testid="todo-list" className="p-4">
       <div className="mb-4">
+        {/* Input for task title */}
         <input
           type="text"
           placeholder="Enter new task"
@@ -182,122 +187,121 @@ const TodoList: React.FC = () => {
           onChange={(e) => setNewTask(e.target.value)}
           className="border p-2 mr-2"
           data-cy="task-input"
+          data-testid="task-input"
         />
 
-        {/* Category Selection */}
+        {/* Category selection */}
         <select
           value={selectedCategoryId || ""}
           onChange={(e) => setSelectedCategoryId(e.target.value || null)}
           className="border p-2 mr-2"
           data-cy="category-select"
+          data-testid="category-select"
         >
           <option value="">Select category</option>
-          {categories.map((category) => (
+          {categories?.map((category) => (
             <option key={category._id} value={category._id}>
               {category.name}
             </option>
           ))}
         </select>
 
-        {/* Priority Selection */}
+        {/* Priority selection */}
         <select
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
           className="border p-2 mr-2"
           data-cy="priority-select"
+          data-testid="priority-select"
         >
           <option value="low">Low Priority</option>
           <option value="medium">Medium Priority</option>
           <option value="high">High Priority</option>
         </select>
 
-        {/* Due Date Input */}
+        {/* Date input */}
         <input
           type="date"
           value={dateInput || ""} // Send "" if not filled
           onChange={(e) => setDateInput(e.target.value)} // This should update dateInput
           className="border p-2 mr-2"
           data-cy="date-input"
+          data-testid="date-input"
         />
 
-        {/* Due Time Input */}
+        {/* Time input */}
         <input
           type="time"
           value={timeInput || ""} // Send "" if not filled
           onChange={(e) => setTimeInput(e.target.value)} // This should update timeInput
           className="border p-2 mr-2"
           data-cy="time-input"
+          data-testid="time-input"
         />
 
+        {/* Add Task Button */}
         <button
           onClick={addTask}
           className="bg-blue-500 text-white p-2 rounded"
+          data-cy="add-task-button"
+          data-testid="add-task-button"
         >
           Add Task
         </button>
       </div>
 
       {/* List of tasks */}
-      <ul className="list-disc space-y-2 pl-5" data-cy="task-list">
+      <ul
+        className="list-disc space-y-2 pl-5"
+        data-cy="task-list"
+        data-testid="task-list"
+      >
         {tasks.map((task) => {
-          console.log("Task data:", task.dueDate, task.dueTime); // Log task dueDate and dueTime for debugging
+          // Ensure task and dueDate are valid before attempting to access them
+          const dueDate = task.dueDate
+            ? new Date(task.dueDate).toLocaleDateString()
+            : "No due date";
+          const dueTime = task.dueTime ? `at ${task.dueTime}` : "";
 
           return (
             <li
               key={task._id}
               className={`flex justify-between items-center ${
-                task.completed ? "text-gray-400" : "text-black"
-              } ${isTaskOverdue(task.dueDate) ? "text-red-500" : ""}`} // Highlight overdue tasks in red
+                task.completed ? "text-gray-400 line-through" : "text-black"
+              } ${isTaskOverdue(task.dueDate) ? "text-red-500" : ""}`}
+              data-cy={`task-${task._id}`}
+              data-testid={`task-${task._id}`}
+              onClick={() => toggleTaskCompletion(task._id)}
             >
-              <span
-                style={{
-                  textDecoration: task.completed ? "line-through" : "none",
-                }}
-                data-cy={`task-${task.title}`}
-              >
-                {task.title} -{" "}
-                {task.priority
-                  ? `${
-                      task.priority.charAt(0).toUpperCase() +
-                      task.priority.slice(1)
-                    } Priority`
-                  : "Medium Priority"}
-              </span>
+              <span>{`${task.title} - ${
+                task.priority.charAt(0).toUpperCase() + task.priority.slice(1)
+              } Priority`}</span>
 
               {task.dueDate && (
                 <span className="text-sm">
-                  - Due Date:{" "}
-                  {new Date(task.dueDate).toLocaleDateString(undefined, {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                  {task.dueTime && (
-                    <>
-                      {" "}
-                      at {task.dueTime} {/* Exibir o horário após a data */}
-                    </>
-                  )}
+                  - Due Date: {dueDate} {dueTime}
                 </span>
               )}
 
               <div>
-                {/* Toggle task completion */}
+                {/* Toggle task completion button */}
                 <button
                   onClick={() => toggleTaskCompletion(task._id)}
                   className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"
                   aria-label={`toggle-${task._id}`}
                   data-cy={`toggle-task-${task._id}`}
+                  data-testid={`toggle-task-${task._id}`}
                 >
                   {task.completed ? <FaRegCheckSquare /> : <FaRegSquare />}
                 </button>
 
-                {/* Delete task */}
+                {/* Delete task button */}
                 <button
                   onClick={() => deleteTask(task._id)}
                   className="ml-2 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-700 transition"
                   aria-label={`remove-${task._id}`}
                   data-cy={`remove-task-${task._id}`}
+                  data-testid={`remove-task-${task._id}`}
                 >
                   <FaRegTrashAlt />
                 </button>

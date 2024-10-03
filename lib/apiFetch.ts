@@ -22,21 +22,27 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
   };
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${token}`; // Include the token in the Authorization header
+    console.log('Token:', token); // Log the token for debugging purposes
   }
+
+  console.log('URL:', url); // Log the URL to debug
 
   const fetchOptions: RequestInit = {
     ...options,
     headers: {
       ...headers,
-      ...(options.headers || {}),
+      ...(options.headers || {}), // Spread headers from options if any
     },
   };
+
+  console.log('URL:', url); // Verificar a URL
+  console.log('Headers:', fetchOptions.headers); // Verificar os headers
+  console.log('Body:', fetchOptions.body); // Verificar o corpo da requisição
 
   try {
     const response = await fetch(url, fetchOptions);
 
-    // Handle unauthorized response by redirecting
     if (response.status === 401) {
       handleAuthRedirection("token_expired", window); 
       return null;

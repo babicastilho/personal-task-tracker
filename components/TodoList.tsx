@@ -1,18 +1,18 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/apiFetch";
-import { FaRegTrashAlt, FaRegCheckSquare, FaRegSquare } from "react-icons/fa";
+import { FaRegCheckSquare, FaRegSquare, FaPen } from "react-icons/fa";
 import { Skeleton } from "@/components/Loading";
 
-// Define the Task and Category interfaces
+// Define interfaces for Task and Category
 export interface Task {
   _id: string;
   title: string;
   completed: boolean;
-  priority: "high" | "medium" | "low"; // Add priority to Task interface
-  dueDate?: string | undefined; // Optional due date for tasks
-  dueTime?: string | undefined; // Optional due time for tasks
-  categoryId?: string; // Optional categoryId for tasks
+  priority: "high" | "medium" | "low";
+  dueDate?: string | undefined;
+  dueTime?: string | undefined;
+  categoryId?: string;
 }
 
 interface Category {
@@ -20,39 +20,33 @@ interface Category {
   name: string;
 }
 
-const TodoList: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]); // List of tasks
-  const [newTask, setNewTask] = useState<string>(""); // New task state
-  const [dateInput, setDateInput] = useState<string>(""); // New due date state
-  const [timeInput, setTimeInput] = useState<string>(""); // New due time state
-  const [categories, setCategories] = useState<Category[]>([]); // State to store categories
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    null
-  ); // Selected category
-  const [priority, setPriority] = useState<string>("medium"); // Add state for task priority
+interface TodoListProps {
+  onAddTask: () => void; // Prop to handle task creation
+  onEditTask: (id: string) => void; // Prop to handle task editing
+}
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
+  const [tasks, setTasks] = useState<Task[]>([]); // State for tasks
+  const [categories, setCategories] = useState<Category[]>([]); // State for categories
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Error message state
 
-  // Fetch tasks and categories on component mount
+  // Fetch tasks and categories when the component mounts
   useEffect(() => {
     const fetchTasksAndCategories = async () => {
       try {
-        // Fetch tasks
         const taskData = await apiFetch("/api/tasks", { method: "GET" });
         if (taskData && taskData.success) {
-          console.log("Loaded tasks with dueDate and dueTime:", taskData.tasks); // Log loaded tasks
-          setTasks(taskData.tasks);
+          setTasks(taskData.tasks); // Set tasks if the API response is successful
         } else {
           setErrorMessage("Failed to fetch tasks.");
         }
 
-        // Fetch categories
         const categoryData = await apiFetch("/api/categories", {
           method: "GET",
         });
         if (categoryData && categoryData.success) {
-          setCategories(categoryData.categories);
+          setCategories(categoryData.categories); // Set categories if the API response is successful
         } else {
           setErrorMessage("Failed to fetch categories.");
         }
@@ -62,53 +56,14 @@ const TodoList: React.FC = () => {
           "Failed to load tasks or categories. Please try again."
         );
       } finally {
-        setLoading(false);
+        setLoading(false); // Set loading to false after fetching
       }
     };
 
-    fetchTasksAndCategories();
+    fetchTasksAndCategories(); // Call the fetch function
   }, []);
 
-  // Add new task
-  const addTask = async () => {
-    if (newTask.trim() !== "") {
-      try {
-        // Prepare task payload, only sending dueDate and dueTime if they are filled
-        const taskPayload: any = {
-          title: newTask,
-          categoryId: selectedCategoryId,
-          completed: false,
-          priority,
-          dueDate: dateInput || undefined, // Send due date only if filled
-          dueTime: timeInput || undefined, // Send due time only if filled
-        };
-
-        console.log("Task payload being sent:", taskPayload); // Log task payload being sent
-
-        const data = await apiFetch("/api/tasks", {
-          method: "POST",
-          body: JSON.stringify(taskPayload),
-        });
-
-        if (data && data.success) {
-          console.log("Task added successfully:", data.task); // Log added task
-          setTasks([...tasks, data.task]); // Update the task list with the new task
-          setNewTask("");
-          setSelectedCategoryId(null);
-          setPriority("medium");
-          setDateInput(""); // Reset date after adding
-          setTimeInput(""); // Reset time after adding
-        } else {
-          setErrorMessage("Failed to add task.");
-        }
-      } catch (error) {
-        console.error("Error adding task:", error);
-        setErrorMessage("Error adding task. Please try again.");
-      }
-    }
-  };
-
-  // Toggle task completion status
+  // Function to toggle task completion
   const toggleTaskCompletion = async (id: string) => {
     const task = tasks.find((task) => task._id === id);
     if (task) {
@@ -116,40 +71,20 @@ const TodoList: React.FC = () => {
         const data = await apiFetch(`/api/tasks/${id}`, {
           method: "PUT",
           body: JSON.stringify({
-            completed: !task.completed, // Toggle the completed state
+            completed: !task.completed, // Toggle completion state
             priority: task.priority,
             dueDate: task.dueDate,
             dueTime: task.dueTime,
           }),
         });
         if (data && data.success) {
-          console.log("Task completion toggled:", data.task); // Log the task after toggle
-          setTasks((prevTasks) => {
-            const updatedTasks = prevTasks.map((t) =>
-              t._id === id ? data.task : t
-            );
-            console.log("Updated tasks:", updatedTasks); // Log the updated tasks array
-            return updatedTasks;
-          });
+          setTasks(
+            (prevTasks) => prevTasks.map((t) => (t._id === id ? data.task : t)) // Update tasks state
+          );
         }
       } catch (error) {
         console.error("Error toggling task completion:", error);
       }
-    }
-  };
-
-  // Delete a task
-  const deleteTask = async (id: string) => {
-    try {
-      const data = await apiFetch(`/api/tasks/${id}`, { method: "DELETE" });
-      if (data && data.success) {
-        setTasks(tasks.filter((task) => task._id !== id)); // Remove task from the list
-      } else {
-        setErrorMessage("Failed to delete task.");
-      }
-    } catch (error) {
-      console.error("Error deleting task:", error);
-      setErrorMessage("Error deleting task. Please try again.");
     }
   };
 
@@ -158,150 +93,112 @@ const TodoList: React.FC = () => {
     if (!dueDate) return false;
     const currentDate = new Date();
     const taskDueDate = new Date(dueDate);
-    return currentDate > taskDueDate;
+    return currentDate > taskDueDate; // Compare current date with task's due date
   };
 
   if (loading) {
     return (
       <Skeleton
-        repeatCount={4}
+        repeatCount={4} // Number of skeletons to display
         count={5}
-        type="text"
+        type="text" // Text type skeletons
         widths={["w-1/2", "w-full", "w-full", "w-full", "w-1/2"]}
       />
     );
   }
 
   return (
-    <div data-cy="todo-list" data-testid="todo-list" className="p-4">
-      <div className="mb-4">
-        {/* Input for task title */}
-        <input
-          type="text"
-          placeholder="Enter new task"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          className="border p-2 mr-2"
-          data-cy="task-input"
-          data-testid="task-input"
-        />
-  
-        {/* Category selection */}
-        <select
-          value={selectedCategoryId || ""}
-          onChange={(e) => setSelectedCategoryId(e.target.value || null)}
-          className="border p-2 mr-2"
-          data-cy="category-select"
-          data-testid="category-select"
-        >
-          <option value="">Select category</option>
-          {categories?.map((category) => (
-            <option key={category._id} value={category._id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-  
-        {/* Priority selection */}
-        <select
-          value={priority}
-          onChange={(e) => setPriority(e.target.value)}
-          className="border p-2 mr-2"
-          data-cy="priority-select"
-          data-testid="priority-select"
-        >
-          <option value="low">Low Priority</option>
-          <option value="medium">Medium Priority</option>
-          <option value="high">High Priority</option>
-        </select>
-  
-        {/* Date input */}
-        <input
-          type="date"
-          value={dateInput || ""} 
-          onChange={(e) => setDateInput(e.target.value)}
-          className="border p-2 mr-2"
-          data-cy="date-input"
-          data-testid="date-input"
-        />
-  
-        {/* Time input */}
-        <input
-          type="time"
-          value={timeInput || ""}
-          onChange={(e) => setTimeInput(e.target.value)}
-          className="border p-2 mr-2"
-          data-cy="time-input"
-          data-testid="time-input"
-        />
-  
-        {/* Add Task Button */}
+    <div data-cy="todo-list" data-testid="todo-list" className="px-4">
+      <div className="mb-4 flex justify-between">
+        <h1 className="text-xl font-bold">Your To-Do List</h1>
+        {/* Button to trigger task creation */}
         <button
-          onClick={addTask}
+          onClick={onAddTask}
           className="bg-blue-500 text-white p-2 rounded"
-          data-cy="add-task-button"
-          data-testid="add-task-button"
         >
-          Add Task
+          Add New Task
         </button>
       </div>
-  
-      {/* Error message should be shown here, without blocking the form */}
+
+      {/* Show error message if there is any */}
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-  
-      {/* List of tasks */}
-      <ul className="list-disc space-y-2 pl-5" data-cy="task-list" data-testid="task-list">
+
+      <div className="mt-10 grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
         {tasks.map((task) => {
           const dueDate = task.dueDate
             ? new Date(task.dueDate).toLocaleDateString()
-            : "No due date";
-          const dueTime = task.dueTime ? `at ${task.dueTime}` : "";
-  
+            : "No due date"; // Format due date
+          const category = categories.find(
+            (cat) => cat._id === task.categoryId
+          ); // Find the category
+
           return (
-            <li
+            <div
               key={task._id}
-              className={`flex justify-between items-center ${
-                task.completed ? "text-gray-400 line-through" : "text-black"
-              } ${isTaskOverdue(task.dueDate) ? "text-red-500" : ""}`}
-              data-cy={`task-${task._id}`}
-              data-testid={`task-${task._id}`}
-              onClick={() => toggleTaskCompletion(task._id)}
+              className={`flex flex-col justify-between p-4 border rounded-md shadow-md transition-all ${
+                isTaskOverdue(task.dueDate) && !task.completed
+                  ? "border-red-500"
+                  : "border-gray-200"
+              } ${
+                task.completed
+                  ? "bg-gray-100 dark:bg-gray-700 text-gray-500"
+                  : "bg-white dark:bg-gray-800"
+              }`}
             >
-              <span>{`${task.title} - ${task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : "No"} Priority`}</span>
-  
-              {task.dueDate && (
-                <span className="text-sm">- Due Date: {dueDate} {dueTime}</span>
-              )}
-  
-              <div>
-                {/* Toggle task completion button */}
+              <div className="flex justify-between items-start">
+                <span
+                  className={`font-semibold ${
+                    task.completed ? "line-through" : ""
+                  }`}
+                >
+                  {task.title} {/* Task title */}
+                </span>
                 <button
-                  onClick={() => toggleTaskCompletion(task._id)}
-                  className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"
+                  onClick={() => toggleTaskCompletion(task._id)} // Toggle task completion
+                  className="text-blue-500 mt-2"
                   aria-label={`toggle-${task._id}`}
-                  data-cy={`toggle-task-${task._id}`}
-                  data-testid={`toggle-task-${task._id}`}
                 >
                   {task.completed ? <FaRegCheckSquare /> : <FaRegSquare />}
                 </button>
-  
-                {/* Delete task button */}
-                <button
-                  onClick={() => deleteTask(task._id)}
-                  className="ml-2 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-700 transition"
-                  aria-label={`remove-${task._id}`}
-                  data-cy={`remove-task-${task._id}`}
-                  data-testid={`remove-task-${task._id}`}
+              </div>
+
+              <div className="my-3 text-sm text-gray-500">
+                <p>Category: {category ? category.name : "No category"}</p>
+                <p>
+                  Priority:{" "}
+                  {task.priority.charAt(0).toUpperCase() +
+                    task.priority.slice(1)}
+                </p>
+                <p
+                  className={`text-sm ${
+                    isTaskOverdue(task.dueDate) && !task.completed
+                      ? "text-red-500"
+                      : "text-gray-500"
+                  }`}
                 >
-                  <FaRegTrashAlt />
+                  Due Date:{" "}
+                  {task.dueDate
+                    ? new Date(task.dueDate).toLocaleDateString()
+                    : "No due date"}
+                </p>
+              </div>
+
+              <div className="mt-2">
+                {/* Button to trigger task editing */}
+                <button
+                  onClick={() => onEditTask(task._id)} // Call edit function
+                  className="transition-all bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 dark:bg-yellow-500 dark:hover:bg-yellow-400"
+                  aria-label={`edit-${task._id}`}
+                >
+                  <FaPen />
                 </button>
               </div>
-            </li>
+            </div>
           );
         })}
-      </ul>
+      </div>
     </div>
-  );  
+  );
 };
 
 export default TodoList;

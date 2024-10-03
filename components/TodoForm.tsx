@@ -1,0 +1,312 @@
+"use client";
+import React, { useState, useEffect } from "react";
+import { apiFetch } from "@/lib/apiFetch";
+import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic"; // To dynamically import react-quill
+import "react-quill/dist/quill.snow.css"; // React Quill CSS for styling
+
+// Dynamically import react-quill for Markdown-like editor
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
+// Define Task and Category interfaces
+interface Task {
+  _id?: string;
+  title: string;
+  resume: string; // Add resume field for short summary
+  description?: string; // Add description field for detailed markdown content
+  categoryId?: string;
+  priority: "high" | "medium" | "low";
+  dueDate?: string;
+  dueTime?: string;
+}
+
+interface Category {
+  _id: string;
+  name: string;
+}
+
+const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
+  const router = useRouter();
+  const [taskName, setTaskName] = useState<string>(task?.title || ""); // Task name state
+  const [resume, setResume] = useState<string>(task?.resume || ""); // Resume field state
+  const [description, setDescription] = useState<string>(
+    task?.description || ""
+  ); // Description field state
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    task?.categoryId || null
+  ); // State for selected category
+  const [priority, setPriority] = useState<string>(task?.priority || "medium"); // State for task priority
+  const [dateInput, setDateInput] = useState<string>(task?.dueDate || ""); // State for due date
+  const [timeInput, setTimeInput] = useState<string>(task?.dueTime || ""); // State for due time
+  const [categories, setCategories] = useState<Category[]>([]); // State for category list
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // State for delete confirmation modal
+
+  // Fetch categories when the component mounts
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categoryData = await apiFetch("/api/categories", { method: "GET" });
+      if (categoryData && categoryData.success) {
+        setCategories(categoryData.categories); // Update categories list
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Load task data into the form when the task changes
+  useEffect(() => {
+    if (task) {
+      setTaskName(task.title || "");
+      setResume(task.resume || ""); // Load resume into state
+      setDescription(task.description || ""); // Load description into state
+      setSelectedCategoryId(task.categoryId || null);
+      setPriority(task.priority || "medium");
+      setDateInput(
+        task.dueDate ? new Date(task.dueDate).toISOString().substr(0, 10) : ""
+      );
+      setTimeInput(task.dueTime || "");
+    }
+  }, [task]);
+
+  // Function to handle saving the task (create or update)
+  const handleSaveTask = async () => {
+    const taskPayload = {
+      title: taskName,
+      resume, // Include resume in the payload
+      description, // Include description in the payload
+      categoryId: selectedCategoryId,
+      priority,
+      dueDate: dateInput,
+      dueTime: timeInput,
+    };
+
+    let updatedTask;
+
+    if (task?._id) {
+      // Update existing task
+      const response = await apiFetch(`/api/tasks/${task._id}`, {
+        method: "PUT",
+        body: JSON.stringify(taskPayload),
+      });
+      if (response && response.success) {
+        updatedTask = response.task;
+        setTaskName(updatedTask.title);
+        setResume(updatedTask.resume); // Update resume and description
+        setDescription(updatedTask.description);
+      }
+    } else {
+      // Create a new task
+      const response = await apiFetch("/api/tasks", {
+        method: "POST",
+        body: JSON.stringify(taskPayload),
+      });
+      if (response && response.success) {
+        updatedTask = response.task;
+      }
+    }
+
+    // Redirect to the tasks list after saving
+    router.push("/tasks");
+  };
+
+  // Function to handle deleting the task
+  const handleDeleteTask = async () => {
+    if (task?._id) {
+      await apiFetch(`/api/tasks/${task._id}`, { method: "DELETE" });
+      router.push("/tasks");
+    }
+  };
+
+  return (
+    <div data-cy="todo-form" data-testid="todo-form" className="p-4">
+      <h1 className="text-xl font-bold mb-6">
+        {task ? `Edit Task: ${taskName || "Untitled"}` : "Add a New Task"}
+      </h1>
+
+      {/* Task Name Input */}
+      <div className="w-full mb-6 relative">
+        <input
+          type="text"
+          id="taskName"
+          name="taskName"
+          value={taskName}
+          onChange={(e) => setTaskName(e.target.value)}
+          placeholder="Task Name"
+          className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent peer focus:outline-none"
+        />
+        <label
+          htmlFor="taskName"
+          className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-2 origin-[0] left-2 z-10 bg-gray-50 dark:bg-slate-800 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:bg-transparent"
+        >
+          Task Name
+        </label>
+      </div>
+
+      {/* Resume (Short Summary) */}
+      <div className="w-full mb-6 relative">
+        <input
+          type="text"
+          id="resume"
+          name="resume"
+          value={resume}
+          onChange={(e) => setResume(e.target.value)}
+          placeholder=""
+          className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent peer focus:outline-none"
+        />
+        <label
+          htmlFor="resume"
+          className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-2 origin-[0] left-2 z-10 bg-gray-50 dark:bg-slate-800 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:bg-transparent"
+        >
+          Resume
+        </label>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        {/* Category Selection */}
+        <div>
+          <label
+            htmlFor="category"
+            className="text-gray-500 dark:text-gray-300"
+          >
+            Category
+          </label>
+          <select
+            id="category"
+            name="category"
+            value={selectedCategoryId || ""}
+            onChange={(e) => setSelectedCategoryId(e.target.value)}
+            className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent focus:outline-none"
+          >
+            <option value="">Select Category</option>
+            {categories.map((category) => (
+              <option key={category._id} value={category._id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Priority Selection */}
+        <div>
+          <label
+            htmlFor="priority"
+            className="text-gray-500 dark:text-gray-300"
+          >
+            Priority
+          </label>
+          <select
+            id="priority"
+            name="priority"
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent focus:outline-none"
+          >
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+      </div>
+      {/* Description using ReactQuill (Markdown support) */}
+      <div className="w-full mb-6">
+        <label
+          htmlFor="description"
+          className="text-gray-500 dark:text-gray-300"
+        >
+          Description
+        </label>
+        <ReactQuill
+          value={description}
+          onChange={setDescription}
+          className="bg-transparent text-gray-900 dark:text-gray-300 quill-height"
+        />
+      </div>
+
+      {/* Due Date and Time Inputs */}
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div>
+          <label
+            htmlFor="dateInput"
+            className="text-gray-500 dark:text-gray-300"
+          >
+            Due Date
+          </label>
+          <input
+            type="date"
+            id="dateInput"
+            name="dateInput"
+            value={dateInput}
+            onChange={(e) => setDateInput(e.target.value)}
+            className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent focus:outline-none"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="timeInput"
+            className="text-gray-500 dark:text-gray-300"
+          >
+            Due Time
+          </label>
+          <input
+            type="time"
+            id="timeInput"
+            name="timeInput"
+            value={timeInput}
+            onChange={(e) => setTimeInput(e.target.value)}
+            className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent focus:outline-none"
+          />
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-between">
+        <button
+          onClick={handleSaveTask}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-all"
+        >
+          Save Task
+        </button>
+        <button
+          onClick={() => router.push("/tasks")}
+          className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-all"
+        >
+          Cancel
+        </button>
+        {task?._id && (
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-all"
+          >
+            Delete Task
+          </button>
+        )}
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-md shadow-lg text-center">
+            <p className="mb-4 text-lg">
+              Are you sure you want to delete this task?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={handleDeleteTask}
+                className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-all"
+              >
+                Yes, delete
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="bg-gray-500 text-white p-2 rounded-md hover:bg-gray-600 transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default TodoForm;

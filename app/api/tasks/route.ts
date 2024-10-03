@@ -68,12 +68,14 @@ export async function POST(req: Request) {
 
     const decoded = verifyToken(token);
     const userId = new ObjectId(decoded.userId);
-    
-    const { title, dueDate, dueTime, priority } = await req.json();
 
-    if (!title) {
+    // Destructure the request body to extract the new fields
+    const { title, resume, description, dueDate, dueTime, priority } = await req.json();
+
+    // Validate required fields
+    if (!title || !resume) {
       return NextResponse.json(
-        { success: false, message: 'Title is required' },
+        { success: false, message: 'Title and resume are required' },
         { status: 400 }
       );
     }
@@ -94,6 +96,8 @@ export async function POST(req: Request) {
 
     const newTask = createTask({
       title,
+      resume, // Assign resume
+      description, // Assign description
       userId,
       dueDate: processedDueDate, // Pass processed date
       dueTime: dueTime || undefined, // Pass dueTime or undefined

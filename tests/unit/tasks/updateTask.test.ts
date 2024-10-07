@@ -1,15 +1,18 @@
+// tests/unit/tasks/updateTask.test.ts
+
 import { ObjectId } from "mongodb";
 import { updateTodo, addTodo } from "@/lib/task";
 
 describe("Task Update", () => {
   it("should update task completion status", async () => {
-    // Cria um ObjectId válido
+    // Create a valid ObjectId
     const validObjectId = new ObjectId();
 
-    // Adiciona uma tarefa de teste antes de atualizá-la
+    // Add a test task before updating it
     await addTodo({
       _id: validObjectId,
       title: "Test Task",
+      resume: "This is a test task", // Add the resume field
       completed: false,
       dueDate: new Date("2024-12-30"),
       priority: "medium",
@@ -22,13 +25,14 @@ describe("Task Update", () => {
   });
 
   it("should update the due date and priority of a task", async () => {
-    // Cria um ObjectId válido
+    // Create a valid ObjectId
     const validObjectId = new ObjectId();
 
-    // Adiciona uma tarefa de teste antes de atualizá-la
+    // Add a test task before updating it
     await addTodo({
       _id: validObjectId,
       title: "Test Task 2",
+      resume: "This is a second test task", // Add the resume field
       completed: false,
       dueDate: new Date("2024-12-30"),
       priority: "medium",
@@ -44,3 +48,4 @@ describe("Task Update", () => {
     expect(updated).toBe(true);
   });
 });
+

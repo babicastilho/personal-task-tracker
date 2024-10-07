@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/apiFetch";
 import { FaRegCheckSquare, FaRegSquare, FaPen } from "react-icons/fa";
 import { Skeleton } from "@/components/Loading";
+import { formatForDataCy } from "@/lib/utils";
 
 // Define interfaces for Task and Category
 export interface Task {
@@ -115,6 +116,8 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
         <button
           onClick={onAddTask}
           className="bg-blue-500 text-white p-2 rounded"
+          data-testid="button-add-task"
+          data-cy="button-add-task"
         >
           Add New Task
         </button>
@@ -144,12 +147,16 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
                   ? "bg-gray-100 dark:bg-gray-700 text-gray-500"
                   : "bg-white dark:bg-gray-800"
               }`}
+              data-cy={`task-${formatForDataCy(task.title)}`}
+              data-testid={`task-${formatForDataCy(task.title)}`}
             >
               <div className="flex justify-between items-start">
                 <span
                   className={`font-semibold ${
                     task.completed ? "line-through" : ""
                   }`}
+                  data-testid={`task-title-${task._id}`}
+                  data-cy={`task-title-${task._id}`}
                 >
                   {task.title} {/* Task title */}
                 </span>
@@ -157,6 +164,8 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
                   onClick={() => toggleTaskCompletion(task._id)} // Toggle task completion
                   className="text-blue-500 mt-2"
                   aria-label={`toggle-${task._id}`}
+                  data-cy={`todo-edit-${formatForDataCy}`} 
+                  data-testid={`todo-edit-${formatForDataCy}`}
                 >
                   {task.completed ? <FaRegCheckSquare /> : <FaRegSquare />}
                 </button>
@@ -189,6 +198,8 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
                   onClick={() => onEditTask(task._id)} // Call edit function
                   className="transition-all bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 dark:bg-yellow-500 dark:hover:bg-yellow-400"
                   aria-label={`edit-${task._id}`}
+                  data-cy={`edit-task-${formatForDataCy(task.title)}`}
+                  data-testid={`edit-task-${formatForDataCy(task.title)}`}
                 >
                   <FaPen />
                 </button>

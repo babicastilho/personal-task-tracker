@@ -40,6 +40,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
   const [timeInput, setTimeInput] = useState<string>(task?.dueTime || ""); // State for due time
   const [categories, setCategories] = useState<Category[]>([]); // State for category list
   const [showDeleteModal, setShowDeleteModal] = useState(false); // State for delete confirmation modal
+  const [errors, setErrors] = useState<{ [key: string]: string }>({}); // State for error messages
 
   // Fetch categories when the component mounts
   useEffect(() => {
@@ -68,7 +69,27 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
   }, [task]);
 
   // Function to handle saving the task (create or update)
+  // Function to handle saving the task (create or update)
   const handleSaveTask = async () => {
+    const newErrors: { [key: string]: string } = {};
+
+    // Validate required fields
+    if (!taskName) newErrors.taskName = "Task name is required";
+    if (!resume) newErrors.resume = "Resume is required";
+
+    // Validate if time is provided without a date
+    if (timeInput && !dateInput)
+      newErrors.dateInput = "Please provide a due date if you set a time.";
+
+    // If there are validation errors, set the error state and stop submission
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    // Clear errors before submission
+    setErrors({});
+
     const taskPayload = {
       title: taskName,
       resume, // Include resume in the payload
@@ -118,7 +139,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
 
   return (
     <div data-cy="todo-form" data-testid="todo-form" className="p-4">
-      <h1 className="text-xl font-bold mb-6">
+      <h1 className="text-xl font-bold mb-6" data-cy="todo-form-info" data-testid="todo-form-info">
         {task ? `Edit Task: ${taskName || "Untitled"}` : "Add a New Task"}
       </h1>
 
@@ -131,6 +152,8 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
           value={taskName}
           onChange={(e) => setTaskName(e.target.value)}
           placeholder="Task Name"
+          data-testid="task-input"
+          data-cy="task-input"
           className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent peer focus:outline-none"
         />
         <label
@@ -139,6 +162,14 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
         >
           Task Name
         </label>
+        {errors.taskName && (
+          <p 
+            className="text-sm text-red-500" 
+            data-cy="task-name-error" 
+            data-testid="task-name-error">
+            {errors.taskName}
+          </p>
+        )}
       </div>
 
       {/* Resume (Short Summary) */}
@@ -147,6 +178,8 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
           type="text"
           id="resume"
           name="resume"
+          data-testid="resume-input"
+          data-cy="resume-input"
           value={resume}
           onChange={(e) => setResume(e.target.value)}
           placeholder=""
@@ -158,6 +191,15 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
         >
           Resume
         </label>
+        {errors.resume && (
+          <p 
+            className="text-sm text-red-500" 
+            data-cy="resume-error" 
+            data-testid="resume-error"
+          >
+            {errors.resume}
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -174,6 +216,8 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
             name="category"
             value={selectedCategoryId || ""}
             onChange={(e) => setSelectedCategoryId(e.target.value)}
+            data-cy="category-select"
+            data-testid="category-select"
             className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent focus:outline-none"
           >
             <option value="">Select Category</option>
@@ -198,6 +242,8 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
             name="priority"
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
+            data-cy="priority-select"
+            data-testid="priority-select"
             className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent focus:outline-none"
           >
             <option value="low">Low</option>
@@ -234,6 +280,8 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
             type="date"
             id="dateInput"
             name="dateInput"
+            data-testid="date-input"
+            data-cy="date-input"
             value={dateInput}
             onChange={(e) => setDateInput(e.target.value)}
             className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent focus:outline-none"
@@ -250,17 +298,30 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
             type="time"
             id="timeInput"
             name="timeInput"
+            data-testid="time-input"
+            data-cy="time-input"
             value={timeInput}
             onChange={(e) => setTimeInput(e.target.value)}
             className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent focus:outline-none"
           />
+          {errors.dateInput && (
+            <p
+              className="text-sm text-red-500"
+              data-cy="date-input-error"
+              data-testid="date-input-error"
+            >
+              {errors.dateInput}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex justify-between">
+            {/* Action Buttons */}
+            <div className="flex justify-between">
         <button
           onClick={handleSaveTask}
+          data-testid="add-task-button"
+          data-cy="add-task-button"
           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-all"
         >
           Save Task
@@ -275,6 +336,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
           <button
             onClick={() => setShowDeleteModal(true)}
             className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-all"
+            data-cy="task-form-delete" data-testid="task-form-delete"
           >
             Delete Task
           </button>
@@ -285,19 +347,21 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
       {showDeleteModal && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
           <div className="bg-white dark:bg-slate-800 p-6 rounded-md shadow-lg text-center">
-            <p className="mb-4 text-lg">
-              Are you sure you want to delete this task?
-            </p>
+            <p className="mb-4 text-lg">Are you sure you want to delete this task?</p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleDeleteTask}
                 className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-all"
+                data-cy="task-delete-confirm-button" 
+                data-testid="task-delete-confirm-button"
               >
                 Yes, delete
               </button>
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="bg-gray-500 text-white p-2 rounded-md hover:bg-gray-600 transition-all"
+                data-cy="task-delete-cancel-button" 
+                data-testid="task-delete-cancel-button"
               >
                 Cancel
               </button>

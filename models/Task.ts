@@ -24,6 +24,11 @@ export function createTask(data: Partial<ITask>): ITask {
     throw new Error('Resume is required');
   }
 
+  // Validate if time is provided without a date
+  if (data.dueTime && !data.dueDate) {
+    throw new Error('Please provide a due date if you set a time.');
+  }
+
   // Validate if the due date is in the past
   if (data.dueDate && data.dueDate < new Date()) {
     throw new Error("Cannot set a due date in the past");
@@ -38,8 +43,8 @@ export function createTask(data: Partial<ITask>): ITask {
   const task: ITask = {
     _id: data._id || new ObjectId(),
     title: data.title,
-    resume: data.resume, // Assign the resume field
-    description: data.description || '', // Assign description or empty string
+    resume: data.resume,
+    description: data.description || '',
     completed: data.completed ?? false,
     userId: data.userId!,
     dueDate: data.dueDate ?? undefined,
@@ -50,3 +55,4 @@ export function createTask(data: Partial<ITask>): ITask {
 
   return task;
 }
+

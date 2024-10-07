@@ -33,12 +33,12 @@ describe('/api/tasks API Endpoint', () => {
       ]),
     });
 
-    // Cria o objeto Headers corretamente
+    // Creates Headers object correctly
     const headers = new Headers({
       authorization: `Bearer ${token}`,
     });
 
-    // Cria o Request para o teste
+    // Create a Request for the test
     const request = new Request('http://localhost:3000/api/tasks', {
       method: 'GET',
       headers: headers,
@@ -68,6 +68,7 @@ describe('/api/tasks API Endpoint', () => {
     const mockTask = {
       _id: newTaskId,
       title: 'New Task',
+      resume: 'Task summary', // Adicione o campo resume
       completed: false,
       userId: userId,
     };
@@ -83,7 +84,10 @@ describe('/api/tasks API Endpoint', () => {
     const request = new Request('http://localhost:3000/api/tasks', {
       method: 'POST',
       headers: headers,
-      body: JSON.stringify({ title: 'New Task' }),
+      body: JSON.stringify({
+        title: 'New Task',
+        resume: 'Task summary', 
+      }),
     });
 
     const response = await POST(request);
@@ -94,6 +98,7 @@ describe('/api/tasks API Endpoint', () => {
     expect(json.task).toEqual(
       expect.objectContaining({
         title: 'New Task',
+        resume: 'Task summary', 
         completed: false,
         userId: userId,
       })

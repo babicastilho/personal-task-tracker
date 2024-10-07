@@ -10,6 +10,7 @@ describe("Task Validation", () => {
     expect(() => {
       createTask({
         title: "Test Task",
+        resume: "Test task summary", // Add resume field
         dueDate: pastDate,
       });
     }).toThrow("Cannot set a due date in the past"); // Ensure error is thrown for past date
@@ -21,6 +22,7 @@ describe("Task Validation", () => {
 
     const task = createTask({
       title: "Test Task",
+      resume: "Test task summary", // Add resume field
       dueDate: futureDate,
     });
 
@@ -32,6 +34,7 @@ describe("Task Validation", () => {
 
     const task = createTask({
       title: "Test Task",
+      resume: "Test task summary", // Add resume field
       dueDate: futureDate,
     });
 

@@ -69,13 +69,14 @@ export async function POST(req: Request) {
     const decoded = verifyToken(token);
     const userId = new ObjectId(decoded.userId);
 
-    // Destructure the request body to extract the new fields
+    // Extract task details from request body
     const { title, resume, description, dueDate, dueTime, priority } = await req.json();
 
-    // Validate required fields
-    if (!title || !resume) {
+    // Validate priority field
+    const validPriorities = ['highest', 'high', 'medium', 'low', 'lowest'];
+    if (priority && !validPriorities.includes(priority)) {
       return NextResponse.json(
-        { success: false, message: 'Title and resume are required' },
+        { success: false, message: 'Invalid priority level' },
         { status: 400 }
       );
     }
@@ -89,18 +90,18 @@ export async function POST(req: Request) {
         const [hours, minutes] = dueTime.split(":").map(Number);
         processedDueDate.setHours(hours, minutes, 0);
       } else {
-        // Set default time to 23:59 if no time is provided
-        processedDueDate.setHours(23, 59, 0);
+        processedDueDate.setHours(23, 59, 0); // Default to end of day
       }
     }
 
+    // Create a new task with validated priority
     const newTask = createTask({
       title,
-      resume, // Assign resume
-      description, // Assign description
+      resume,
+      description,
       userId,
-      dueDate: processedDueDate, // Pass processed date
-      dueTime: dueTime || undefined, // Pass dueTime or undefined
+      dueDate: processedDueDate,
+      dueTime: dueTime || undefined,
       priority
     });
 

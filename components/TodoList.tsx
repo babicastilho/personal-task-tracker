@@ -1,16 +1,25 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/apiFetch";
-import { FaRegCheckSquare, FaRegSquare, FaPen } from "react-icons/fa";
+import {
+  FaRegCheckSquare,
+  FaRegSquare,
+  FaPen,
+  FaRegCalendarAlt,
+  FaAngleUp,
+  FaAngleDown,
+  FaEquals,
+  FaAngleDoubleUp,
+  FaAngleDoubleDown,
+} from "react-icons/fa";
 import { Skeleton } from "@/components/Loading";
 import { formatForDataCy } from "@/lib/utils";
 
-// Define interfaces for Task and Category
 export interface Task {
   _id: string;
   title: string;
   completed: boolean;
-  priority: "high" | "medium" | "low";
+  priority: "highest" | "high" | "medium" | "low" | "lowest";
   dueDate?: string | undefined;
   dueTime?: string | undefined;
   categoryId?: string;
@@ -22,23 +31,22 @@ interface Category {
 }
 
 interface TodoListProps {
-  onAddTask: () => void; // Prop to handle task creation
-  onEditTask: (id: string) => void; // Prop to handle task editing
+  onAddTask: () => void;
+  onEditTask: (id: string) => void;
 }
 
 const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
-  const [tasks, setTasks] = useState<Task[]>([]); // State for tasks
-  const [categories, setCategories] = useState<Category[]>([]); // State for categories
-  const [loading, setLoading] = useState<boolean>(true); // Loading state
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Error message state
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Fetch tasks and categories when the component mounts
   useEffect(() => {
     const fetchTasksAndCategories = async () => {
       try {
         const taskData = await apiFetch("/api/tasks", { method: "GET" });
         if (taskData && taskData.success) {
-          setTasks(taskData.tasks); // Set tasks if the API response is successful
+          setTasks(taskData.tasks);
         } else {
           setErrorMessage("Failed to fetch tasks.");
         }
@@ -47,7 +55,7 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
           method: "GET",
         });
         if (categoryData && categoryData.success) {
-          setCategories(categoryData.categories); // Set categories if the API response is successful
+          setCategories(categoryData.categories);
         } else {
           setErrorMessage("Failed to fetch categories.");
         }
@@ -57,14 +65,13 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
           "Failed to load tasks or categories. Please try again."
         );
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false);
       }
     };
 
-    fetchTasksAndCategories(); // Call the fetch function
+    fetchTasksAndCategories();
   }, []);
 
-  // Function to toggle task completion
   const toggleTaskCompletion = async (id: string) => {
     const task = tasks.find((task) => task._id === id);
     if (task) {
@@ -72,15 +79,15 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
         const data = await apiFetch(`/api/tasks/${id}`, {
           method: "PUT",
           body: JSON.stringify({
-            completed: !task.completed, // Toggle completion state
+            completed: !task.completed,
             priority: task.priority,
             dueDate: task.dueDate,
             dueTime: task.dueTime,
           }),
         });
         if (data && data.success) {
-          setTasks(
-            (prevTasks) => prevTasks.map((t) => (t._id === id ? data.task : t)) // Update tasks state
+          setTasks((prevTasks) =>
+            prevTasks.map((t) => (t._id === id ? data.task : t))
           );
         }
       } catch (error) {
@@ -89,20 +96,36 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
     }
   };
 
-  // Check if the task is overdue
   const isTaskOverdue = (dueDate?: string) => {
     if (!dueDate) return false;
     const currentDate = new Date();
     const taskDueDate = new Date(dueDate);
-    return currentDate > taskDueDate; // Compare current date with task's due date
+    return currentDate > taskDueDate;
+  };
+
+  const getPriorityIcon = (priority: string) => {
+    switch (priority) {
+      case "highest":
+        return <FaAngleDoubleUp className="text-red-600" />;
+      case "high":
+        return <FaAngleUp className="text-red-400" />;
+      case "medium":
+        return <FaEquals className="text-yellow-500" />;
+      case "low":
+        return <FaAngleDown className="text-blue-600" />;
+      case "lowest":
+        return <FaAngleDoubleDown className="text-blue-400" />;
+      default:
+        return null;
+    }
   };
 
   if (loading) {
     return (
       <Skeleton
-        repeatCount={4} // Number of skeletons to display
+        repeatCount={4}
         count={5}
-        type="text" // Text type skeletons
+        type="text"
         widths={["w-1/2", "w-full", "w-full", "w-full", "w-1/2"]}
       />
     );
@@ -112,7 +135,6 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
     <div data-cy="todo-list" data-testid="todo-list" className="px-4">
       <div className="mb-4 flex justify-between">
         <h1 className="text-xl font-bold">Your To-Do List</h1>
-        {/* Button to trigger task creation */}
         <button
           onClick={onAddTask}
           className="bg-blue-500 text-white p-2 rounded"
@@ -123,24 +145,23 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
         </button>
       </div>
 
-      {/* Show error message if there is any */}
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
       <div className="mt-10 grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
         {tasks.map((task) => {
           const dueDate = task.dueDate
             ? new Date(task.dueDate).toLocaleDateString()
-            : "No due date"; // Format due date
+            : "No due date";
           const category = categories.find(
             (cat) => cat._id === task.categoryId
-          ); // Find the category
+          );
 
           return (
             <div
               key={task._id}
-              className={`flex flex-col justify-between p-4 border rounded-md shadow-md transition-all ${
+              className={`relative flex flex-col justify-between p-4 border rounded-md shadow-md transition-all ${
                 isTaskOverdue(task.dueDate) && !task.completed
-                  ? "border-red-500"
+                  ? "border-red-600 dark:border-red-400"
                   : "border-gray-200"
               } ${
                 task.completed
@@ -152,19 +173,20 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
             >
               <div className="flex justify-between items-start">
                 <span
-                  className={`font-semibold ${
+                  className={`font-semibold flex items-center ${
                     task.completed ? "line-through" : ""
                   }`}
                   data-testid={`task-title-${task._id}`}
                   data-cy={`task-title-${task._id}`}
                 >
-                  {task.title} {/* Task title */}
+                  {getPriorityIcon(task.priority)}
+                  <span className="ml-1">{task.title}</span>
                 </span>
                 <button
-                  onClick={() => toggleTaskCompletion(task._id)} // Toggle task completion
+                  onClick={() => toggleTaskCompletion(task._id)}
                   className="text-blue-500 mt-2"
                   aria-label={`toggle-${task._id}`}
-                  data-cy={`todo-edit-${formatForDataCy}`} 
+                  data-cy={`todo-edit-${formatForDataCy}`}
                   data-testid={`todo-edit-${formatForDataCy}`}
                 >
                   {task.completed ? <FaRegCheckSquare /> : <FaRegSquare />}
@@ -172,31 +194,34 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
               </div>
 
               <div className="my-3 text-sm text-gray-500">
-                <p>Category: {category ? category.name : "No category"}</p>
-                <p>
-                  Priority:{" "}
-                  {task.priority.charAt(0).toUpperCase() +
-                    task.priority.slice(1)}
+                <p className="flex items-center">
+                  {category ? category.name : "No category"}
                 </p>
-                <p
-                  className={`text-sm ${
-                    isTaskOverdue(task.dueDate) && !task.completed
-                      ? "text-red-500"
-                      : "text-gray-500"
-                  }`}
-                >
-                  Due Date:{" "}
-                  {task.dueDate
-                    ? new Date(task.dueDate).toLocaleDateString()
-                    : "No due date"}
+                <p className="flex items-center">
+                  <FaRegCalendarAlt
+                    className={`mr-1 ${
+                      isTaskOverdue(task.dueDate) && !task.completed
+                        ? "text-red-600 dark:text-red-400"
+                        : "text-gray-500 dark:text-gray-400"
+                    }`}
+                    title={
+                      isTaskOverdue(task.dueDate) && !task.completed
+                        ? "Overdue"
+                        : "Due Date"
+                    }
+                  />
+                  <span className={`ml-1 ${
+                      isTaskOverdue(task.dueDate) && !task.completed
+                        ? "text-red-600 dark:text-red-400"
+                        : "text-gray-500 dark:text-gray-400"
+                    }`}>{dueDate}</span>
                 </p>
               </div>
 
               <div className="mt-2">
-                {/* Button to trigger task editing */}
                 <button
-                  onClick={() => onEditTask(task._id)} // Call edit function
-                  className="transition-all bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 dark:bg-yellow-500 dark:hover:bg-yellow-400"
+                  onClick={() => onEditTask(task._id)}
+                  className="transition-all bg-blue-500 text-white p-2 rounded hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400"
                   aria-label={`edit-${task._id}`}
                   data-cy={`edit-task-${formatForDataCy(task.title)}`}
                   data-testid={`edit-task-${formatForDataCy(task.title)}`}

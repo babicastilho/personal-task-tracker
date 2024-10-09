@@ -32,36 +32,47 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   try {
     const db = await dbConnect();
-    const token = req.headers.get('Authorization')?.split(' ')[1]; // Get the token from the request headers
+    const token = req.headers.get('Authorization')?.split(' ')[1];
 
     if (!token) {
-      return NextResponse.json({ success: false, message: 'No token provided' }, { status: 401 });
+      return NextResponse.json(
+        { success: false, message: 'No token provided' },
+        { status: 401 }
+      );
     }
 
-    const decoded = verifyToken(token); // Verify the token using JWT
+    const decoded = verifyToken(token);
     const userId = new ObjectId(decoded.userId);
 
-    // Extract the updated task details, including resume and description
-    const { title, resume, description, completed, priority, dueDate } = await req.json(); 
+    // Extract updated task details from request body
+    const { title, resume, description, completed, priority, dueDate } = await req.json();
 
-    // Find the task to be updated and verify that it belongs to the user
-    const task = await db.collection('tasks').findOne({ _id: new ObjectId(params.id), userId });
-
-    if (!task) {
-      return NextResponse.json({ success: false, message: 'Task not found or does not belong to the user' }, { status: 404 });
+    // Validate priority field for update
+    const validPriorities = ['highest', 'high', 'medium', 'low', 'lowest'];
+    if (priority && !validPriorities.includes(priority)) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid priority level' },
+        { status: 400 }
+      );
     }
 
-    // Build the update object, including resume, description, title, priority, and completed status
+    // Prepare fields to update
     const updateFields: any = {
       title,
-      resume,        // Add resume to the update
-      description,   // Add description to the update
+      resume,
+      description,
       completed,
       priority,
+      dueDate: dueDate ? new Date(dueDate) : undefined
     };
 
-    if (dueDate) {
-      updateFields.dueDate = new Date(dueDate); // Update dueDate if provided
+    // Update the task in the database, ensuring ownership
+    const task = await db.collection('tasks').findOne({ _id: new ObjectId(params.id), userId });
+    if (!task) {
+      return NextResponse.json(
+        { success: false, message: 'Task not found or does not belong to the user' },
+        { status: 404 }
+      );
     }
 
     await db.collection('tasks').updateOne(
@@ -71,9 +82,15 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     const updatedTask = await db.collection('tasks').findOne({ _id: new ObjectId(params.id), userId });
 
-    return NextResponse.json({ success: true, task: updatedTask }, { status: 200 });
+    return NextResponse.json(
+      { success: true, task: updatedTask },
+      { status: 200 }
+    );
   } catch (error) {
-    return NextResponse.json({ success: false, message: 'Internal server error', error: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: 'Internal server error', error: (error as Error).message },
+      { status: 500 }
+    );
   }
 }
 

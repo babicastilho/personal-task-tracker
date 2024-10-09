@@ -10,7 +10,7 @@ export interface ITask {
   userId: ObjectId;
   dueDate?: Date; // Due date as a Date object
   dueTime?: string; // Optional due time as a string (e.g., "12:00")
-  priority?: 'high' | 'medium' | 'low';
+  priority?: 'highest' | 'high' | 'medium' | 'low' | 'lowest';
   createdAt: Date;
 }
 

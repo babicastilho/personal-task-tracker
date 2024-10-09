@@ -4,6 +4,7 @@ import { apiFetch } from "@/lib/apiFetch";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic"; // To dynamically import react-quill
 import "react-quill/dist/quill.snow.css"; // React Quill CSS for styling
+import PriorityDropdown from "@/components/PriorityDropdown"; // Import PriorityDropdown
 
 // Dynamically import react-quill for Markdown-like editor
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -15,7 +16,7 @@ interface Task {
   resume: string; // Add resume field for short summary
   description?: string; // Add description field for detailed markdown content
   categoryId?: string;
-  priority: "high" | "medium" | "low";
+  priority: "highest" | "high" | "medium" | "low" | "lowest";
   dueDate?: string;
   dueTime?: string;
 }
@@ -35,7 +36,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     task?.categoryId || null
   ); // State for selected category
-  const [priority, setPriority] = useState<string>(task?.priority || "medium"); // State for task priority
+  const [priority, setPriority] = useState<"highest" | "high" | "medium" | "low" | "lowest">(task?.priority || "medium"); // State for task priority
   const [dateInput, setDateInput] = useState<string>(task?.dueDate || ""); // State for due date
   const [timeInput, setTimeInput] = useState<string>(task?.dueTime || ""); // State for due time
   const [categories, setCategories] = useState<Category[]>([]); // State for category list
@@ -68,7 +69,6 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
     }
   }, [task]);
 
-  // Function to handle saving the task (create or update)
   // Function to handle saving the task (create or update)
   const handleSaveTask = async () => {
     const newErrors: { [key: string]: string } = {};
@@ -139,7 +139,11 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
 
   return (
     <div data-cy="todo-form" data-testid="todo-form" className="p-4">
-      <h1 className="text-xl font-bold mb-6" data-cy="todo-form-info" data-testid="todo-form-info">
+      <h1
+        className="text-xl font-bold mb-6"
+        data-cy="todo-form-info"
+        data-testid="todo-form-info"
+      >
         {task ? `Edit Task: ${taskName || "Untitled"}` : "Add a New Task"}
       </h1>
 
@@ -163,10 +167,11 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
           Task Name
         </label>
         {errors.taskName && (
-          <p 
-            className="text-sm text-red-500" 
-            data-cy="task-name-error" 
-            data-testid="task-name-error">
+          <p
+            className="text-sm text-red-500"
+            data-cy="task-name-error"
+            data-testid="task-name-error"
+          >
             {errors.taskName}
           </p>
         )}
@@ -192,9 +197,9 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
           Resume
         </label>
         {errors.resume && (
-          <p 
-            className="text-sm text-red-500" 
-            data-cy="resume-error" 
+          <p
+            className="text-sm text-red-500"
+            data-cy="resume-error"
             data-testid="resume-error"
           >
             {errors.resume}
@@ -229,7 +234,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
           </select>
         </div>
 
-        {/* Priority Selection */}
+        {/* Priority Selection with PriorityDropdown */}
         <div>
           <label
             htmlFor="priority"
@@ -237,21 +242,15 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
           >
             Priority
           </label>
-          <select
-            id="priority"
-            name="priority"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            data-cy="priority-select"
-            data-testid="priority-select"
-            className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent focus:outline-none"
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
+          <PriorityDropdown
+            selectedPriority={priority}
+            onSelectPriority={(value) =>
+              setPriority(value as "highest" | "high" | "medium" | "low" | "lowest")
+            }
+          />
         </div>
       </div>
+
       {/* Description using ReactQuill (Markdown support) */}
       <div className="w-full mb-6">
         <label
@@ -316,8 +315,8 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
         </div>
       </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-between">
+      {/* Action Buttons */}
+      <div className="flex justify-between">
         <button
           onClick={handleSaveTask}
           data-testid="add-task-button"
@@ -336,7 +335,8 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
           <button
             onClick={() => setShowDeleteModal(true)}
             className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-all"
-            data-cy="task-form-delete" data-testid="task-form-delete"
+            data-cy="task-form-delete"
+            data-testid="task-form-delete"
           >
             Delete Task
           </button>
@@ -347,12 +347,14 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
       {showDeleteModal && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
           <div className="bg-white dark:bg-slate-800 p-6 rounded-md shadow-lg text-center">
-            <p className="mb-4 text-lg">Are you sure you want to delete this task?</p>
+            <p className="mb-4 text-lg">
+              Are you sure you want to delete this task?
+            </p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleDeleteTask}
                 className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-all"
-                data-cy="task-delete-confirm-button" 
+                data-cy="task-delete-confirm-button"
                 data-testid="task-delete-confirm-button"
               >
                 Yes, delete
@@ -360,7 +362,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="bg-gray-500 text-white p-2 rounded-md hover:bg-gray-600 transition-all"
-                data-cy="task-delete-cancel-button" 
+                data-cy="task-delete-cancel-button"
                 data-testid="task-delete-cancel-button"
               >
                 Cancel

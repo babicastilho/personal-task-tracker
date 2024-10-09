@@ -38,6 +38,8 @@ next-env.d.ts
 # Ignore the project structure generator script and output
 generate-structure.js
 project-structure.txt
+Ideas.docx
+~$Ideas.docx
 
 # Cypress screenshots
 /cypress/screenshots/

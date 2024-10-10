@@ -4,7 +4,14 @@ import { apiFetch } from "@/lib/apiFetch";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic"; // To dynamically import react-quill
 import "react-quill/dist/quill.snow.css"; // React Quill CSS for styling
-import PriorityDropdown from "@/components/PriorityDropdown"; // Import PriorityDropdown
+import Dropdown from "./Dropdown";
+import {
+  FaAngleDoubleUp,
+  FaAngleUp,
+  FaEquals,
+  FaAngleDown,
+  FaAngleDoubleDown,
+} from "react-icons/fa";
 
 // Dynamically import react-quill for Markdown-like editor
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -26,6 +33,14 @@ interface Category {
   name: string;
 }
 
+const priorityIcons = {
+  highest: <FaAngleDoubleUp className="text-red-400" />,
+  high: <FaAngleUp className="text-red-300" />,
+  medium: <FaEquals className="text-yellow-300" />,
+  low: <FaAngleDown className="text-blue-300" />,
+  lowest: <FaAngleDoubleDown className="text-blue-200" />,
+};
+
 const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
   const router = useRouter();
   const [taskName, setTaskName] = useState<string>(task?.title || ""); // Task name state
@@ -36,7 +51,9 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     task?.categoryId || null
   ); // State for selected category
-  const [priority, setPriority] = useState<"highest" | "high" | "medium" | "low" | "lowest">(task?.priority || "medium"); // State for task priority
+  const [priority, setPriority] = useState<
+    "highest" | "high" | "medium" | "low" | "lowest"
+  >(task?.priority || "medium"); // State for task priority
   const [dateInput, setDateInput] = useState<string>(task?.dueDate || ""); // State for due date
   const [timeInput, setTimeInput] = useState<string>(task?.dueTime || ""); // State for due time
   const [categories, setCategories] = useState<Category[]>([]); // State for category list
@@ -71,6 +88,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
 
   // Function to handle saving the task (create or update)
   const handleSaveTask = async () => {
+    console.log("Selected Category ID:", selectedCategoryId);
     const newErrors: { [key: string]: string } = {};
 
     // Validate required fields
@@ -99,7 +117,8 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
       dueDate: dateInput,
       dueTime: timeInput,
     };
-
+    console.log("Task Payload:", taskPayload);
+    
     let updatedTask;
 
     if (task?._id) {
@@ -210,43 +229,32 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
       <div className="grid grid-cols-2 gap-4 mb-6">
         {/* Category Selection */}
         <div>
-          <label
-            htmlFor="category"
-            className="text-gray-500 dark:text-gray-300"
-          >
-            Category
-          </label>
-          <select
-            id="category"
-            name="category"
-            value={selectedCategoryId || ""}
-            onChange={(e) => setSelectedCategoryId(e.target.value)}
-            data-cy="category-select"
-            data-testid="category-select"
-            className="p-3 text-gray-900 dark:text-gray-300 border border-gray-300 rounded w-full bg-transparent focus:outline-none"
-          >
-            <option value="">Select Category</option>
-            {categories.map((category) => (
-              <option key={category._id} value={category._id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+          <label className="text-gray-500 dark:text-gray-300">Category</label>
+          <Dropdown
+            options={categories.map((cat) => cat.name)}
+            selectedValue={
+              selectedCategoryId
+                ? categories.find((cat) => cat._id === selectedCategoryId)
+                    ?.name || "Select Category"
+                : "Select Category"
+            }
+            onSelect={(value) => {
+              const selectedCategory = categories.find(
+                (cat) => cat.name === value
+              );
+              setSelectedCategoryId(selectedCategory?._id || null);
+            }}
+          />
         </div>
 
-        {/* Priority Selection with PriorityDropdown */}
+        {/* Priority Selection with Dropdown */}
         <div>
-          <label
-            htmlFor="priority"
-            className="text-gray-500 dark:text-gray-300"
-          >
-            Priority
-          </label>
-          <PriorityDropdown
-            selectedPriority={priority}
-            onSelectPriority={(value) =>
-              setPriority(value as "highest" | "high" | "medium" | "low" | "lowest")
-            }
+          <label className="text-gray-500 dark:text-gray-300">Priority</label>
+          <Dropdown
+            options={["highest", "high", "medium", "low", "lowest"]}
+            selectedValue={priority}
+            onSelect={(value) => setPriority(value)}
+            iconMap={priorityIcons}
           />
         </div>
       </div>

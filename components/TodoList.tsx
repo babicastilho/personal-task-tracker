@@ -156,6 +156,8 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
             (cat) => cat._id === task.categoryId
           );
 
+          console.log("Task:", task.title, "Category ID:", task.categoryId, "Category Found:", category);
+
           return (
             <div
               key={task._id}

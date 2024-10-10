@@ -45,7 +45,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const userId = new ObjectId(decoded.userId);
 
     // Extract updated task details from request body
-    const { title, resume, description, completed, priority, dueDate } = await req.json();
+    const { title, resume, description, categoryId, completed, priority, dueDate, dueTime } = await req.json();
 
     // Validate priority field for update
     const validPriorities = ['highest', 'high', 'medium', 'low', 'lowest'];
@@ -60,11 +60,17 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const updateFields: any = {
       title,
       resume,
+      categoryId,
       description,
       completed,
       priority,
-      dueDate: dueDate ? new Date(dueDate) : undefined
+      dueDate: dueDate ? new Date(dueDate) : undefined,
+      dueTime,
     };
+
+    Object.keys(updateFields).forEach(
+      key => updateFields[key] === undefined && delete updateFields[key]
+    );
 
     // Update the task in the database, ensuring ownership
     const task = await db.collection('tasks').findOne({ _id: new ObjectId(params.id), userId });

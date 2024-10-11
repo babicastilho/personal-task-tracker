@@ -1,5 +1,7 @@
+// TodoList.tsx
 "use client";
 import React, { useState, useEffect } from "react";
+import FilterModal from "./FilterModal";
 import { apiFetch } from "@/lib/apiFetch";
 import {
   FaRegCheckSquare,
@@ -11,6 +13,7 @@ import {
   FaEquals,
   FaAngleDoubleUp,
   FaAngleDoubleDown,
+  FaFilter,
 } from "react-icons/fa";
 import { Skeleton } from "@/components/Loading";
 import { formatForDataCy } from "@/lib/utils";
@@ -40,6 +43,8 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchTasksAndCategories = async () => {
@@ -120,6 +125,27 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
     }
   };
 
+  const handlePriorityChange = (priority: string) => {
+    setSelectedPriorities(
+      (prevPriorities) =>
+        prevPriorities.includes(priority)
+          ? prevPriorities.filter((p) => p !== priority) // Remove if exists
+          : [...prevPriorities, priority] // Add if doesn't exist
+    );
+  };
+
+  const closeFilterModal = () => setShowFilterModal(false);
+
+  const filteredTasks = tasks.filter((task) =>
+    selectedPriorities.length > 0
+      ? selectedPriorities.includes(task.priority)
+      : true
+  );
+
+  const clearSelectedPriorities = () => {
+    setSelectedPriorities([]);
+  };
+
   if (loading) {
     return (
       <Skeleton
@@ -135,20 +161,29 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
     <div data-cy="todo-list" data-testid="todo-list" className="px-4">
       <div className="mb-4 flex justify-between">
         <h1 className="text-xl font-bold">Your To-Do List</h1>
-        <button
-          onClick={onAddTask}
-          className="bg-blue-500 text-white p-2 rounded"
-          data-testid="button-add-task"
-          data-cy="button-add-task"
-        >
-          Add New Task
-        </button>
+        <div className="flex items-center">
+          <button
+            onClick={() => setShowFilterModal(true)}
+            className="flex items-center bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-2 rounded-lg shadow hover:bg-gray-300 dark:hover:bg-gray-600 transition-all"
+          >
+            <FaFilter className="mr-1" />
+            Filter
+          </button>
+          <button
+            onClick={onAddTask}
+            className="ml-2 bg-blue-500 text-white p-2 rounded-lg shadow hover:bg-blue-600 transition-all"
+            data-testid="button-add-task"
+            data-cy="button-add-task"
+          >
+            Add New Task
+          </button>
+        </div>
       </div>
 
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
       <div className="mt-10 grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
-        {tasks.map((task) => {
+        {filteredTasks.map((task) => {
           const dueDate = task.dueDate
             ? new Date(task.dueDate).toLocaleDateString()
             : "No due date";
@@ -156,18 +191,16 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
             (cat) => cat._id === task.categoryId
           );
 
-          console.log("Task:", task.title, "Category ID:", task.categoryId, "Category Found:", category);
-
           return (
             <div
               key={task._id}
               className={`relative flex flex-col justify-between p-4 border rounded-md shadow-md transition-all ${
                 isTaskOverdue(task.dueDate) && !task.completed
                   ? "border-red-600 dark:border-red-400"
-                  : "border-gray-200"
+                  : "border-gray-200 dark:border-gray-900"
               } ${
                 task.completed
-                  ? "bg-gray-100 dark:bg-gray-700 text-gray-500"
+                  ? "bg-gray-100 dark:bg-gray-700 border-0 text-gray-500"
                   : "bg-white dark:bg-gray-800"
               }`}
               data-cy={`task-${formatForDataCy(task.title)}`}
@@ -212,11 +245,15 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
                         : "Due Date"
                     }
                   />
-                  <span className={`ml-1 ${
+                  <span
+                    className={`ml-1 ${
                       isTaskOverdue(task.dueDate) && !task.completed
                         ? "text-red-600 dark:text-red-400"
                         : "text-gray-500 dark:text-gray-400"
-                    }`}>{dueDate}</span>
+                    }`}
+                  >
+                    {dueDate}
+                  </span>
                 </p>
               </div>
 
@@ -235,6 +272,15 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
           );
         })}
       </div>
+
+      {showFilterModal && (
+        <FilterModal
+          selectedPriorities={selectedPriorities}
+          onClose={closeFilterModal}
+          onPriorityChange={handlePriorityChange} 
+          onClearFilters={clearSelectedPriorities}
+        />
+      )}
     </div>
   );
 };

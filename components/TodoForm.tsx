@@ -4,7 +4,7 @@ import { apiFetch } from "@/lib/apiFetch";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic"; // To dynamically import react-quill
 import "react-quill/dist/quill.snow.css"; // React Quill CSS for styling
-import Dropdown from "./Dropdown";
+import Dropdown from "@/components/Dropdown";
 import {
   FaAngleDoubleUp,
   FaAngleUp,
@@ -118,7 +118,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
       dueTime: timeInput,
     };
     console.log("Task Payload:", taskPayload);
-    
+
     let updatedTask;
 
     if (task?._id) {
@@ -231,6 +231,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
         <div>
           <label className="text-gray-500 dark:text-gray-300">Category</label>
           <Dropdown
+            testIdPrefix="category-dropdown"
             options={categories.map((cat) => cat.name)}
             selectedValue={
               selectedCategoryId
@@ -251,6 +252,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
         <div>
           <label className="text-gray-500 dark:text-gray-300">Priority</label>
           <Dropdown
+            testIdPrefix="priority-dropdown"
             options={["highest", "high", "medium", "low", "lowest"]}
             selectedValue={priority}
             onSelect={(value) => setPriority(value)}

@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa";
 import { Skeleton } from "@/components/Loading";
 import { formatForDataCy } from "@/lib/utils";
+import PriorityFilter from "./PriorityFilter";
 
 export interface Task {
   _id: string;
@@ -134,16 +135,15 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
     );
   };
 
-  const closeFilterModal = () => setShowFilterModal(false);
-
   const filteredTasks = tasks.filter((task) =>
     selectedPriorities.length > 0
       ? selectedPriorities.includes(task.priority)
       : true
   );
 
-  const clearSelectedPriorities = () => {
-    setSelectedPriorities([]);
+  // Define clearFilters function to clear selected priorities
+  const clearFilters = () => {
+    setSelectedPriorities([]); // Reset the selected priorities
   };
 
   if (loading) {
@@ -165,6 +165,8 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
           <button
             onClick={() => setShowFilterModal(true)}
             className="flex items-center bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-2 rounded-lg shadow hover:bg-gray-300 dark:hover:bg-gray-600 transition-all"
+            data-testid="filter-modal-button"
+            data-cy="filter-modal-button"
           >
             <FaFilter className="mr-1" />
             Filter
@@ -182,7 +184,19 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
 
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
-      <div className="mt-10 grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
+      {filteredTasks.length === 0 && (
+        <p className="text-gray-500 mt-4">
+          {tasks.length === 0
+            ? "No tasks added yet. How about adding your first task?"
+            : "No tasks match the applied filters. Try adjusting the filters to view your tasks."}
+        </p>
+      )}
+
+      <div
+        className="mt-10 grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4"
+        data-testid="task-list"
+        data-cy="task-list"
+      >
         {filteredTasks.map((task) => {
           const dueDate = task.dueDate
             ? new Date(task.dueDate).toLocaleDateString()
@@ -275,11 +289,16 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
 
       {showFilterModal && (
         <FilterModal
-          selectedPriorities={selectedPriorities}
-          onClose={closeFilterModal}
-          onPriorityChange={handlePriorityChange} 
-          onClearFilters={clearSelectedPriorities}
-        />
+          key={showFilterModal ? "open" : "closed"}
+          onClose={() => setShowFilterModal(false)}
+          onClearFilters={clearFilters}
+        >
+          <PriorityFilter
+            selectedPriorities={selectedPriorities}
+            onPriorityChange={handlePriorityChange}
+          />
+          {/* Adicione outros filtros aqui */}
+        </FilterModal>
       )}
     </div>
   );

@@ -1,16 +1,6 @@
-//
-/**
- * context/AuthProvider.tsx
- * Provides authentication context for the application.
- * 
- * Handles user authentication state, login, and logout functionality using localStorage to store the token.
- * The `useAuthContext` hook is used to access this context.
- * 
- * @returns A provider with authentication state, loading status, login, and logout functions.
- */
-
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { apiFetch } from '@/lib/apiFetch'; // Assuming the apiFetch function exists to check the token
+import { apiFetch } from '@/lib/apiFetch';
+import { useUserProfile } from '@/context/UserProfileProvider'; // Import profile context
 
 interface AuthContextProps {
   isAuthenticated: boolean;
@@ -24,43 +14,45 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { refreshUserProfile } = useUserProfile(); // Access refreshUserProfile function from UserProfileProvider
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const checkToken = async () => {
-        const token = localStorage.getItem('token');
-        if (token) {
-          try {
-            const response = await apiFetch('/api/auth/check');
-            if (response && response.success) {
-              setIsAuthenticated(true);
-            } else {
-              setIsAuthenticated(false);
-              localStorage.removeItem('token');
-            }
-          } catch (error) {
+    // Check token on initial load to determine authentication state
+    const checkToken = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const response = await apiFetch('/api/auth/check');
+          if (response && response.success) {
+            setIsAuthenticated(true);
+          } else {
             setIsAuthenticated(false);
+            localStorage.removeItem('token');
           }
-        } else {
+        } catch (error) {
           setIsAuthenticated(false);
         }
-        setLoading(false);
-      };
-      checkToken();
-    }
+      } else {
+        setIsAuthenticated(false);
+      }
+      setLoading(false);
+    };
+    checkToken();
   }, []);
 
   const login = (token: string) => {
+    // Store token and set authentication state to true
     localStorage.setItem('token', token);
     setIsAuthenticated(true);
+    refreshUserProfile(); // Immediately refresh user profile after login
   };
 
   const logout = () => {
-    console.log('AuthProvider: Logging out'); // Log inside the logout function
+    // Clear token and reset authentication state
+    console.log('AuthProvider: Logging out');
     localStorage.removeItem('token');
     setIsAuthenticated(false);
   };
-  
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, loading, login, logout }}>

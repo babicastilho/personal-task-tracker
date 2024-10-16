@@ -4,10 +4,12 @@ import { fetchProfile, updateProfile } from "@/lib/user"; // API functions for f
 import Image from "next/image"; // Next.js Image component for optimized images
 import { Spinner } from "@/components/Loading"; // Loading spinner component
 import { useProtectedPage } from "@/hooks/useProtectedPage"; // Custom hook to handle protected pages
+import { useUserProfile } from "@/context/UserProfileProvider";
 
 const ProfilePage = () => {
   const { isAuthenticated, loading } = useProtectedPage(); // Access authentication state (isAuthenticated, loading)
-
+  const { refreshUserProfile } = useUserProfile();
+  
   // State to manage profile data
   const [profile, setProfile] = useState({
     _id: "",
@@ -80,6 +82,7 @@ const ProfilePage = () => {
       const response = await updateProfile(profile); // Update profile via API
       if (response.success) {
         setStatusMessage("Profile updated successfully!"); // Show success message
+        await refreshUserProfile(); // Atualiza o contexto após o sucesso
       } else {
         setErrorMessage("Failed to update profile."); // Show error message on failure
       }
@@ -90,7 +93,9 @@ const ProfilePage = () => {
 
   // Handle form input changes
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     // Update the profile state based on form inputs
@@ -104,7 +109,10 @@ const ProfilePage = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string); // Set the profile picture preview
-        setProfile((prevProfile) => ({ ...prevProfile, profilePicture: reader.result as string })); // Update profile picture
+        setProfile((prevProfile) => ({
+          ...prevProfile,
+          profilePicture: reader.result as string,
+        })); // Update profile picture
       };
       reader.readAsDataURL(file); // Read the file as a data URL
     }
@@ -114,7 +122,11 @@ const ProfilePage = () => {
   return (
     <div className="p-4 dark:text-gray-300">
       <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
-      <form onSubmit={handleSubmit} className="space-y-6" data-cy="edit-profile">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6"
+        data-cy="edit-profile"
+      >
         {/* Profile Picture */}
         <div className="space-y-4">
           <label className="block mb-1 font-bold">Profile Picture</label>
@@ -129,10 +141,12 @@ const ProfilePage = () => {
               />
             ) : (
               <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                <span className="font-bold text-gray-500">?</span> {/* Default profile picture */}
+                <span className="font-bold text-gray-500">?</span>{" "}
+                {/* Default profile picture */}
               </div>
             )}
-            <input type="file" onChange={handleFileChange} /> {/* File input for profile picture */}
+            <input type="file" onChange={handleFileChange} />{" "}
+            {/* File input for profile picture */}
           </div>
         </div>
         <hr />
@@ -166,11 +180,12 @@ const ProfilePage = () => {
               className="p-3 border border-gray-300 rounded w-full peer bg-transparent focus:outline-none"
             >
               <option value="username">Username</option>
-              <option value="name">First Name</option>
-              <option value="surname">Last Name</option>
+              <option value="firstName">First Name</option>
+              <option value="lastName">Last Name</option>
               <option value="nickname">Nickname</option>
               <option value="fullName">Full Name</option>
             </select>
+
             <label
               htmlFor="preferredNameOption"
               className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10 bg-gray-50 dark:bg-slate-800 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:bg-transparent"

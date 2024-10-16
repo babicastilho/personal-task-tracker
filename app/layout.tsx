@@ -8,6 +8,7 @@ import Sidebar from "@/components/Sidebar";
 import { Spinner, Skeleton } from "@/components/Loading"; // Import spinner and skeleton
 import { useAuthContext, AuthProvider } from "@/context/AuthProvider"; // Authentication hook and provider
 import { ThemeProvider } from "@/context/ThemeContext"; // Theme Provider
+import { UserProfileProvider } from "@/context/UserProfileProvider";
 import { useTheme } from "@/hooks/useTheme"; // Theme hook
 
 interface RootLayoutProps {
@@ -16,11 +17,13 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <AuthProvider>
-      <ThemeProvider>
-        <LayoutContent>{children}</LayoutContent>
-      </ThemeProvider>
-    </AuthProvider>
+    <UserProfileProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <LayoutContent>{children}</LayoutContent>
+        </ThemeProvider>
+      </AuthProvider>
+    </UserProfileProvider>
   );
 }
 
@@ -28,7 +31,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
 function LayoutContent({ children }: { children: ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false); // State to control menu visibility
   const { theme, toggleTheme } = useTheme(); // Use theme from ThemeProvider
-  const { isAuthenticated, loading, logout } = useAuthContext(); // Use authentication context
+  const { isAuthenticated, loading, } = useAuthContext(); // Use authentication context
 
   // Toggle the mobile menu
   const handleMenuToggle = () => {
@@ -49,7 +52,6 @@ function LayoutContent({ children }: { children: ReactNode }) {
               isAuthenticated={isAuthenticated} // Pass authentication status to Header
               handleMenuToggle={handleMenuToggle} // Pass the menu toggle function to Header
               isMenuOpen={isMenuOpen} // Pass the menu open state to Header
-              logout={logout} // Pass logout function to Header
             />
             <div className="flex flex-1">
               {isAuthenticated ? (
@@ -59,7 +61,6 @@ function LayoutContent({ children }: { children: ReactNode }) {
                     handleClose={handleMenuToggle} // Pass the menu close function to Sidebar
                     toggleTheme={toggleTheme} // Pass toggleTheme to Sidebar
                     theme={theme} // Pass the current theme to Sidebar
-                    logout={logout} // Pass logout function to Sidebar
                   />
 
                   {/* Only show the overlay for mobile view (when lg:hidden applies) */}

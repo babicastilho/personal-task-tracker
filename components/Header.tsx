@@ -1,10 +1,13 @@
 // Header.tsx
 
-import React from "react";
-import { FaGithub, FaMoon, FaSun, FaPowerOff } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { FaSun, FaPowerOff } from "react-icons/fa";
 import { HiMenu, HiOutlineX } from "react-icons/hi";
+import { BsFillMoonStarsFill } from "react-icons/bs";
 import Title from "@/components/Title";
-import { logoutAndRedirect } from "@/lib/auth"; // Use the new function
+import { logoutAndRedirect } from "@/lib/auth";
+import { fetchProfile } from "@/lib/user";
+import UserProfileMenu from "@/components/UserProfileMenu";
 
 interface HeaderProps {
   toggleTheme: () => void;
@@ -27,15 +30,34 @@ const Header: React.FC<HeaderProps> = ({
         {theme === "light" ? (
           <FaSun className="w-6 h-6 text-yellow-500" />
         ) : (
-          <FaMoon className="w-6 h-6 text-gray-300" />
+          <BsFillMoonStarsFill className="w-6 h-6 text-gray-300" />
         )}
       </button>
-
-      <a href="https://github.com/babicastilho" target="_blank" className="p-2">
-        <FaGithub className="w-6 h-6" />
-      </a>
     </>
   );
+
+  const [user, setUser] = useState<{
+    firstName: string;
+    lastName: string;
+    username: string;
+    preferredNameOption: string;
+    profilePicture?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (isAuthenticated) { // Execute fetch only if user is authenticated
+      const fetchUser = async () => {
+        try {
+          const data = await fetchProfile(); // Fetch user profile data
+          setUser(data.profile); // Set user profile data in state
+        } catch (error) {
+          console.error("Failed to fetch user:", error); // Log any errors that occur during fetch
+        }
+      };
+  
+      fetchUser(); // Call the fetch function to retrieve user data
+    }
+  }, [isAuthenticated]); // Add isAuthenticated as a dependency to rerun effect on authentication change
 
   return (
     <header className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 p-4 fixed top-0 w-full flex justify-between items-center z-50">
@@ -45,16 +67,12 @@ const Header: React.FC<HeaderProps> = ({
         {!isAuthenticated && renderGitHubAndThemeToggle()}
 
         {isAuthenticated && (
-          <div className="hidden lg:flex">
+          <div className="hidden lg:flex lg:items-center lg:gap-4">
             {renderGitHubAndThemeToggle()}
 
-            {/* Logout button */}
-            <button
-              onClick={logoutAndRedirect} // Use the new function here
-              className="p-2"
-            >
-              <FaPowerOff className="w-6 h-6" />
-            </button>
+            {user && (
+              <UserProfileMenu onLogout={logoutAndRedirect} />
+            )}
           </div>
         )}
 

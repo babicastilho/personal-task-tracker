@@ -3,8 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { FaCalendarAlt, FaTasks, FaUser, FaGithub, FaPowerOff, FaBookmark, FaSun, FaMoon } from 'react-icons/fa';
+import { BsFillMoonStarsFill } from "react-icons/bs";
 import Title from '@/components/Title';
-import { logoutAndRedirect } from '@/lib/auth'; // Use the new function
+import { logoutAndRedirect } from '@/lib/auth'; 
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   return (
     <aside
-      className={`fixed lg:relative top-0 left-0 w-64 min-h-screen bg-gray-200 dark:bg-gray-900 p-4 z-30 transform transition-transform duration-300 ease-in-out ${
+      className={`fixed lg:relative top-0 left-0 w-64 min-h-screen bg-gray-200 dark:bg-gray-900 p-4 z-30 lg:z-0 transform transition-transform duration-300 ease-in-out ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } lg:translate-x-0`}
     >
@@ -71,20 +72,10 @@ const Sidebar: React.FC<SidebarProps> = ({
             {theme === 'light' ? (
               <FaSun className="w-5 h-5 mr-2" />
             ) : (
-              <FaMoon className="w-5 h-5 mr-2" />
+              <BsFillMoonStarsFill className="w-5 h-5 mr-2" />
             )}
             {theme.charAt(0).toUpperCase() + theme.slice(1)} Mode
           </button>
-
-          <a
-            href="https://github.com/babicastilho"
-            target="_blank"
-            className="w-full flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
-            onClick={handleClose}
-          >
-            <FaGithub className="w-5 h-5 mr-2" />
-            GitHub
-          </a>
 
           {/* Logout button */}
           <button

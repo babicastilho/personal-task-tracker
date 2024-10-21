@@ -120,7 +120,7 @@ const ProfilePage = () => {
 
   // Render the profile form and related fields
   return (
-    <div className="p-4 dark:text-gray-300">
+    <div className="p-8 dark:text-gray-300">
       <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
       <form
         onSubmit={handleSubmit}
@@ -153,7 +153,7 @@ const ProfilePage = () => {
         {/* Username and Preferred Name fields */}
         <div className="flex flex-col space-y-2 md:flex-row md:space-x-4 md:space-y-0">
           {/* Username (read-only) */}
-          <div className="relative flex flex-col w-full md:w-1/2 space-y-2">
+          <div className="relative flex flex-col w-full md:w-1/2 mb-4 md:mb-0 space-y-2">
             <input
               type="text"
               id="username"

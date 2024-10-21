@@ -37,7 +37,7 @@ export default function TasksPage() {
 
   // Render the main content if the user is authenticated
   return (
-    <div className="p-4 dark:text-gray-300">
+    <div className="mt-16 p-8 dark:text-gray-300">
       {/* Passing router functions to the TodoList component */}
       <TodoList
         onAddTask={() => router.push("/tasks/new")} // Navigate to add task page

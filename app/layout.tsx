@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import "./globals.scss";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -31,12 +31,32 @@ export default function RootLayout({ children }: RootLayoutProps) {
 function LayoutContent({ children }: { children: ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false); // State to control menu visibility
   const { theme, toggleTheme } = useTheme(); // Use theme from ThemeProvider
-  const { isAuthenticated, loading, } = useAuthContext(); // Use authentication context
+  const { isAuthenticated, loading } = useAuthContext(); // Use authentication context
 
-  // Toggle the mobile menu
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const headerRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+  const [mainHeight, setMainHeight] = useState("100vh");
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const [footerHeight, setFooterHeight] = useState(0);
+
+  // Update the mainHeight dynamically based on header and footer
+  useEffect(() => {
+    const updateMainHeight = () => {
+      const newHeaderHeight = headerRef.current?.offsetHeight || 0;
+      const newFooterHeight = footerRef.current?.offsetHeight || 0;
+      setHeaderHeight(newHeaderHeight);
+      setFooterHeight(newFooterHeight);
+      setMainHeight(`calc(100vh - ${newHeaderHeight}px - ${newFooterHeight}px)`);
+    };
+
+    updateMainHeight();
+    window.addEventListener("resize", updateMainHeight);
+    return () => window.removeEventListener("resize", updateMainHeight);
+  }, []);
 
   return (
     <html lang="en" className={theme}>
@@ -47,14 +67,15 @@ function LayoutContent({ children }: { children: ReactNode }) {
         ) : (
           <>
             <Header
+              ref={headerRef}
               toggleTheme={toggleTheme} // Pass toggleTheme to Header
               theme={theme} // Pass the current theme to Header
               isAuthenticated={isAuthenticated} // Pass authentication status to Header
               handleMenuToggle={handleMenuToggle} // Pass the menu toggle function to Header
               isMenuOpen={isMenuOpen} // Pass the menu open state to Header
             />
-            <div className="flex flex-1">
-              {isAuthenticated ? (
+            <div className={`flex flex-1 ${isAuthenticated ? 'lg:ml-64' : ''}`}>
+              {isAuthenticated && (
                 <>
                   <Sidebar
                     isOpen={isMenuOpen} // Pass the menu open state to Sidebar
@@ -71,18 +92,19 @@ function LayoutContent({ children }: { children: ReactNode }) {
                     ></div>
                   )}
                 </>
-              ) : (
-                <Skeleton
-                  repeatCount={5} // Number of times to repeat the entire set
-                  count={4} // Number of skeletons inside the set
-                  type="text" // Skeleton type
-                  widths={["w-full", "w-3/4", "w-3/4", "w-1/2"]} // Widths for each skeleton
-                  skeletonDuration={1000} // Delay before showing real content
-                />
               )}
-              <main className="flex-1 p-4 my-20">{children}</main>
+              <main
+                 className={`flex-1 overflow-y-auto ${!isAuthenticated ? 'flex justify-center' : ''}`}
+                style={{
+                  minHeight: mainHeight,
+                  // marginTop: headerHeight, // Offset for the header
+                  // marginBottom: footerHeight, // Offset for the footer
+                }}
+              >
+                {children}
+              </main>
             </div>
-            <Footer />
+            <Footer ref={footerRef} />
           </>
         )}
       </body>

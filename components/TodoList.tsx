@@ -158,7 +158,7 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
   }
 
   return (
-    <div data-cy="todo-list" data-testid="todo-list" className="px-4">
+    <div data-cy="todo-list" data-testid="todo-list" className="">
       <div className="mb-4 flex justify-between">
         <h1 className="text-xl font-bold">Your To-Do List</h1>
         <div className="flex items-center">

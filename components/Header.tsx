@@ -1,6 +1,6 @@
 // Header.tsx
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, forwardRef } from "react";
 import { FaSun, FaPowerOff } from "react-icons/fa";
 import { HiMenu, HiOutlineX } from "react-icons/hi";
 import { BsFillMoonStarsFill } from "react-icons/bs";
@@ -17,23 +17,21 @@ interface HeaderProps {
   isMenuOpen: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({
+const Header = forwardRef<HTMLDivElement, HeaderProps>(({
   toggleTheme,
   theme,
   isAuthenticated,
   handleMenuToggle,
   isMenuOpen,
-}) => {
+}, ref) => {
   const renderGitHubAndThemeToggle = () => (
-    <>
-      <button onClick={toggleTheme} className="p-2" data-cy="toggle-button">
-        {theme === "light" ? (
-          <FaSun className="w-6 h-6 text-yellow-500" />
-        ) : (
-          <BsFillMoonStarsFill className="w-6 h-6 text-gray-300" />
-        )}
-      </button>
-    </>
+    <button onClick={toggleTheme} className="p-2" data-cy="toggle-button">
+      {theme === "light" ? (
+        <FaSun className="w-6 h-6 text-yellow-500" />
+      ) : (
+        <BsFillMoonStarsFill className="w-6 h-6 text-gray-300" />
+      )}
+    </button>
   );
 
   const [user, setUser] = useState<{
@@ -45,37 +43,35 @@ const Header: React.FC<HeaderProps> = ({
   } | null>(null);
 
   useEffect(() => {
-    if (isAuthenticated) { // Execute fetch only if user is authenticated
+    if (isAuthenticated) {
       const fetchUser = async () => {
         try {
-          const data = await fetchProfile(); // Fetch user profile data
-          setUser(data.profile); // Set user profile data in state
+          const data = await fetchProfile();
+          setUser(data.profile);
         } catch (error) {
-          console.error("Failed to fetch user:", error); // Log any errors that occur during fetch
+          console.error("Failed to fetch user:", error);
         }
       };
-  
-      fetchUser(); // Call the fetch function to retrieve user data
+      fetchUser();
     }
-  }, [isAuthenticated]); // Add isAuthenticated as a dependency to rerun effect on authentication change
+  }, [isAuthenticated]);
 
   return (
-    <header className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 p-4 fixed top-0 w-full flex justify-between items-center z-50">
+    <header
+      ref={ref} // Attach the ref here
+      className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 p-4 fixed top-0 w-full flex justify-between items-center z-50"
+    >
       <Title text="TO DO App" />
-
       <div className="flex items-center space-x-4 justify-end flex-1">
         {!isAuthenticated && renderGitHubAndThemeToggle()}
-
         {isAuthenticated && (
           <div className="hidden lg:flex lg:items-center lg:gap-4">
             {renderGitHubAndThemeToggle()}
-
             {user && (
               <UserProfileMenu onLogout={logoutAndRedirect} />
             )}
           </div>
         )}
-
         <div className="lg:hidden relative z-50">
           <button
             onClick={handleMenuToggle}
@@ -92,6 +88,7 @@ const Header: React.FC<HeaderProps> = ({
       </div>
     </header>
   );
-};
+});
 
+Header.displayName = "Header";
 export default Header;

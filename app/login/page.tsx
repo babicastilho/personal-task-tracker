@@ -21,7 +21,7 @@ export default function LoginPage() {
   }, [isAuthenticated, loading, router, redirectUrl]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen -my-24 lg:-my-20 p-4">
+    <div className={`flex flex-col items-center justify-center ${isAuthenticated ? '' : 'lg:ml-0'} min-h-screen`}>
       {/* Display a loading spinner while checking authentication */}
       {loading ? (
         <Spinner />

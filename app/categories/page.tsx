@@ -107,7 +107,7 @@ const CategoriesPage: React.FC = () => {
   }
 
   return (
-    <div data-cy="categories-list" className="p-4 dark:text-gray-300">
+    <div data-testid="categories-list" data-cy="categories-list" className="mt-16 p-8 dark:text-gray-300">
       <h2 className="text-lg font-bold mb-4" data-cy="category-tests">
         Manage Categories
       </h2>

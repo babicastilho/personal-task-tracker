@@ -157,7 +157,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
   };
 
   return (
-    <div data-cy="todo-form" data-testid="todo-form" className="p-4">
+    <div data-cy="todo-form" data-testid="todo-form" className="mt-16 p-8">
       <h1
         className="text-xl font-bold mb-6"
         data-cy="todo-form-info"

@@ -1,11 +1,15 @@
-// components/Footer.tsx
-import React from "react";
+// Footer.tsx
+
+import React, { forwardRef } from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
-const Footer = () => {
+const Footer = forwardRef<HTMLDivElement>((props, ref) => {
   return (
-    <footer className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 text-center p-4 fixed bottom-0 w-full">
-      <div className="z-40 flex justify-between">
+    <footer
+      ref={ref} // Attach the ref here
+      className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 text-center p-4 fixed bottom-0 w-full z-50"
+    >
+      <div className="flex justify-between">
         <div>Powered by Bárbara Castilho with Next.js</div>
         <div className="flex gap-4">
           <a href="https://github.com/babicastilho" target="_blank">
@@ -18,6 +22,7 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
 
+Footer.displayName = "Footer";
 export default Footer;

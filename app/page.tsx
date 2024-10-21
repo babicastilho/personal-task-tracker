@@ -19,7 +19,7 @@ export default function Home() {
   }, [isAuthenticated, loading, router]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center -my-24">
+    <div className={`flex flex-col items-center justify-center ${isAuthenticated ? '' : 'lg:ml-0'} min-h-screen`}>
       {/* Show loading screen if authentication is being verified */}
       {loading ? (
         <Spinner />

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { FaCalendarAlt, FaTasks, FaUser, FaPowerOff, FaBookmark, FaSun, FaMoon, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaCalendarAlt, FaTasks, FaUser, FaPowerOff, FaBookmark, FaChevronDown, FaChevronUp, FaSun } from 'react-icons/fa';
 import { BsFillMoonStarsFill } from "react-icons/bs";
 import Title from '@/components/Title';
 import { logoutAndRedirect } from '@/lib/auth';
+import { useRouterContext } from "@/context/RouterContext"; // Importa o contexto do router
 
 interface SidebarProps {
   isOpen: boolean;
@@ -18,14 +19,25 @@ const Sidebar: React.FC<SidebarProps> = ({
   toggleTheme,
   theme,
 }) => {
-  const [activePath, setActivePath] = useState<string>('');
+  const { currentPath } = useRouterContext(); // Usa o currentPath do contexto
   const [isTasksViewOpen, setIsTasksViewOpen] = useState(false);
 
   useEffect(() => {
-    setActivePath(window.location.pathname); // Set the active path to the current URL path
-  }, []);
+    console.log("Current Path from RouterContext:", currentPath); // Verifica o caminho atual
+    // Abre a seção de "View Tasks" se o caminho atual for uma das páginas relacionadas às tasks
+    if (
+      currentPath === '/tasks/board' ||
+      currentPath === '/tasks/list' ||
+      currentPath === '/tasks/calendar' ||
+      currentPath === '/tasks'
+    ) {
+      setIsTasksViewOpen(true);
+    } else {
+      setIsTasksViewOpen(false);
+    }
+  }, [currentPath]); // O efeito será executado sempre que currentPath mudar
 
-  const isActive = (path: string) => activePath === path;
+  const isActive = (path: string) => currentPath === path;
 
   const toggleTasksView = () => {
     setIsTasksViewOpen(!isTasksViewOpen);
@@ -64,9 +76,13 @@ const Sidebar: React.FC<SidebarProps> = ({
               {isTasksViewOpen ? <FaChevronUp className="ml-auto" /> : <FaChevronDown className="ml-auto" />}
             </div>
 
-            {/* Slider for View Tasks Options */}
-            {isTasksViewOpen && (
-              <ul className="mt-2 pl-6 space-y-2 transition-all duration-300 ease-in-out">
+            {/* Slider for View Tasks Options with smooth animation */}
+            <div
+              className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                isTasksViewOpen ? 'text-sm max-h-60 opacity-100' : 'max-h-0 opacity-0'
+              }`}
+            >
+              <ul className="mt-2 pl-6 space-y-2">
                 <li>
                   <Link href="/tasks/board" className={`block p-2 rounded ${isActive('/tasks/board') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`} onClick={handleClose}>
                     Board
@@ -82,8 +98,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                     Calendar
                   </Link>
                 </li>
+                <li>
+                  <Link href="/tasks" className={`block p-2 rounded ${isActive('/tasks') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`} onClick={handleClose}>
+                    Cards
+                  </Link>
+                </li>
               </ul>
-            )}
+            </div>
           </li>
 
           <li>

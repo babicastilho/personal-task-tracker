@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect } from "react";
 import Calendar from "@/components/Calendar";
 import { Spinner } from "@/components/Loading";

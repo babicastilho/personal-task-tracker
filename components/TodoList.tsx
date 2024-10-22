@@ -1,23 +1,14 @@
-// TodoList.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import FilterModal from "./FilterModal";
 import { apiFetch } from "@/lib/apiFetch";
 import {
-  FaRegCheckSquare,
-  FaRegSquare,
-  FaPen,
-  FaRegCalendarAlt,
-  FaAngleUp,
-  FaAngleDown,
-  FaEquals,
-  FaAngleDoubleUp,
-  FaAngleDoubleDown,
   FaFilter,
 } from "react-icons/fa";
 import { Skeleton } from "@/components/Loading";
 import { formatForDataCy } from "@/lib/utils";
 import PriorityFilter from "./PriorityFilter";
+import TaskCard from "./TaskCard"; // Import the TaskCard component
 
 export interface Task {
   _id: string;
@@ -102,30 +93,6 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
     }
   };
 
-  const isTaskOverdue = (dueDate?: string) => {
-    if (!dueDate) return false;
-    const currentDate = new Date();
-    const taskDueDate = new Date(dueDate);
-    return currentDate > taskDueDate;
-  };
-
-  const getPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case "highest":
-        return <FaAngleDoubleUp className="text-red-600" />;
-      case "high":
-        return <FaAngleUp className="text-red-400" />;
-      case "medium":
-        return <FaEquals className="text-yellow-500" />;
-      case "low":
-        return <FaAngleDown className="text-blue-600" />;
-      case "lowest":
-        return <FaAngleDoubleDown className="text-blue-400" />;
-      default:
-        return null;
-    }
-  };
-
   const handlePriorityChange = (priority: string) => {
     setSelectedPriorities(
       (prevPriorities) =>
@@ -141,7 +108,6 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
       : true
   );
 
-  // Define clearFilters function to clear selected priorities
   const clearFilters = () => {
     setSelectedPriorities([]); // Reset the selected priorities
   };
@@ -198,91 +164,16 @@ const TodoList: React.FC<TodoListProps> = ({ onAddTask, onEditTask }) => {
         data-cy="task-list"
       >
         {filteredTasks.map((task) => {
-          const dueDate = task.dueDate
-            ? new Date(task.dueDate).toLocaleDateString()
-            : "No due date";
-          const category = categories.find(
-            (cat) => cat._id === task.categoryId
-          );
+          const category = categories.find((cat) => cat._id === task.categoryId)?.name || "No category";
 
           return (
-            <div
+            <TaskCard
               key={task._id}
-              className={`relative flex flex-col justify-between p-4 border rounded-md shadow-md transition-all ${
-                isTaskOverdue(task.dueDate) && !task.completed
-                  ? "border-red-600 dark:border-red-400"
-                  : "border-gray-200 dark:border-gray-900"
-              } ${
-                task.completed
-                  ? "bg-gray-100 dark:bg-gray-700 border-0 text-gray-500"
-                  : "bg-white dark:bg-gray-800"
-              }`}
-              data-cy={`task-${formatForDataCy(task.title)}`}
-              data-testid={`task-${formatForDataCy(task.title)}`}
-            >
-              <div className="flex justify-between items-start">
-                <span
-                  className={`font-semibold flex items-center ${
-                    task.completed ? "line-through" : ""
-                  }`}
-                  data-testid={`task-title-${task._id}`}
-                  data-cy={`task-title-${task._id}`}
-                >
-                  {getPriorityIcon(task.priority)}
-                  <span className="ml-1">{task.title}</span>
-                </span>
-                <button
-                  onClick={() => toggleTaskCompletion(task._id)}
-                  className="text-blue-500 mt-2"
-                  aria-label={`toggle-${task._id}`}
-                  data-cy={`todo-edit-${formatForDataCy}`}
-                  data-testid={`todo-edit-${formatForDataCy}`}
-                >
-                  {task.completed ? <FaRegCheckSquare /> : <FaRegSquare />}
-                </button>
-              </div>
-
-              <div className="my-3 text-sm text-gray-500">
-                <p className="flex items-center">
-                  {category ? category.name : "No category"}
-                </p>
-                <p className="flex items-center">
-                  <FaRegCalendarAlt
-                    className={`mr-1 ${
-                      isTaskOverdue(task.dueDate) && !task.completed
-                        ? "text-red-600 dark:text-red-400"
-                        : "text-gray-500 dark:text-gray-400"
-                    }`}
-                    title={
-                      isTaskOverdue(task.dueDate) && !task.completed
-                        ? "Overdue"
-                        : "Due Date"
-                    }
-                  />
-                  <span
-                    className={`ml-1 ${
-                      isTaskOverdue(task.dueDate) && !task.completed
-                        ? "text-red-600 dark:text-red-400"
-                        : "text-gray-500 dark:text-gray-400"
-                    }`}
-                  >
-                    {dueDate}
-                  </span>
-                </p>
-              </div>
-
-              <div className="mt-2">
-                <button
-                  onClick={() => onEditTask(task._id)}
-                  className="transition-all bg-blue-500 text-white p-2 rounded hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400"
-                  aria-label={`edit-${task._id}`}
-                  data-cy={`edit-task-${formatForDataCy(task.title)}`}
-                  data-testid={`edit-task-${formatForDataCy(task.title)}`}
-                >
-                  <FaPen />
-                </button>
-              </div>
-            </div>
+              task={task}
+              category={category}
+              toggleTaskCompletion={toggleTaskCompletion}
+              onEditTask={onEditTask}
+            />
           );
         })}
       </div>

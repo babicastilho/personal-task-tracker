@@ -10,6 +10,7 @@ import { useAuthContext, AuthProvider } from "@/context/AuthProvider"; // Authen
 import { ThemeProvider } from "@/context/ThemeContext"; // Theme Provider
 import { UserProfileProvider } from "@/context/UserProfileProvider";
 import { useTheme } from "@/hooks/useTheme"; // Theme hook
+import { RouterProvider } from "@/context/RouterContext";
 
 interface RootLayoutProps {
   children: ReactNode;
@@ -20,7 +21,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <UserProfileProvider>
       <AuthProvider>
         <ThemeProvider>
-          <LayoutContent>{children}</LayoutContent>
+          <RouterProvider>
+            <LayoutContent>{children}</LayoutContent>
+          </RouterProvider>
         </ThemeProvider>
       </AuthProvider>
     </UserProfileProvider>
@@ -40,17 +43,15 @@ function LayoutContent({ children }: { children: ReactNode }) {
   const headerRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
   const [mainHeight, setMainHeight] = useState("100vh");
-  const [headerHeight, setHeaderHeight] = useState(0);
-  const [footerHeight, setFooterHeight] = useState(0);
 
   // Update the mainHeight dynamically based on header and footer
   useEffect(() => {
     const updateMainHeight = () => {
       const newHeaderHeight = headerRef.current?.offsetHeight || 0;
       const newFooterHeight = footerRef.current?.offsetHeight || 0;
-      setHeaderHeight(newHeaderHeight);
-      setFooterHeight(newFooterHeight);
-      setMainHeight(`calc(100vh - ${newHeaderHeight}px - ${newFooterHeight}px)`);
+      setMainHeight(
+        `calc(100vh - ${newHeaderHeight}px - ${newFooterHeight}px)`
+      );
     };
 
     updateMainHeight();
@@ -74,7 +75,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
               handleMenuToggle={handleMenuToggle} // Pass the menu toggle function to Header
               isMenuOpen={isMenuOpen} // Pass the menu open state to Header
             />
-            <div className={`flex flex-1 ${isAuthenticated ? 'lg:ml-64' : ''}`}>
+            <div className={`flex flex-1 ${isAuthenticated ? "lg:ml-64" : ""}`}>
               {isAuthenticated && (
                 <>
                   <Sidebar
@@ -94,11 +95,11 @@ function LayoutContent({ children }: { children: ReactNode }) {
                 </>
               )}
               <main
-                 className={`flex-1 overflow-y-auto ${!isAuthenticated ? 'flex justify-center' : ''}`}
+                className={`flex-1 overflow-y-auto ${
+                  !isAuthenticated ? "flex justify-center" : ""
+                }`}
                 style={{
                   minHeight: mainHeight,
-                  // marginTop: headerHeight, // Offset for the header
-                  // marginBottom: footerHeight, // Offset for the footer
                 }}
               >
                 {children}

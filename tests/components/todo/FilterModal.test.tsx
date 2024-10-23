@@ -1,8 +1,8 @@
 // FilterModal.test.tsx
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import FilterModal from '@/components/FilterModal';
-import PriorityFilter from '@/components/PriorityFilter';
+import FilterModal from '@/components/filters/FilterModal';
+import PriorityFilter from '@/components/filters/PriorityFilter';
 
 describe('FilterModal Component', () => {
   const handleClose = jest.fn(); // Mock function to handle modal close

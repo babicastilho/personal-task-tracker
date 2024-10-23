@@ -3,9 +3,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation"; // Import useParams and useRouter from next/navigation
-import TodoForm from "@/components/TodoForm";
+import TodoForm from "@/components/tasks/TodoForm";
 import { apiFetch } from "@/lib/apiFetch";
-import { Spinner } from "@/components/Loading";
+import { Spinner } from "@/components/loading";
 
 export default function EditTaskPage() {
   const { id } = useParams(); // Get the task ID from dynamic route params

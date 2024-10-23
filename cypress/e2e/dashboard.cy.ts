@@ -45,8 +45,11 @@ describe("Dashboard Page E2E", () => {
     cy.get('[data-cy="menu-toggle-button"]').click(); // Open the menu
 
     // Click on the "Tasks" link to navigate to the tasks page
-    cy.contains("Tasks").click();
-
+    cy.get('[data-cy="sidebar-view-tasks"]').click();
+    cy.wait(500);
+    cy.get('[data-cy="sidebar-tasks-cards"]').click();
+    cy.wait(500);
+    
     // Verify if the To-Do list is displayed on the dashboard
     cy.contains("Your To-Do List").should("be.visible");
     cy.wait(1000);

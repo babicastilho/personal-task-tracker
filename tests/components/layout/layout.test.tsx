@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { render } from '@testing-library/react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
 interface TestLayoutProps {
   children: ReactNode;

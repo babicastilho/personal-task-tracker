@@ -19,8 +19,14 @@ describe("Filter Modal E2E", () => {
     cy.wait("@loginRequest").then((interception) => {
       expect(interception.response?.statusCode).to.equal(200);
     });
-    cy.get('[data-cy="menu-toggle-button"]').click();
-    cy.contains("Tasks").click();
+    // Open the menu to access the Tasks page
+    cy.get('[data-cy="menu-toggle-button"]').click(); // Open the menu
+
+    // Click on the "Tasks" link to navigate to the tasks page
+    cy.get('[data-cy="sidebar-view-tasks"]').click();
+    cy.wait(500);
+    cy.get('[data-cy="sidebar-tasks-cards"]').click();
+    cy.wait(500);
 
     // Adds a task with high priority
     const taskTitle = `High Priority Task ${Date.now()}`;
@@ -34,7 +40,9 @@ describe("Filter Modal E2E", () => {
     cy.get('[data-cy="priority-dropdown-option-high"]').click();
 
     // Saves the new task and verifies it appears in the list
-    cy.get('[data-cy="add-task-button"]').click();
+    cy.wait(1000);
+    cy.get('[data-cy="add-task-button"]').click({ force: true });
+
     cy.contains(taskTitle).should("be.visible");
   });
 

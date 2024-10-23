@@ -10,7 +10,8 @@ import {
   FaAngleUp,
   FaAngleDoubleUp,
 } from "react-icons/fa";
-import { Task } from "./TodoList"; // Import the Task interface from TodoList
+import { Task } from "../tasks/TodoList"; // Import the Task interface from TodoList
+import { formatForDataCy } from "@/lib/utils";
 
 interface TaskCardProps {
   task: Task;
@@ -64,12 +65,16 @@ const TaskCard: React.FC<TaskCardProps> = ({
           ? "bg-gray-100 dark:bg-gray-700 border-0 text-gray-500"
           : "bg-white dark:bg-gray-800"
       }`}
+      data-testid={`task-card-${formatForDataCy(task.title)}`} // Ensure the title is formatted correctly
+      data-cy={`task-card-${formatForDataCy(task.title)}`} // Ensure consistency in test identifiers
     >
       <div className="flex justify-between items-start">
         <span
           className={`font-semibold flex items-center ${
             task.completed ? "line-through" : ""
           }`}
+          data-testid={`task-title-${task._id}`} // data-testid para task title
+          data-cy={`task-title-${task._id}`} // data-cy para E2E
         >
           <span className="ml-1">{task.title}</span>
         </span>
@@ -77,6 +82,8 @@ const TaskCard: React.FC<TaskCardProps> = ({
           onClick={() => toggleTaskCompletion(task._id)}
           className="text-blue-500 mt-2"
           aria-label={`toggle-${task._id}`}
+          data-testid={`toggle-${task._id}`} // data-testid para toggle
+          data-cy={`toggle-${task._id}`} // data-cy para E2E
         >
           {task.completed ? <FaRegCheckSquare /> : <FaRegSquare />}
         </button>
@@ -85,7 +92,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
       <div className="my-3 text-sm text-gray-500">
         <p className="flex items-center">
           {getPriorityIcon(task.priority)}{" "}
-          <span className="ml-1 capitalize">{task.priority}{" "}priority</span>
+          <span className="ml-1 capitalize">{task.priority} priority</span>
         </p>
         <p>{category || "No category"}</p>
         <p className="mt-1 flex items-center">
@@ -103,6 +110,8 @@ const TaskCard: React.FC<TaskCardProps> = ({
           onClick={() => onEditTask(task._id)}
           className="transition-all bg-blue-500 text-white p-2 rounded hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400"
           aria-label={`edit-${task._id}`}
+          data-testid={`edit-task-${formatForDataCy(task.title)}`} // data-testid para o botão de editar
+          data-cy={`edit-task-${formatForDataCy(task.title)}`} // data-cy para E2E
         >
           <FaPen />
         </button>

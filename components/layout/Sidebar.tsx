@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FaCalendarAlt, FaTasks, FaUser, FaPowerOff, FaBookmark, FaChevronDown, FaChevronUp, FaSun } from 'react-icons/fa';
 import { BsFillMoonStarsFill } from "react-icons/bs";
-import Title from '@/components/Title';
+import Title from '@/components/layout/Title';
 import { logoutAndRedirect } from '@/lib/auth';
 import { useRouterContext } from "@/context/RouterContext"; // Importa o contexto do router
 
@@ -55,14 +55,26 @@ const Sidebar: React.FC<SidebarProps> = ({
       <nav>
         <ul className="mt-8 space-y-4">
           <li>
-            <Link href="/dashboard" className={`flex items-center p-2 rounded ${isActive('/dashboard') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`} onClick={handleClose}>
+            <Link
+              href="/dashboard"
+              className={`flex items-center p-2 rounded ${isActive('/dashboard') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`}
+              onClick={handleClose}
+              data-cy="sidebar-dashboard"
+              data-testid="sidebar-dashboard"
+            >
               <FaCalendarAlt className="w-5 h-5 mr-2" />
               Dashboard
             </Link>
           </li>
 
           <li>
-            <Link href="/categories" className={`flex items-center p-2 rounded ${isActive('/categories') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`} onClick={handleClose}>
+            <Link
+              href="/categories"
+              className={`flex items-center p-2 rounded ${isActive('/categories') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`}
+              onClick={handleClose}
+              data-cy="sidebar-categories"
+              data-testid="sidebar-categories"
+            >
               <FaBookmark className="w-5 h-5 mr-2" />
               Categories
             </Link>
@@ -70,7 +82,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 
           {/* View Tasks Section */}
           <li>
-            <div className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded cursor-pointer" onClick={toggleTasksView}>
+            <div
+              className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded cursor-pointer"
+              onClick={toggleTasksView}
+              data-cy="sidebar-view-tasks"
+              data-testid="sidebar-view-tasks"
+            >
               <FaTasks className="w-5 h-5 mr-2" />
               View Tasks
               {isTasksViewOpen ? <FaChevronUp className="ml-auto" /> : <FaChevronDown className="ml-auto" />}
@@ -81,25 +98,51 @@ const Sidebar: React.FC<SidebarProps> = ({
               className={`overflow-hidden transition-all duration-500 ease-in-out ${
                 isTasksViewOpen ? 'text-sm max-h-60 opacity-100' : 'max-h-0 opacity-0'
               }`}
+              data-cy="sidebar-tasks-options"
+              data-testid="sidebar-tasks-options"
             >
               <ul className="mt-2 pl-6 space-y-2">
                 <li>
-                  <Link href="/tasks/board" className={`block p-2 rounded ${isActive('/tasks/board') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`} onClick={handleClose}>
+                  <Link
+                    href="/tasks/board"
+                    className={`block p-2 rounded ${isActive('/tasks/board') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`}
+                    onClick={handleClose}
+                    data-cy="sidebar-tasks-board"
+                    data-testid="sidebar-tasks-board"
+                  >
                     Board
                   </Link>
                 </li>
                 <li>
-                  <Link href="/tasks/list" className={`block p-2 rounded ${isActive('/tasks/list') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`} onClick={handleClose}>
+                  <Link
+                    href="/tasks/list"
+                    className={`block p-2 rounded ${isActive('/tasks/list') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`}
+                    onClick={handleClose}
+                    data-cy="sidebar-tasks-list"
+                    data-testid="sidebar-tasks-list"
+                  >
                     List
                   </Link>
                 </li>
                 <li>
-                  <Link href="/tasks/calendar" className={`block p-2 rounded ${isActive('/tasks/calendar') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`} onClick={handleClose}>
+                  <Link
+                    href="/tasks/calendar"
+                    className={`block p-2 rounded ${isActive('/tasks/calendar') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`}
+                    onClick={handleClose}
+                    data-cy="sidebar-tasks-calendar"
+                    data-testid="sidebar-tasks-calendar"
+                  >
                     Calendar
                   </Link>
                 </li>
                 <li>
-                  <Link href="/tasks" className={`block p-2 rounded ${isActive('/tasks') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`} onClick={handleClose}>
+                  <Link
+                    href="/tasks"
+                    className={`block p-2 rounded ${isActive('/tasks') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`}
+                    onClick={handleClose}
+                    data-cy="sidebar-tasks-cards"
+                    data-testid="sidebar-tasks-cards"
+                  >
                     Cards
                   </Link>
                 </li>
@@ -108,7 +151,13 @@ const Sidebar: React.FC<SidebarProps> = ({
           </li>
 
           <li>
-            <Link href="/profile" className={`flex items-center p-2 rounded ${isActive('/profile') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`} onClick={handleClose}>
+            <Link
+              href="/profile"
+              className={`flex items-center p-2 rounded ${isActive('/profile') ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}`}
+              onClick={handleClose}
+              data-cy="sidebar-profile"
+              data-testid="sidebar-profile"
+            >
               <FaUser className="w-5 h-5 mr-2" />
               Profile
             </Link>
@@ -124,6 +173,8 @@ const Sidebar: React.FC<SidebarProps> = ({
               handleClose();
             }}
             className="w-full flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
+            data-cy="toggle-theme"
+            data-testid="toggle-theme"
           >
             {theme === 'light' ? (
               <FaSun className="w-5 h-5 mr-2" />
@@ -140,6 +191,8 @@ const Sidebar: React.FC<SidebarProps> = ({
               handleClose();
             }}
             className="w-full flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
+            data-cy="logout-button"
+            data-testid="logout-button"
           >
             <FaPowerOff className="w-5 h-5 mr-2" />
             Log Out

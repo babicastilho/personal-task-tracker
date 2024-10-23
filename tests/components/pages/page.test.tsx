@@ -12,7 +12,7 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock the Dashboard and SignIn components
-jest.mock('@/components/Dashboard', () => {
+jest.mock('@/components/dashboard', () => {
   return () => (
     <div>
       <h2 className="text-lg font-bold mb-4">Welcome,</h2>
@@ -20,7 +20,7 @@ jest.mock('@/components/Dashboard', () => {
   );
 });
 
-jest.mock('@/components/SignIn', () => {
+jest.mock('@/components/auth/SignIn', () => {
   return () => (
     <div>
       <h2 className="text-lg font-bold mb-4">Sign In</h2>

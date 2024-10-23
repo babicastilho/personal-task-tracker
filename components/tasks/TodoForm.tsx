@@ -4,7 +4,7 @@ import { apiFetch } from "@/lib/apiFetch";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic"; // To dynamically import react-quill
 import "react-quill/dist/quill.snow.css"; // React Quill CSS for styling
-import Dropdown from "@/components/Dropdown";
+import Dropdown from "@/components/commom/Dropdown";
 import {
   FaAngleDoubleUp,
   FaAngleUp,
@@ -157,7 +157,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
   };
 
   return (
-    <div data-cy="todo-form" data-testid="todo-form" className="mt-16 p-8">
+    <div data-cy="todo-form" data-testid="todo-form" className="my-16 p-8">
       <h1
         className="text-xl font-bold mb-6"
         data-cy="todo-form-info"
@@ -343,7 +343,9 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
         </button>
         {task?._id && (
           <button
-            onClick={() => setShowDeleteModal(true)}
+            onClick={() => {
+              setShowDeleteModal(true); // Open the delete confirmation modal
+            }}
             className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-all"
             data-cy="task-form-delete"
             data-testid="task-form-delete"
@@ -355,7 +357,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
+        <div className="z-10 fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
           <div className="bg-white dark:bg-slate-800 p-6 rounded-md shadow-lg text-center">
             <p className="mb-4 text-lg">
               Are you sure you want to delete this task?
@@ -363,7 +365,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleDeleteTask}
-                className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-all"
+                className="z-20 bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-all"
                 data-cy="task-delete-confirm-button"
                 data-testid="task-delete-confirm-button"
               >
@@ -371,7 +373,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
               </button>
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="bg-gray-500 text-white p-2 rounded-md hover:bg-gray-600 transition-all"
+                className="z-20 bg-gray-500 text-white p-2 rounded-md hover:bg-gray-600 transition-all"
                 data-cy="task-delete-cancel-button"
                 data-testid="task-delete-cancel-button"
               >

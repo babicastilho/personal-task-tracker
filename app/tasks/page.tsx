@@ -1,8 +1,8 @@
 "use client"; // Garantir que o código seja executado no client-side
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation"; // Use the next/navigation router for client-side routing
-import TodoList from "@/components/TodoList";
-import { Skeleton } from "@/components/Loading";
+import TodoList from "@/components/tasks/TodoList";
+import { Skeleton } from "@/components/loading";
 import { useProtectedPage } from "@/hooks/useProtectedPage";
 
 export default function TasksPage() {
@@ -10,10 +10,30 @@ export default function TasksPage() {
   const router = useRouter(); // useRouter to manage routing
 
   useEffect(() => {
-    if (!isAuthenticated && !loading) {
-      router.push("/login"); // Redirect to login if the user is not authenticated
-    }
+    const handleAuthentication = async () => {
+      if (!isAuthenticated && !loading) {
+        // Check if authentication failed due to an expired token
+        try {
+          const response = await fetch("/api/auth/check"); // Validate the token
+          const data = await response.json();
+  
+          if (!response.ok && data.message === "Token expired") {
+            // If the token has expired, redirect with a session expired message
+            router.push("/login?message=session_expired");
+          } else {
+            // Otherwise, redirect with the default no_token message
+            router.push("/login?message=no_token");
+          }
+        } catch (error) {
+          // If there's an error checking the token, redirect with no_token message
+          router.push("/login?message=no_token");
+        }
+      }
+    };
+  
+    handleAuthentication();
   }, [isAuthenticated, loading, router]);
+  
 
   // Show loading state while authentication check is in progress
   if (loading) {

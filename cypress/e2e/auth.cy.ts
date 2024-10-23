@@ -47,26 +47,31 @@ describe("Authentication E2E Tests", () => {
   // Test cases for unauthenticated users
   context("Unauthenticated User Redirection", () => {
     it("should redirect unauthenticated users from /dashboard to /login with no_token message", () => {
-      cy.logout();
+      cy.logout(); // Ensure the user is logged out
       cy.wait(1000);
       cy.visit("http://localhost:3000/dashboard");
-      cy.url({ timeout: 5000 }).should("include", "/login?message=no_token"); // Ensure redirected to login with no_token message
+      
+      // Verifica se a URL contém a mensagem de erro e redireciona adequadamente
+      cy.url({ timeout: 5000 }).should("include", "/login?message=no_token");
     });
 
     it("should redirect unauthenticated users from /tasks to /login with no_token message", () => {
       cy.logout();
+      cy.wait(1000);
       cy.visit("http://localhost:3000/tasks");
       cy.url({ timeout: 5000 }).should("include", "/login?message=no_token"); // Ensure redirected to login with no_token message
     });
 
     it("should redirect unauthenticated users from /categories to /login with no_token message", () => {
       cy.logout();
+      cy.wait(1000);
       cy.visit("http://localhost:3000/categories");
       cy.url({ timeout: 5000 }).should("include", "/login?message=no_token"); // Ensure redirected to login with no_token message
     });
 
     it("should redirect unauthenticated users from /profile to /login with no_token message", () => {
       cy.logout();
+      cy.wait(1000);
       cy.visit("http://localhost:3000/profile");
       cy.url({ timeout: 5000 }).should("include", "/login?message=no_token"); // Ensure redirected to login with no_token message
     });

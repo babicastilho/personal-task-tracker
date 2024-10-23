@@ -2,14 +2,15 @@
 import React, { useState, useEffect } from "react";
 import { fetchProfile, updateProfile } from "@/lib/user"; // API functions for fetching and updating profile
 import Image from "next/image"; // Next.js Image component for optimized images
-import { Spinner } from "@/components/Loading"; // Loading spinner component
+import { Spinner } from "@/components/loading"; // Loading spinner component
 import { useProtectedPage } from "@/hooks/useProtectedPage"; // Custom hook to handle protected pages
 import { useUserProfile } from "@/context/UserProfileProvider";
+import Dropdown from "@/components/commom/Dropdown";
 
 const ProfilePage = () => {
   const { isAuthenticated, loading } = useProtectedPage(); // Access authentication state (isAuthenticated, loading)
   const { refreshUserProfile } = useUserProfile();
-  
+
   // State to manage profile data
   const [profile, setProfile] = useState({
     _id: "",
@@ -120,7 +121,7 @@ const ProfilePage = () => {
 
   // Render the profile form and related fields
   return (
-    <div className="p-8 dark:text-gray-300">
+    <div className="mt-16 p-8 dark:text-gray-300">
       <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
       <form
         onSubmit={handleSubmit}
@@ -172,19 +173,21 @@ const ProfilePage = () => {
           </div>
 
           {/* Preferred Name Option */}
-          <div className="relative flex flex-col w-full md:w-1/2 space-y-2">
-            <select
-              name="preferredNameOption"
-              value={profile.preferredNameOption} // Display the selected preferred name option
-              onChange={handleChange} // Handle changes
-              className="p-3 border border-gray-300 rounded w-full peer bg-transparent focus:outline-none"
-            >
-              <option value="username">Username</option>
-              <option value="firstName">First Name</option>
-              <option value="lastName">Last Name</option>
-              <option value="nickname">Nickname</option>
-              <option value="fullName">Full Name</option>
-            </select>
+          <div className="relative flex flex-col w-full md:w-1/2 space-y-2 z-50">
+            <Dropdown
+              testIdPrefix="preferred-name-option"
+              options={[
+                "username",
+                "firstName",
+                "lastName",
+                "nickname",
+                "fullName",
+              ]}
+              selectedValue={profile.preferredNameOption}
+              onSelect={(value) =>
+                setProfile({ ...profile, preferredNameOption: value })
+              }
+            />
 
             <label
               htmlFor="preferredNameOption"

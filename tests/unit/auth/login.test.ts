@@ -2,7 +2,6 @@ import { createMocks } from 'node-mocks-http';
 import { POST } from '@/app/api/auth/login/route';
 import dbConnect from '@/lib/mongodb';
 import { verifyPassword } from '@/models/User';
-import { generateToken } from '@/lib/auth';
 import { ObjectId } from 'mongodb';
 
 jest.mock('@/lib/mongodb');

@@ -5,7 +5,7 @@ import {
   act,
   fireEvent,
 } from "@testing-library/react";
-import TodoList from "@/components/TodoList";
+import TodoList from "@/components/tasks/TodoList";
 import { apiFetch } from "@/lib/apiFetch";
 
 // Mock the apiFetch function
@@ -87,16 +87,17 @@ describe("TodoList Component", () => {
 
   it("should toggle task completion by clicking on the toggle button", async () => {
     render(<TodoList onAddTask={() => {}} onEditTask={() => {}} />);
-  
-    const toggleButton = await screen.findByLabelText("toggle-1");
+
+    // Locate the toggle button using the updated data-testid
+    const toggleButton = await screen.findByTestId("toggle-1");
     const taskTitle = await screen.findByTestId("task-title-1");
-  
+
     expect(taskTitle).not.toHaveClass("line-through");
-  
+
     await act(async () => {
       fireEvent.click(toggleButton);
     });
-  
+
     await waitFor(() => {
       expect(taskTitle).toHaveClass("line-through");
     });

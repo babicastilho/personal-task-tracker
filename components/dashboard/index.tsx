@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import Calendar from "@/components/Calendar";
-import { Spinner } from "@/components/Loading";
+import Calendar from "@/components/dashboard/Calendar";
+import { Spinner } from "@/components/loading";
 import Image from "next/image";
 import { apiFetch } from "@/lib/apiFetch";
 import { useUserProfile } from "@/context/UserProfileProvider";

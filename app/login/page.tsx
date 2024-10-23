@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect } from "react";
-import SignIn from "@/components/SignIn";
+import SignIn from "@/components/auth/SignIn";
 import { useRouter, useSearchParams } from "next/navigation"; // Import necessary hooks
 import { useAuth } from "@/hooks/useAuth"; // Import custom authentication hook
-import { Spinner } from "@/components/Loading"; // Import Spinner component
+import { Spinner } from "@/components/loading"; // Import Spinner component
 
 export default function LoginPage() {
   const { isAuthenticated, loading } = useAuth(); // Access authentication status

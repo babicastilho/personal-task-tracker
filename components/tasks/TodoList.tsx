@@ -1,14 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import FilterModal from "./FilterModal";
+import FilterModal from "@/components/filters/FilterModal";
 import { apiFetch } from "@/lib/apiFetch";
 import {
   FaFilter,
 } from "react-icons/fa";
-import { Skeleton } from "@/components/Loading";
+import { Skeleton } from "@/components/loading";
 import { formatForDataCy } from "@/lib/utils";
-import PriorityFilter from "./PriorityFilter";
-import TaskCard from "./TaskCard"; // Import the TaskCard component
+import PriorityFilter from "@/components/filters/PriorityFilter";
+import TaskCard from "@/components/commom/TaskCard"; // Import the TaskCard component
 
 export interface Task {
   _id: string;

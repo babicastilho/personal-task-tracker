@@ -2,8 +2,8 @@
 
 import React from "react";
 import { useProtectedPage } from "@/hooks/useProtectedPage"; // Custom hook for protected pages
-import Dashboard from "@/components/Dashboard"; // Import the dashboard component
-import { Skeleton } from "@/components/Loading"; // Import Skeleton component for loading state
+import Dashboard from "@/components/dashboard"; // Import the dashboard component
+import { Skeleton } from "@/components/loading"; // Import Skeleton component for loading state
 
 export default function DashboardPage() {
   const { isAuthenticated, loading } = useProtectedPage(); // Use the new useProtectedPage hook

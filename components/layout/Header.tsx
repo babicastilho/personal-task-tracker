@@ -4,10 +4,10 @@ import React, { useEffect, useState, forwardRef } from "react";
 import { FaSun, FaPowerOff } from "react-icons/fa";
 import { HiMenu, HiOutlineX } from "react-icons/hi";
 import { BsFillMoonStarsFill } from "react-icons/bs";
-import Title from "@/components/Title";
+import Title from "@/components/layout/Title";
 import { logoutAndRedirect } from "@/lib/auth";
 import { fetchProfile } from "@/lib/user";
-import UserProfileMenu from "@/components/UserProfileMenu";
+import UserProfileMenu from "@/components/layout/UserProfileMenu";
 
 interface HeaderProps {
   toggleTheme: () => void;

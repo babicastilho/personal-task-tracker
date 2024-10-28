@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  FaRegCheckSquare,
-  FaRegSquare,
   FaPen,
   FaRegCalendarAlt,
   FaAngleDoubleDown,
@@ -10,22 +8,17 @@ import {
   FaAngleUp,
   FaAngleDoubleUp,
 } from "react-icons/fa";
-import { Task } from "../tasks/TodoList"; // Import the Task interface from TodoList
+
 import { formatForDataCy } from "@/lib/utils";
+import { Task } from "@/types/TaskCategoryTypes";
 
 interface TaskCardProps {
   task: Task;
-  toggleTaskCompletion: (id: string) => void;
   onEditTask: (id: string) => void;
   category: string | null;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({
-  task,
-  toggleTaskCompletion,
-  onEditTask,
-  category,
-}) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, onEditTask, category }) => {
   const isTaskOverdue = (dueDate?: string) => {
     if (!dueDate) return false;
     const currentDate = new Date();
@@ -57,36 +50,21 @@ const TaskCard: React.FC<TaskCardProps> = ({
   return (
     <div
       className={`relative flex flex-col justify-between p-4 border rounded-md shadow-md transition-all ${
-        isTaskOverdue(task.dueDate) && !task.completed
+        isTaskOverdue(task.dueDate)
           ? "border-red-600 dark:border-red-400"
           : "border-gray-200 dark:border-gray-900"
-      } ${
-        task.completed
-          ? "bg-gray-100 dark:bg-gray-700 border-0 text-gray-500"
-          : "bg-white dark:bg-gray-800"
-      }`}
-      data-testid={`task-card-${formatForDataCy(task.title)}`} // Ensure the title is formatted correctly
-      data-cy={`task-card-${formatForDataCy(task.title)}`} // Ensure consistency in test identifiers
+      } bg-white dark:bg-gray-800`}
+      data-testid={`task-card-${formatForDataCy(task.title)}`}
+      data-cy={`task-card-${formatForDataCy(task.title)}`}
     >
       <div className="flex justify-between items-start">
         <span
-          className={`font-semibold flex items-center ${
-            task.completed ? "line-through" : ""
-          }`}
-          data-testid={`task-title-${task._id}`} // data-testid para task title
-          data-cy={`task-title-${task._id}`} // data-cy para E2E
+          className="font-semibold flex items-center"
+          data-testid={`task-title-${task._id}`}
+          data-cy={`task-title-${task._id}`}
         >
           <span className="ml-1">{task.title}</span>
         </span>
-        <button
-          onClick={() => toggleTaskCompletion(task._id)}
-          className="text-blue-500 mt-2"
-          aria-label={`toggle-${task._id}`}
-          data-testid={`toggle-${task._id}`} // data-testid para toggle
-          data-cy={`toggle-${task._id}`} // data-cy para E2E
-        >
-          {task.completed ? <FaRegCheckSquare /> : <FaRegSquare />}
-        </button>
       </div>
 
       <div className="my-3 text-sm text-gray-500">
@@ -95,11 +73,11 @@ const TaskCard: React.FC<TaskCardProps> = ({
           <span className="ml-1 capitalize">{task.priority} priority</span>
         </p>
         <p>{category || "No category"}</p>
-        <p className="mt-1 flex items-center">
-          <FaRegCalendarAlt
-            className={`mr-1 ${
+        <p className={`mt-1 flex items-center ${
               isTaskOverdue(task.dueDate) ? "text-red-600" : "text-gray-500"
-            }`}
+            }`}>
+          <FaRegCalendarAlt
+            className="mr-1"
           />
           {dueDate}
         </p>
@@ -110,8 +88,8 @@ const TaskCard: React.FC<TaskCardProps> = ({
           onClick={() => onEditTask(task._id)}
           className="transition-all bg-blue-500 text-white p-2 rounded hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400"
           aria-label={`edit-${task._id}`}
-          data-testid={`edit-task-${formatForDataCy(task.title)}`} // data-testid para o botão de editar
-          data-cy={`edit-task-${formatForDataCy(task.title)}`} // data-cy para E2E
+          data-testid={`edit-task-${formatForDataCy(task.title)}`}
+          data-cy={`edit-task-${formatForDataCy(task.title)}`}
         >
           <FaPen />
         </button>

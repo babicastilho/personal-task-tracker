@@ -1,4 +1,4 @@
-import { formatForDataCy } from "@/lib/utils"; // Certifique-se de importar a função utilitária correta
+import { formatForDataCy } from "@/lib/utils"; 
 
 describe("Todo App E2E", () => {
   let token;
@@ -34,7 +34,7 @@ describe("Todo App E2E", () => {
   it("should load the app and display the task list", () => {
     cy.wait(1000);
     cy.contains("Your To-Do List").should("be.visible");
-    cy.get('[data-cy="todo-list"]').should("exist");
+    cy.get('[data-cy="todo-list-title"]').should("exist");
   });
 
   it("should allow users to add a new task with priority, date, and time", () => {

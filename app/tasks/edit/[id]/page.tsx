@@ -3,7 +3,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation"; // Import useParams and useRouter from next/navigation
-import TodoForm from "@/components/tasks/TodoForm";
+import TaskForm from "@/components/tasks/TaskForm";
 import { apiFetch } from "@/lib/apiFetch";
 import { Spinner } from "@/components/loading";
 
@@ -36,5 +36,5 @@ export default function EditTaskPage() {
   }
 
   // Render the form with the loaded task data
-  return <TodoForm task={task} />;
+  return <TaskForm task={task} />;
 }

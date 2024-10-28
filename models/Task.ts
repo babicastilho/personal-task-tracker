@@ -6,7 +6,6 @@ export interface ITask {
   title: string; // Task title
   resume: string; // Short description or summary of the task
   description?: string; // Optional longer description in Markdown format
-  completed: boolean;
   userId: ObjectId;
   dueDate?: Date; // Due date as a Date object
   dueTime?: string; // Optional due time as a string (e.g., "12:00")
@@ -45,7 +44,6 @@ export function createTask(data: Partial<ITask>): ITask {
     title: data.title,
     resume: data.resume,
     description: data.description || '',
-    completed: data.completed ?? false,
     userId: data.userId!,
     dueDate: data.dueDate ?? undefined,
     dueTime: data.dueTime ?? undefined,

@@ -11,7 +11,6 @@ export async function getTodos(): Promise<ITask[]> {
   return todos.map(todo => ({
     _id: todo._id,
     title: todo.title,
-    completed: todo.completed
   })) as ITask[];
 }
 
@@ -29,7 +28,6 @@ export async function getTodoById(id: string): Promise<ITask | null> {
   return {
     _id: todo._id,
     title: todo.title,
-    completed: todo.completed
   } as ITask;
 }
 

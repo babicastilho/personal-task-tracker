@@ -1,3 +1,5 @@
+require('dotenv').config({ path: '.env.test' });
+
 // jest.config.js
 module.exports = {
   projects: [

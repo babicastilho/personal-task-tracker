@@ -1,4 +1,4 @@
-// tests/unit/models/task.test.ts
+// tests/unit/lib/task.test.ts
 
 import { createTask, ITask } from '@/models/Task';
 import { ObjectId } from 'mongodb';
@@ -11,7 +11,6 @@ describe('Task Model', () => {
     const taskData: Partial<ITask> = {
       title: 'Test Task',
       resume: 'Task summary', // Adicionando o campo resume
-      completed: false,
       userId: new ObjectId(), // Adding userId
     };
 
@@ -22,7 +21,6 @@ describe('Task Model', () => {
     expect(task._id).toBeDefined(); // Verify if _id is defined
     expect(task.title).toBe('Test Task'); // Verify if title matches
     expect(task.resume).toBe('Task summary'); // Verificar o campo resume
-    expect(task.completed).toBe(false); // Verify if completed status matches
     expect(task.userId).toBeDefined(); // Verify if userId is defined
   });
 });

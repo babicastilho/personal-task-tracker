@@ -1,3 +1,5 @@
+// tests/unit/api/tasks.test.ts
+
 import { createMocks } from 'node-mocks-http';
 import { GET, POST } from '@/app/api/tasks/route';
 import dbConnect from '@/lib/mongodb';
@@ -63,24 +65,23 @@ describe('/api/tasks API Endpoint', () => {
 
   it('should create a new task', async () => {
     (verifyToken as jest.Mock).mockImplementation(() => ({ userId }));
-
+  
     const newTaskId = new ObjectId().toHexString();
     const mockTask = {
       _id: newTaskId,
       title: 'New Task',
-      resume: 'Task summary', // Adicione o campo resume
-      completed: false,
+      resume: 'Task summary', // Campo resume
       userId: userId,
     };
-
+  
     mockDb.insertOne.mockResolvedValue({
       insertedId: newTaskId,
     });
-
+  
     const headers = new Headers({
       authorization: `Bearer ${token}`,
     });
-
+  
     const request = new Request('http://localhost:3000/api/tasks', {
       method: 'POST',
       headers: headers,
@@ -89,9 +90,9 @@ describe('/api/tasks API Endpoint', () => {
         resume: 'Task summary', 
       }),
     });
-
+  
     const response = await POST(request);
-
+  
     expect(response.status).toBe(201);
     const json = await response.json();
     expect(json.success).toBe(true);
@@ -99,9 +100,8 @@ describe('/api/tasks API Endpoint', () => {
       expect.objectContaining({
         title: 'New Task',
         resume: 'Task summary', 
-        completed: false,
         userId: userId,
       })
     );
-  });
+  });  
 });

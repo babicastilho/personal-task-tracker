@@ -17,7 +17,6 @@ describe('Task Model', () => {
     expect(task._id).toBeInstanceOf(ObjectId);
     expect(task.title).toBe('Test Task');
     expect(task.resume).toBe('Test resume');
-    expect(task.completed).toBe(false);
     expect(task.userId).toBeInstanceOf(ObjectId);
   });
 

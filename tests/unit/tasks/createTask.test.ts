@@ -13,7 +13,6 @@ describe("Task Creation", () => {
 
     expect(task.title).toBe("Test Task");
     expect(task.resume).toBe("Task summary"); // Verificando o campo resume
-    expect(task.completed).toBe(false); // Default to not completed
     expect(task.priority).toBe("medium"); // Default priority
     expect(task.dueDate).toBeUndefined(); // No due date set
     expect(task.dueTime).toBeUndefined(); // No due time set

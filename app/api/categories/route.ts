@@ -1,4 +1,17 @@
-// app/api/categories/route.ts
+// 
+/**
+ * app/api/categories/route.ts
+ * Manages retrieval and creation of user-specific categories with authentication.
+ * 
+ * This module includes two main functions:
+ * - `GET`: Retrieves all categories associated with the authenticated user.
+ * - `POST`: Creates a new category for the authenticated user with the provided name and optional description.
+ * 
+ * @param req - The incoming HTTP request containing an authorization token and, for POST, the category data.
+ * @returns JSON response with category data for GET, or creation confirmation for POST. 
+ *          Returns error messages if access or the operation fails.
+ */
+
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { createCategory } from '@/models/Category';

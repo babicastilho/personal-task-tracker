@@ -1,4 +1,16 @@
-// components/UserProfileMenu.tsx
+/**
+ * UserProfileMenu.tsx
+ * 
+ * A user profile menu component with options for viewing the profile and logging out.
+ * - Displays user's preferred name and profile picture from the context.
+ * - Uses outside click detection to close the menu when clicking outside.
+ * 
+ * @component
+ * @param {function} onLogout - Callback function to handle logout action.
+ * 
+ * @returns A dropdown menu component accessible from the profile icon.
+ */
+
 import React, { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";

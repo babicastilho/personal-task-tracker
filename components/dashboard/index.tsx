@@ -1,3 +1,21 @@
+/**
+ * Dashboard.tsx
+ * 
+ * Displays the user's dashboard with personalized stats, a calendar, and a welcome message. 
+ * Shows real-time date and time, task status, and an optional profile picture.
+ * - Fetches and displays user-specific statistics such as tasks completed, pending, due today, and unread messages.
+ * - Updates the displayed time every second and fetches dashboard data on mount.
+ * 
+ * @component
+ * @returns A user dashboard with statistics, real-time clock, calendar, and welcome message.
+ * 
+ * @param user - User's profile information from context, including profile picture and preferred name.
+ * @param dashboardData - Statistics on tasks and unread messages.
+ * @param currentDateTime - Real-time formatted date and time.
+ * 
+ * @dependencies - Uses `apiFetch` for API calls and `useUserProfile` context for user data.
+ */
+
 "use client"
 import React, { useState, useEffect } from "react";
 import Calendar from "@/components/dashboard/Calendar";

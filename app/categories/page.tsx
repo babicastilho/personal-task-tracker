@@ -1,3 +1,15 @@
+/**
+ * CategoriesPage.tsx
+ * 
+ * Page component for managing categories. Allows authenticated users to view, add, and delete categories.
+ * 
+ * Features:
+ * - Displays a list of categories with options to add or delete.
+ * - Uses `useProtectedPage` to handle authentication and display a loading skeleton.
+ * - Handles errors gracefully with inline error messaging.
+ * 
+ */
+
 "use client";
 import React, { useState, useEffect } from "react";
 import { useProtectedPage } from "@/hooks/useProtectedPage"; // Custom hook for protected pages

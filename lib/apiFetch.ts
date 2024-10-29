@@ -1,4 +1,17 @@
+//
 // lib/apiFetch.ts
+/**
+ * Provides a centralized function to handle authenticated API requests.
+ * 
+ * The `apiFetch` function manages HTTP requests with JSON handling, token-based authentication, 
+ * and redirects upon token expiration. It integrates `getToken` for token retrieval and `handleAuthRedirection`
+ * for handling authentication errors, ensuring consistent API interactions across the app.
+ * 
+ * @param url - The endpoint URL for the API request.
+ * @param options - Additional options for the fetch request (method, headers, etc.).
+ * @returns JSON response if the request is successful; otherwise, throws an error or redirects if unauthorized.
+ */
+
 import { handleAuthRedirection } from '@/lib/redirection';
 import { getToken } from '@/lib/tokenUtils'; // Import getToken to centralize token retrieval
 

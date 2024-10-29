@@ -40,6 +40,7 @@ generate-structure.js
 project-structure.txt
 Ideas.docx
 ~$Ideas.docx
+*.tmp
 
 # Cypress screenshots
 /cypress/screenshots/

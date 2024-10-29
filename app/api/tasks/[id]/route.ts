@@ -1,4 +1,18 @@
+//
 // app/api/tasks/[id]/route.ts
+/**
+ * Handles API requests for specific task operations, including fetching, updating, and deleting tasks
+ * for authenticated users based on task ID.
+ * 
+ * - GET: Retrieves a specific task by ID for the authenticated user, ensuring ownership.
+ * - PUT: Updates the task's details, such as title, description, priority, and due date, for the authenticated user.
+ * - DELETE: Removes a specific task by ID for the authenticated user, confirming user ownership.
+ * 
+ * @param req - The HTTP request containing headers and data for task operations.
+ * @param params - The URL parameters, including the task ID.
+ * @returns JSON response indicating success or failure, including task data or error messages as needed.
+ */
+
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { verifyToken } from '@/lib/auth';

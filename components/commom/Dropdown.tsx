@@ -1,3 +1,21 @@
+/**
+ * Dropdown.tsx
+ * 
+ * Generic dropdown component for selecting an option from a list.
+ * 
+ * - Displays a list of options, allows selecting one, and shows an icon next to the selected item if an icon map is provided.
+ * - Toggles between open and closed states to show or hide the options list.
+ * - Supports customizable `data-cy` and `data-testid` prefixes for testing.
+ * 
+ * @param options - Array of selectable options.
+ * @param selectedValue - The currently selected option.
+ * @param onSelect - Callback function triggered when an option is selected, passing the selected value.
+ * @param iconMap - Optional object mapping each option to an icon.
+ * @param testIdPrefix - Optional prefix for `data-cy` and `data-testid` attributes.
+ * 
+ * @returns A dropdown component with interactive options and an icon display if provided.
+ */
+
 import React, { useState } from 'react';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 

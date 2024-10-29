@@ -1,3 +1,18 @@
+// 
+/**
+ * app/api/categories/[id]/route.ts
+ * Handles fetching and deletion of specific user categories by ID, with token-based authentication.
+ * 
+ * This module includes two primary operations:
+ * - `GET`: Retrieves a category by its ID if it belongs to the authenticated user.
+ * - `DELETE`: Deletes a category by its ID if it belongs to the authenticated user.
+ * 
+ * @param req - The incoming HTTP request containing an authorization token.
+ * @param params - The request parameters, including the category `id`.
+ * @returns JSON response indicating success with category data (for GET) or deletion confirmation (for DELETE),
+ *           or an error message if access or the operation fails.
+ */
+
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { verifyToken } from '@/lib/auth';

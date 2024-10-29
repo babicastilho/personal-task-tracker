@@ -1,4 +1,15 @@
-// app/api/auth/check/route.ts
+// 
+/**
+ * app/api/auth/check/route.ts
+ * Handles token verification for user authentication.
+ * 
+ * This endpoint checks the presence and validity of the user's token from the authorization header.
+ * If the token is valid, it responds with authentication success; otherwise, it provides error messages.
+ * 
+ * @param request - The HTTP request, which should contain the authorization header with the token.
+ * @returns NextResponse - JSON response indicating success with user data or failure with an error message.
+ */
+
 import { NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 

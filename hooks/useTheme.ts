@@ -1,3 +1,16 @@
+// 
+/**
+ * hooks/useTheme.ts
+ * Custom hook to manage light and dark theme modes in the application.
+ * 
+ * Initializes theme based on user preference from local storage or system settings.
+ * Applies the selected theme globally and persists it in local storage for consistency 
+ * across sessions.
+ * 
+ * @returns An object with `theme` (current theme mode), `toggleTheme` (function to switch themes), 
+ *          and `isMounted` (boolean to indicate if the component has mounted).
+ */
+
 import { useState, useEffect } from 'react';
 
 type Theme = 'light' | 'dark';

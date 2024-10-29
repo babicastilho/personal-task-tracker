@@ -1,10 +1,20 @@
-// lib/tokenUtils.ts
+// 
+/**
+ * lib/tokenUtils.ts
+ * Utility functions for managing and verifying JWT tokens in the application.
+ * 
+ * Provides helper functions to retrieve and clear tokens from local storage, and to verify tokens by calling 
+ * the API for validation. These functions assist in handling authentication state and user sessions.
+ * 
+ * @returns - Various types depending on the function: token string, boolean success, or error status.
+ */
+
 import { apiFetch } from '@/lib/apiFetch';
 
 export const getToken = () => localStorage.getItem('token');
 export const clearToken = () => localStorage.removeItem('token');
 
-// Example function to verify token with API
+// Function to verify token with API
 export const verifyTokenWithAPI = async () => {
   const token = getToken();
   if (!token) return { valid: false, error: 'no_token' };

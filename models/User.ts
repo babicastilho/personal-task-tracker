@@ -1,4 +1,20 @@
-// models/User.ts
+// 
+/**
+ * models/User.ts
+ * Defines the User model, password utilities, and a factory function for creating users.
+ * 
+ * The User model includes fields like username, email, password, firstName, lastName,
+ * nickname, bio, and profilePicture. Password hashing and verification are implemented
+ * for secure authentication.
+ * 
+ * @param password - The user's plain text password.
+ * @param hashedPassword - The user's hashed password for verification.
+ * @param usersCollection - MongoDB collection for storing user documents.
+ * @param user - An IUser document instance to be created and saved in the database.
+ * @returns - For createUser, returns the newly created user document with an ID.
+ * @throws - Throws an error if password hashing fails.
+ */
+
 import { Collection, Document, ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
 

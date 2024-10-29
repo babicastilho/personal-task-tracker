@@ -1,3 +1,19 @@
+// 
+/**
+ * context/ThemeContext.tsx
+ * Provides a theme context to manage and toggle between light and dark modes within the application.
+ * 
+ * Initializes the theme based on system preference or local storage, then applies the theme to the 
+ * document's root element. Offers a toggle function for switching between themes, stored in local storage 
+ * for persistence across sessions.
+ * 
+ * @type Theme - Defines possible values for theme: 'light' or 'dark'.
+ * @interface ThemeContextProps - Structure of the theme context, including the current theme and a function 
+ * to toggle it.
+ * @function ThemeProvider - Context provider to manage theme state and apply theme classes to the document.
+ * @function useTheme - Custom hook to access the theme context, ensuring it's used within the provider.
+ */
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Define the type for the theme ('light' or 'dark')

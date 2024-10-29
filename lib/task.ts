@@ -1,4 +1,17 @@
-// lib/task.ts
+// 
+/**
+ * lib/task.ts
+ * Provides functions for managing tasks (todos) in the database, including CRUD operations.
+ * 
+ * This module includes functions to fetch all tasks, fetch a task by ID, add new tasks, 
+ * update existing tasks, and delete tasks from the MongoDB database. Each function ensures 
+ * valid ObjectId formats and connects to the database as needed.
+ * 
+ * @param id - The ObjectId string of the task, used for fetching, updating, or deleting.
+ * @param data - Partial task data for creating or updating tasks in the database.
+ * 
+ * @returns - Various types depending on the function: fetched task(s), update status, or deletion success.
+ */
 
 import { ObjectId } from 'mongodb';
 import dbConnect from '@/lib/mongodb';

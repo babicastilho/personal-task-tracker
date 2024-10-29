@@ -1,4 +1,13 @@
-// app/tasks/edit/[id]/page.tsx
+/**
+ * EditTaskPage.tsx
+ * 
+ * Page component for editing an existing task.
+ * 
+ * - Retrieves task details based on the dynamic route ID and loads them into the TaskForm component.
+ * - Displays a loading spinner while fetching the task data.
+ * 
+ * @returns The TaskForm component pre-filled with the task data for editing.
+ */
 
 "use client";
 import { useEffect, useState } from "react";

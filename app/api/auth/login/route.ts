@@ -1,4 +1,16 @@
-// app/api/auth/login/route.ts
+// 
+/**
+ * app/api/auth/login/route.ts
+ * Handles user login requests and generates JWT tokens for authenticated users.
+ * 
+ * Validates email and password, checks for the user in the database, verifies 
+ * the password, and generates a JWT token upon successful authentication. 
+ * Returns appropriate responses based on validation and authentication results.
+ * 
+ * @param request - The POST request containing email and password in JSON format.
+ * @returns A JSON response with success status, JWT token if authenticated, or error message.
+ */
+
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { verifyPassword, IUser } from '@/models/User';

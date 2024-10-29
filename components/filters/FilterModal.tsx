@@ -1,3 +1,18 @@
+/**
+ * FilterModal.tsx
+ * 
+ * A modal component for displaying and clearing filter options.
+ * - Includes a confirmation dialog for clearing all filters.
+ * - Supports custom child components within the modal for dynamic filter options.
+ * 
+ * @component
+ * @param {function} onClose - Function to handle closing the modal.
+ * @param {function} onClearFilters - Function to handle clearing all applied filters.
+ * @param {React.ReactNode} children - Custom filter components or content to render inside the modal.
+ * 
+ * @returns A modal UI component with clear filter functionality and confirmation dialog.
+ */
+
 import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 

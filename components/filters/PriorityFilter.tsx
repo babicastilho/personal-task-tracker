@@ -1,3 +1,19 @@
+/**
+ * PriorityFilter.tsx
+ * 
+ * A filter component for selecting task priority levels.
+ * - Renders buttons for each priority level with corresponding icons.
+ * - Allows selection and toggling of priority filters, which visually updates based on selection.
+ * 
+ * @component
+ * @param {string[]} selectedPriorities - Array of selected priority levels.
+ * @param {function} onPriorityChange - Callback function for updating selected priorities.
+ * @param {string} [dataCyPrefix="priority-filter"] - Optional prefix for data-cy attributes in tests.
+ * @param {string} [dataTestIdPrefix="priority-filter"] - Optional prefix for data-testid attributes in tests.
+ * 
+ * @returns A UI component for filtering tasks by priority.
+ */
+
 import React from "react";
 import {
   FaAngleDoubleDown,
@@ -10,15 +26,15 @@ import {
 interface PriorityFilterProps {
   selectedPriorities: string[];
   onPriorityChange: (priority: string) => void;
-  dataCyPrefix?: string; // Novo: Prefixo para data-cy
-  dataTestIdPrefix?: string; // Novo: Prefixo para data-testid
+  dataCyPrefix?: string; 
+  dataTestIdPrefix?: string; 
 }
 
 const PriorityFilter: React.FC<PriorityFilterProps> = ({ 
   selectedPriorities, 
   onPriorityChange,
-  dataCyPrefix = "priority-filter", // Prefixo padrão
-  dataTestIdPrefix = "priority-filter" // Prefixo padrão
+  dataCyPrefix = "priority-filter", 
+  dataTestIdPrefix = "priority-filter" 
 }) => {
   const priorities = ["highest", "high", "medium", "low", "lowest"];
 

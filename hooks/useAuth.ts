@@ -1,12 +1,13 @@
-//
+// 
 /**
  * hooks/useAuth.ts
  * Custom hook to manage user authentication state.
  * 
- * Checks if the user is authenticated by validating the token with the API.
- * Tracks authentication status, loading state, and any authentication errors.
+ * This hook checks if the user is authenticated by validating the token with the API.
+ * It tracks the authentication status (`isAuthenticated`), loading state, and any authentication errors.
+ * If authentication fails, it updates the error state accordingly.
  * 
- * @returns An object with isAuthenticated, loading, and authError states.
+ * @returns An object containing `isAuthenticated` (boolean), `loading` (boolean), and `authError` (string or null).
  */
 
 import { useState, useEffect } from 'react';

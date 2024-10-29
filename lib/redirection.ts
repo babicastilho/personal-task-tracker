@@ -1,13 +1,14 @@
 // 
 /**
  * lib/redirection.ts
- * Handles redirection based on authentication errors.
+ * Manages user redirection based on authentication errors, such as missing or expired tokens.
  * 
- * Redirects the user to the login page with appropriate error messages if token is missing or expired.
- * The redirection can either use the Next.js router or window.location, depending on the context.
+ * This module includes functions to handle redirection to the login page with appropriate
+ * error messages. It supports redirection using either the Next.js router or `window.location`,
+ * depending on the context where the redirection occurs.
  * 
- * @param authError - The authentication error type (e.g., 'no_token', 'token_expired').
- * @param routerOrWindow - Either the Next.js router or window object to handle navigation.
+ * @param authError - A string indicating the authentication error type (e.g., 'no_token', 'token_expired').
+ * @param routerOrWindow - Either the Next.js router or `window` object for navigation handling.
  */
 
 export const redirectToLogin = (message: string = 'login_required') => {

@@ -1,3 +1,22 @@
+/**
+ * ProfilePage.tsx
+ * 
+ * Page for managing and editing the user's profile information.
+ * 
+ * Features:
+ * - Fetches and displays profile information for authenticated users, including fields for first name, last name, nickname, and bio.
+ * - Provides functionality to upload and preview a profile picture.
+ * - Handles profile updates through an API, with status and error messages displayed to the user.
+ * - Protects the page to ensure it’s only accessible to authenticated users.
+ * 
+ * @returns A form that allows the user to view and update their profile information.
+ * 
+ * Dependencies:
+ * - `useProtectedPage`: Custom hook for handling authentication.
+ * - `useUserProfile`: Context hook for managing global profile data.
+ * - `Dropdown`: Component to select the preferred name option.
+ */
+
 "use client";
 import React, { useState, useEffect } from "react";
 import { fetchProfile, updateProfile } from "@/lib/user"; // API functions for fetching and updating profile

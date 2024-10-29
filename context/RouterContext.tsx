@@ -1,3 +1,17 @@
+// 
+/**
+ * context/RouterContent.tsx
+ * Provides router context for managing and tracking the current path within the application.
+ * 
+ * Uses `usePathname` from Next.js to track and update the current path whenever the pathname changes,
+ * allowing components to access and set the current path globally.
+ * 
+ * @interface RouterContextProps - Defines the structure of the router context, including the current path
+ * and a function to set it.
+ * @function RouterProvider - Context provider that initializes and updates the current path in the application.
+ * @function useRouterContext - Custom hook to access the router context, providing the current path and setter.
+ */
+
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";

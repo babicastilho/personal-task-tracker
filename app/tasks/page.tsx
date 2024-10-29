@@ -1,3 +1,21 @@
+/**
+ * TasksPage.tsx
+ * 
+ * Page component for managing and viewing tasks with filtering options.
+ * 
+ * - Fetches and displays tasks and categories for the authenticated user.
+ * - Allows filtering by priority through a modal interface.
+ * - Provides options to add new tasks and edit existing ones.
+ * - Handles authentication checks and redirects unauthorized users to the login page.
+ * 
+ * @returns A responsive page displaying tasks in a card view with options to filter and add tasks.
+ * 
+ * Dependencies:
+ * - CardsView: Displays tasks in a card-based layout.
+ * - FilterModal: Renders a modal for filtering tasks by priority.
+ * - PriorityFilter: Component within FilterModal that allows selecting priority levels.
+ */
+
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";

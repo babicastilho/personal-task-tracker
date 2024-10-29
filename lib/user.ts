@@ -1,5 +1,15 @@
-// lib/user.ts
-import { apiFetch } from './apiFetch'; // Using the apiFetch function
+// 
+/**
+ * lib/user.ts
+ * Functions to interact with the API for user profile data.
+ * 
+ * Contains functions to fetch and update the user profile, handling session expiration and token validation
+ * using the `apiFetch` function. Ensures secure and reliable profile data handling.
+ * 
+ * @returns - Returns user profile data or throws an error on failure.
+ */
+
+import { apiFetch } from '@/lib/apiFetch'; // Using the apiFetch function
 
 // Fetch the user profile from the API
 export const fetchProfile = async (): Promise<any> => {

@@ -1,3 +1,19 @@
+/**
+ * TodoForm.tsx
+ * 
+ * A form component for creating or editing tasks with fields for task name, resume, 
+ * description (supports markdown with React Quill), category, priority, due date, and time.
+ * Allows saving, updating, or deleting tasks, with validations for required fields and time dependencies.
+ * 
+ * - Displays categories and priority options as dropdowns, and a markdown editor for the description.
+ * - Shows a delete confirmation modal when deleting a task.
+ * 
+ * @component
+ * @param {Task} [task] - The initial task data for editing. If not provided, a new task will be created.
+ * 
+ * @returns A form UI for adding or editing a task.
+ */
+
 "use client";
 import React, { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/apiFetch";

@@ -1,3 +1,21 @@
+/**
+ * FilterBase.tsx
+ * 
+ * A flexible filter component that displays options as buttons, checkboxes, or text labels, based on the specified filter type.
+ * - Supports optional icons for each option and allows tracking of selected options via `data-cy` and `data-testid` attributes.
+ * 
+ * @component
+ * @param {string[]} options - Array of filter options to display.
+ * @param {string[]} selectedValues - Array of currently selected options.
+ * @param {function} onChange - Callback function to handle selection changes.
+ * @param {("button" | "checkbox" | "string")} filterType - Defines the style of the filter (buttons, checkboxes, or text labels).
+ * @param {function} [getIcon] - Optional function to render icons for each option.
+ * @param {string} [dataCyPrefix="filter-option"] - Prefix for `data-cy` attributes.
+ * @param {string} [dataTestIdPrefix="filter-option"] - Prefix for `data-testid` attributes.
+ * 
+ * @returns A styled filter component with configurable options, selection, and optional icons.
+ */
+
 interface FilterBaseProps {
   options: string[];
   selectedValues: string[];

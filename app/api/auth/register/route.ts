@@ -1,4 +1,15 @@
-// app/api/auth/register/route.ts
+// 
+/**
+ * app/api/auth/register/route.ts
+ * Handles user registration by creating new user entries in the database and generating JWT tokens.
+ * 
+ * Validates username, email, and password fields, checks for existing users, creates new user entries,
+ * and generates a JWT token upon successful registration.
+ * 
+ * @param request - The POST request containing username, email, and password in JSON format.
+ * @returns A JSON response indicating registration success with a JWT token or an error message.
+ */
+
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { IUser, createUser } from '@/models/User';

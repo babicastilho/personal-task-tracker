@@ -1,3 +1,19 @@
+/**
+ * LoginPage.tsx
+ * 
+ * Client-side rendered login page that checks authentication state, manages redirection,
+ * and conditionally displays messages based on URL parameters.
+ * 
+ * Features:
+ * - Uses `useAuth` hook to verify if the user is already authenticated.
+ * - Redirects authenticated users to the specified URL or defaults to `/dashboard`.
+ * - Displays context-specific messages (e.g., session expired, login required) based on query parameters.
+ * - Renders the `SignIn` component for user login.
+ * 
+ * @param message - Query parameter to display relevant login messages (e.g., "session_expired").
+ * @param redirectUrl - Optional query parameter for redirection upon login.
+ */
+
 "use client";
 
 import React, { useEffect } from "react";

@@ -1,3 +1,16 @@
+//
+// app/api/users/profile/route.ts
+/**
+ * Handles user profile retrieval and updates for authenticated users.
+ *
+ * - GET: Fetches the user profile data based on a valid authentication token.
+ * - POST: Updates user profile details, including fields like first name, last name, nickname, and bio.
+ * 
+ * @param request - HTTP request containing headers and, if applicable, JSON body with updated user fields.
+ * @param res - Optional response object for testing environments.
+ * @returns JSON response with success status and profile data or error details if authentication or processing fails.
+ */
+
 import { NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth'; // Function to verify JWT
 import dbConnect from '@/lib/mongodb'; // Function to connect to MongoDB

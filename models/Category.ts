@@ -1,4 +1,16 @@
-// models/Category.ts
+// 
+/**
+ * models/Category.ts
+ * Defines the Category model and provides a factory function for creating categories.
+ * 
+ * The Category model includes fields such as name, slug, description, and userId,
+ * which associates the category with a specific user.
+ * 
+ * @param data - Partial category data that includes name, slug, description, and userId.
+ * @returns - A new ICategory instance with the necessary fields populated.
+ * @throws - Throws an error if the category name is missing.
+ */
+
 import { ObjectId } from 'mongodb';
 
 export interface ICategory {

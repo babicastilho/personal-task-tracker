@@ -1,16 +1,27 @@
-import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb'; // Import MongoDB connection
-import { ObjectId } from 'mongodb';
-import { verifyToken } from '@/lib/auth'; // Import JWT token verification
-import { ITask } from '@/models/Task'; // Import task model
+//
+// app/api/dashboard/route.ts
+/**
+ * Handles data requests for the dashboard, providing task counts and other metrics.
+ * 
+ * This endpoint connects to the MongoDB database, retrieves tasks for the authenticated user,
+ * and compiles a summary of task data. Currently, it returns the total task count and a placeholder
+ * for unread messages.
+ * 
+ * @param req - The HTTP request containing the user's authorization token.
+ * @returns JSON response with the user's dashboard data or an error message.
+ */
 
-// API route to handle dashboard data requests
+import { NextResponse } from 'next/server';
+import dbConnect from '@/lib/mongodb';
+import { ObjectId } from 'mongodb';
+import { verifyToken } from '@/lib/auth';
+import { ITask } from '@/models/Task';
+
 export async function GET(req: Request) {
   try {
-    // Get the JWT token from the Authorization header
     const token = req.headers.get('Authorization')?.split(' ')[1];
 
-    // Verify the JWT token
+    // Verify if token exists and is valid
     if (!token) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
@@ -19,26 +30,15 @@ export async function GET(req: Request) {
 
     // Connect to the database
     const db = await dbConnect();
-
-    // Get collections for tasks and any other data you need
     const tasksCollection = db.collection<ITask>('tasks');
 
-    // Query tasks for the authenticated user
+    // Retrieve tasks for the authenticated user
     const tasks = await tasksCollection.find({ userId: new ObjectId(userId) }).toArray();
 
-    // Separate tasks into completed and pending
-    const completedTasks = tasks.filter((task) => task.completed);
-    const pendingTasks = tasks.filter((task) => !task.completed);
-
-    // Construct the dashboard data response
+    // Build the simplified dashboard data, currently without status separation
     const dashboardData = {
-      tasksCompleted: completedTasks.length,
-      tasksPending: pendingTasks.length,
-      dueToday: pendingTasks.filter((task) => {
-        const today = new Date().setHours(0, 0, 0, 0);
-        return task.dueDate && new Date(task.dueDate).setHours(0, 0, 0, 0) === today;
-      }).length,
-      unreadMessages: 0, // Placeholder for unread messages (to be implemented)
+      totalTasks: tasks.length,
+      unreadMessages: 0, // Placeholder for future unread messages feature
     };
 
     return NextResponse.json({ success: true, dashboard: dashboardData });

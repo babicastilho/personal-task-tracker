@@ -1,3 +1,19 @@
+/**
+ * SignIn.tsx
+ * 
+ * Sign-in component allowing users to enter email and password to log in.
+ * - Displays error messages on login failure and redirects upon successful login.
+ * - Accepts a redirect URL from query parameters to control post-login navigation.
+ * 
+ * @component
+ * @returns A sign-in form with email and password fields, error handling, and redirection.
+ * 
+ * @param email - User's email address.
+ * @param password - User's password.
+ * @param error - Error message displayed on login failure.
+ * @param redirectUrl - URL to redirect to upon successful login (default is "/dashboard").
+ */
+
 "use client";
 
 import { useState, useEffect } from "react";

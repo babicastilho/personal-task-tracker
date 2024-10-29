@@ -1,4 +1,15 @@
+//
 // app/api/tasks/route.ts
+/**
+ * Handles task-related API requests, including retrieving and creating tasks for authenticated users.
+ * 
+ * - GET: Fetches all tasks for the authenticated user, marking overdue tasks based on their due dates.
+ * - POST: Validates and creates a new task for the authenticated user, including optional due dates, times, and priorities.
+ * 
+ * @param req - The HTTP request object, containing headers and body data.
+ * @returns JSON response with task data or error messages, depending on the operation and outcome.
+ */
+
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import { createTask } from "@/models/Task";

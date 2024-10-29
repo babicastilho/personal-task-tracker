@@ -1,10 +1,18 @@
 // 
 /**
  * lib/auth.ts
- * Utility functions for JWT token generation and validation.
+ * Utility functions for JWT token generation, validation, and authentication management.
  * 
- * Handles generating a token for a user and verifying its validity using JWT.
- * Includes functions for generating tokens, verifying tokens, checking authentication, and logging out.
+ * This module provides essential functions for handling JSON Web Tokens (JWT) within the application,
+ * including generating, verifying, and clearing tokens, as well as user authentication checks and logout functionality.
+ * It includes:
+ * - `generateToken`: Creates a signed JWT for a specified user.
+ * - `verifyToken`: Verifies a given JWT and returns decoded user information if valid.
+ * - `checkAuth`: Checks the user's authentication status based on the stored token.
+ * - `logout`: Clears authentication data and redirects the user to the login page.
+ * - `logoutAndRedirect`: A utility function combining token clearance and redirection for a seamless logout experience.
+ * 
+ * @throws Error - Throws an error if `JWT_SECRET` is not set on the server.
  */
 
 import { clearToken } from '@/lib/tokenUtils';

@@ -1,3 +1,16 @@
+/**
+ * DashboardPage.tsx
+ * 
+ * Client-side rendered page component for the user dashboard. Uses `useProtectedPage` to 
+ * manage authentication state and conditionally render content.
+ * 
+ * Features:
+ * - Displays a loading skeleton while verifying authentication.
+ * - Renders the Dashboard component if the user is authenticated.
+ * - Redirects to the login page if the user is not authenticated.
+ * 
+ */
+
 "use client";
 
 import React from "react";

@@ -1,8 +1,10 @@
-# My Todo List MERN
+# Personal Task Tracker
 
 ## Description
 
-My Todo List MERN is a comprehensive to-do list application built with MongoDB, Express, React, and Node.js. It features task management with categories, user authentication, theming, and more. This project serves as a practical implementation of the MERN stack for task management applications.
+The Personal Task Tracker is a robust task management application designed to support productivity and organization. Built with MongoDB and Next.js, this project originally began as a simple to-do list using the MERN stack, but has since evolved into a comprehensive personal task tracking tool. It includes features like task categorization, prioritization, filtering, user authentication, a customizable dashboard, and a responsive UI that supports both server-side and client-side rendering.
+
+With options to view tasks in list, calendar, and Kanban board formats, the Personal Task Tracker offers flexibility and functionality for managing tasks efficiently. This project serves as an in-depth implementation of MongoDB and Next.js capabilities in building a full-featured, scalable task management solution.
 
 ## Table of Contents
 - [Project Structure](#project-structure)
@@ -26,34 +28,29 @@ My Todo List MERN is a comprehensive to-do list application built with MongoDB, 
 The project structure is as follows:
 
 ```plaintext
-my-todo-list/
+personal-task-tracker/
 ├── app/
-│   ├── api/                  # Contains API route handlers for auth, tasks, users, and categories.
-│   ├── categories/           # Pages and components related to task categories.
-│   ├── register/             # User registration pages and forms.
-│   ├── tasks/                # Pages and components related to tasks.
-│   ├── layout.tsx            # Global layout component for the application.
-│   ├── page.tsx              # Main entry point for the application.
-│   └── favicon.ico           # Favicon for the application.
-├── components/               # Reusable React components (e.g., Header, Footer, TodoList).
-├── cypress/                  # Cypress End-to-End tests.
-├── hooks/                    # Custom React hooks (e.g., useTheme).
-├── lib/                      # Utility functions and libraries for auth, database connections, etc.
-├── models/                   # Mongoose models for MongoDB collections.
-├── public/                   # Public assets like images and icons.
-├── styles/                   # SCSS and CSS modules for styling components.
-├── tests/                    # Unit and component tests using Jest and React Testing Library.
-├── API_ENDPOINTS.md          # Documentation for API endpoints.
-├── README.md                 # Project README with detailed setup instructions.
-├── babel.config.js           # Babel configuration for the project.
-├── cypress.config.ts         # Cypress configuration for E2E tests.
-├── jest.config.js            # Jest configuration for unit and component tests.
-├── next.config.mjs           # Next.js configuration file.
-├── package.json              # NPM package configuration and dependencies.
-├── postcss.config.mjs        # PostCSS configuration for handling CSS.
-├── setupTests.ts             # Setup file for configuring Jest tests.
-├── tailwind.config.ts        # Tailwind CSS configuration.
-└── tsconfig.json             # TypeScript configuration file.
+│   ├── api/                # API route handlers for authentication, tasks, users, and categories.
+│   ├── categories/         # Components and pages for managing task categories.
+│   ├── dashboard/          # Dashboard page for an overview of tasks.
+│   ├── profile/            # User profile management.
+│   ├── tasks/              # Components and pages for creating, editing, and viewing tasks.
+│   ├── layout.tsx          # Global layout component.
+│   ├── page.tsx            # Main application entry point.
+├── components/             # Reusable components, including Header, Footer, and custom elements.
+├── context/                # Context providers for authentication and user profile.
+├── cypress/                # Cypress End-to-End tests.
+├── hooks/                  # Custom hooks (e.g., authentication, theming, and protected routes).
+├── lib/                    # Utility functions for API requests, authentication, etc.
+├── models/                 # MongoDB models (e.g., User, Task).
+├── public/                 # Static assets such as icons and images.
+├── styles/                 # SCSS and CSS files for styling.
+├── tests/                  # Unit and integration tests using Jest and Cypress.
+├── API_ENDPOINTS.md        # Documentation for API endpoints.
+├── README.md               # Project README with setup instructions.
+├── next.config.mjs         # Next.js configuration file.
+├── package.json            # Project dependencies and scripts.
+└── tsconfig.json           # TypeScript configuration.
 ```
 
 ## Setup
@@ -151,79 +148,64 @@ The API endpoints are documented in a separate file for better organization. Ple
 
 ## Directory Structure
 
-* `app/api/auth/check/route.ts`: API endpoint to check authentication status.
-* `app/api/auth/login/route.ts`: API endpoint to handle user login.
-* `app/api/auth/register/route.ts`: API endpoint to handle user registration.
-* `app/api/tasks/route.ts`: Defines API endpoints for task management.
-* `app/api/tasks/[id]/route.ts`: Defines API endpoints for specific task management.
-* `app/api/users/delete/route.ts`: API endpoint to handle user deletion.
-* `components/Dashboard.tsx`: Dashboard component.
-* `components/Footer.tsx`: Footer component.
-* `components/Header.tsx`: Header component.
-* `components/SignIn.tsx`: Sign-in component.
-* `components/TodoList.tsx`: React component for displaying the to-do list.
-* `components/register/RegisterForm.tsx`: Register form component.
-* `components/register/RegisterPage.tsx`: Register page component.
-* `cypress/`: Contains Cypress end-to-end tests.
-  * `component/`: Tests for components.
-  * `e2e/`: E2E tests for the application.
-    * `auth.cy.ts`: E2E tests for authentication.
-    * `todo.cy.ts`: E2E tests for the TodoList component.
-  * `fixtures/`: Fixtures for Cypress tests.
-    * `example.json`: Example fixture.
-  * `integration/`: Integration tests.
-  * `plugins/`: Cypress plugins.
-  * `support/`: Support files for Cypress tests.
-    * `commands.ts`: Custom commands for Cypress.
-    * `e2e.ts`: Entry point for Cypress support files.
-  * `cypress.config.ts`: Cypress configuration.
-  * `cypress.json`: Cypress JSON configuration.
-  * `tsconfig.json`: Cypress TypeScript configuration.
-* `hooks/useTheme.ts`: Custom hooks for theme management.
-* `lib/auth.ts`: Authentication library.
-* `lib/mongodb.ts`: MongoDB connection setup.
-* `lib/todo.ts`: Library for todo operations.
-* `models/Task.ts`: Mongoose schema and model for tasks.
-* `models/User.ts`: Mongoose schema and model for users.
-* `public/`: Static files and images.
-  * `next.svg`: Next.js logo.
-  * `vercel.svg`: Vercel logo.
-* `styles/`: Additional CSS files.
-  * `Header.module.scss`: SCSS module for the header component.
-  * `RegisterForm.module.scss`: SCSS module for the register form.
-* `tests/`: Contains unit and integration tests.
-  * `components/`: Tests for React components.
-    * `layout/layout.test.tsx`: Tests for layout components.
-    * `pages/page.test.tsx`: Tests for page components.
-    * `todo/TodoList.test.tsx`: Tests for the TodoList component.
-  * `unit/`: Unit tests.
-    * `api/`: Tests for API endpoints.
-      * `tasks.test.ts`: Unit tests for tasks API.
-      * `tasksId.test.ts`: Unit tests for specific task API.
-    * `auth/`: Tests for authentication endpoints.
-      * `check.test.ts`: Unit tests for check authentication API.
-      * `login.test.ts`: Unit tests for login API.
-      * `register.test.ts`: Unit tests for register API.
-    * `lib/`: Tests for library functions.
-      * `mongodb.test.ts`: Unit tests for MongoDB connection.
-      * `todo.test.ts`: Unit tests for todo library functions.
-    * `models/`: Tests for Mongoose models.
-      * `todo.test.ts`: Unit tests for Todo model.
-* `.env.local`: Configuration file for environment variables.
-* `LICENSE`: License file.
-* `README.md`: Project README file.
-* `babel.config.js`: Babel configuration.
-* `cypress.config.ts`: Cypress configuration.
-* `global.d.ts`: Global TypeScript declarations.
-* `jest.config.js`: Jest configuration for running tests.
-* `next-env.d.ts`: Next.js TypeScript environment declarations.
-* `next.config.mjs`: Next.js configuration.
-* `package.json`: Package file.
-* `postcss.config.mjs`: PostCSS configuration.
-* `setupTests.ts`: Setup file for tests.
-* `tailwind.config.ts`: Tailwind CSS configuration.
-* `tsconfig.json`: TypeScript configuration.
+The project’s detailed directory structure:
 
+* `app/api/`: Contains all API route handlers.
+  * `auth/`: Authentication routes, such as login, registration, and authentication status checks.
+  * `categories/`: Routes for managing task categories.
+  * `dashboard/`: Routes for loading main dashboard data.
+  * `tasks/`: Routes for task management, including creation, updating, and deletion.
+  * `users/`: Routes for user management, including profile updates and account deletion.
+
+* `app/`: Main directory for Next.js pages.
+  * `categories/`: Pages related to task categories.
+  * `dashboard/`: Main user dashboard page.
+  * `login/`: User login page.
+  * `profile/`: User profile page.
+  * `register/`: User registration page.
+  * `tasks/`: Pages for viewing, editing, and creating tasks.
+
+* `components/`: Shared UI components used across the application.
+  * `auth/`: Components for authentication, such as the `SignIn` form.
+  * `common/`: Commonly used components like `Dropdown` and `TaskCard`.
+  * `dashboard/`: Components specific to the dashboard, such as the `Calendar`.
+  * `filters/`: Components for filtering tasks, including `FilterBase`, `FilterModal`, and `PriorityFilter`.
+  * `layout/`: Layout components, including the `Header`, `Sidebar`, `Footer`, and `UserProfileMenu`.
+  * `loading/`: Components to display loading states, like `Skeleton` and `Spinner`.
+  * `register/`: Components for user registration, including the `RegisterForm`.
+  * `tasks/`: Components for managing and displaying tasks, including `TaskForm` and `ViewCards`.
+
+* `context/`: Context providers for managing global application state, including user authentication, theme settings, and user profile.
+
+* `cypress/`: Cypress configuration and end-to-end test files.
+  * `component/`: Tests for individual components.
+  * `e2e/`: End-to-end tests for user flows, such as authentication and task management.
+  * `support/`: Custom commands and setup files for Cypress.
+
+* `hooks/`: Custom React hooks, such as `useTheme` for theme management and `useAuth` for handling authentication logic.
+
+* `lib/`: Utility functions for the application, including database connections, API calls, and helper functions.
+
+* `models/`: Mongoose models that define the structure of MongoDB collections, including models for tasks, users, and categories.
+
+* `tests/`: Test suites for Jest, organized into unit and component tests for various functionalities.
+
+* `public/`: Static files such as icons and images used throughout the application.
+
+* `styles/`: SCSS and CSS stylesheets for custom styling of components and pages.
+
+* `types/`: TypeScript type definitions for the project.
+
+* Configuration files:
+  * `.env.local`: Environment variable configuration.
+  * `API_ENDPOINTS.md`: Documentation of available API endpoints.
+  * `README.md`: Project documentation and setup guide.
+  * `babel.config.js`: Babel configuration.
+  * `cypress.config.ts`: Main Cypress configuration file.
+  * `jest.config.js`: Jest configuration file.
+  * `next.config.mjs`: Next.js configuration file.
+  * `tailwind.config.ts`: Tailwind CSS configuration.
+  * `tsconfig.json`: TypeScript configuration file.
 
 ## Contributing
 

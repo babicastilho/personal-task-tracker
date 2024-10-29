@@ -1,10 +1,13 @@
-//
+// 
 /**
  * hooks/useProtectedPage.ts
- * Hook to handle redirection on protected pages based on authentication state.
+ * Hook to manage access to protected pages by redirecting unauthenticated users.
  * 
- * Redirects the user to the login page with appropriate messages if authentication fails.
- * @returns An object containing the authentication state (isAuthenticated) and loading status.
+ * Utilizes the `useAuth` hook to determine the user's authentication state and triggers a redirection 
+ * to the login page with an appropriate message if the user is not authenticated.
+ * 
+ * @returns An object containing `isAuthenticated` (boolean) and `loading` (boolean) to indicate 
+ *          authentication status and loading state.
  */
 
 import { useEffect } from 'react';

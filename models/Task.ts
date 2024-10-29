@@ -1,4 +1,18 @@
-// models/Task.ts
+// 
+/**
+ * models/Task.ts
+ * Defines the Task model and provides a factory function for creating tasks.
+ * 
+ * The Task model includes fields like title, resume, description, dueDate, dueTime,
+ * priority, and userId, which associates the task with a specific user.
+ * 
+ * @param data - Partial task data that includes title, resume, description, dueDate,
+ * dueTime, priority, and userId.
+ * @returns - A new ITask instance with required and optional fields populated.
+ * @throws - Throws an error if required fields (title, resume) are missing,
+ * if a due time is set without a due date, or if the due date is in the past.
+ */
+
 import { ObjectId } from 'mongodb';
 
 export interface ITask {

@@ -1,3 +1,18 @@
+// 
+/**
+ * context/AuthProvider.tsx
+ * Provides authentication context for managing and accessing user authentication state.
+ * 
+ * Manages authentication status, login, and logout functions, and handles token storage
+ * and validation using `apiFetch`. Integrates with `UserProfileProvider` to refresh user profile
+ * data upon login.
+ * 
+ * @interface AuthContextProps - Defines the structure of the authentication context, including
+ * properties for authentication status, loading state, and login/logout functions.
+ * @function AuthProvider - Context provider for handling authentication logic and state.
+ * @function useAuthContext - Custom hook to access the authentication context.
+ */
+
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { apiFetch } from '@/lib/apiFetch';
 import { useUserProfile } from '@/context/UserProfileProvider'; // Import profile context

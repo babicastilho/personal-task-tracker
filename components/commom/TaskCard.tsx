@@ -1,3 +1,19 @@
+/**
+ * TaskCard.tsx
+ * 
+ * Component for rendering an individual task card in a list or board view.
+ * 
+ * - Displays task details such as title, priority, category, and due date.
+ * - Highlights overdue tasks by applying a different border color.
+ * - Provides an edit button that triggers the onEditTask callback.
+ * 
+ * @param task - The task object containing details like title, priority, due date, and category.
+ * @param onEditTask - Callback function to handle task editing, receives the task ID as a parameter.
+ * @param category - The category name associated with the task.
+ * 
+ * @returns A styled task card with relevant information and actions.
+ */
+
 import React from "react";
 import {
   FaPen,

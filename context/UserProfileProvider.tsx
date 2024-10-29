@@ -1,12 +1,14 @@
-// context/UserProfileProvider.tsx
+//
 /**
- * UserProfileProvider.tsx
+ * context/UserProfileProvider.tsx
  * Context provider to manage and access the user's profile information globally.
  *
  * This context fetches the user profile only if a valid token is present, avoiding
  * unnecessary fetch attempts if the user is not authenticated. It also provides
  * helper functions to refresh the profile and get the user's preferred name.
  *
+ * @interface UserProfile - Structures user data, including first name, last name, and preferred name options.
+ * @interface UserProfileContextProps - Exposes profile data, loading state, and utility functions.
  * @returns Provides user profile data, loading state, and utility functions across the app.
  */
 

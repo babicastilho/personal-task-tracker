@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation"; // Import useParams and useRouter from next/navigation
 import TaskForm from "@/components/tasks/TaskForm";
 import { apiFetch } from "@/lib/apiFetch";
-import { Spinner } from "@/components/loading";
+import { Spinner } from "@/components/Loading";
 
 export default function EditTaskPage() {
   const { id } = useParams(); // Get the task ID from dynamic route params

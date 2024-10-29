@@ -14,7 +14,7 @@
 import React, { useState, useEffect } from "react";
 import { useProtectedPage } from "@/hooks/useProtectedPage"; // Custom hook for protected pages
 import { apiFetch } from "@/lib/apiFetch"; // Import the apiFetch function for handling requests
-import { Skeleton } from "@/components/loading"; // Import your loading skeleton
+import { Skeleton } from "@/components/Loading"; // Import your loading skeleton
 import { FaRegTrashAlt } from "react-icons/fa";
 
 export interface Category {

@@ -5,7 +5,7 @@ import "./globals.scss";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Sidebar from "@/components/layout/Sidebar";
-import { Spinner, Skeleton } from "@/components/loading"; // Import spinner and skeleton
+import { Spinner, Skeleton } from "@/components/Loading"; // Import spinner and skeleton
 import { useAuthContext, AuthProvider } from "@/context/AuthProvider"; // Authentication hook and provider
 import { ThemeProvider } from "@/context/ThemeContext"; // Theme Provider
 import { UserProfileProvider } from "@/context/UserProfileProvider";

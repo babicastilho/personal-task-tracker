@@ -20,7 +20,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CardsView from "@/components/tasks/CardsView";
-import { Skeleton } from "@/components/loading";
+import { Skeleton } from "@/components/Loading";
 import { useProtectedPage } from "@/hooks/useProtectedPage";
 import { apiFetch } from "@/lib/apiFetch"; 
 import { Task, Category } from "@/types/TaskCategoryTypes";

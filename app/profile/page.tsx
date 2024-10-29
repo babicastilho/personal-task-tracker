@@ -21,7 +21,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchProfile, updateProfile } from "@/lib/user"; // API functions for fetching and updating profile
 import Image from "next/image"; // Next.js Image component for optimized images
-import { Spinner } from "@/components/loading"; // Loading spinner component
+import { Spinner } from "@/components/Loading"; // Loading spinner component
 import { useProtectedPage } from "@/hooks/useProtectedPage"; // Custom hook to handle protected pages
 import { useUserProfile } from "@/context/UserProfileProvider";
 import Dropdown from "@/components/commom/Dropdown";

@@ -7,6 +7,7 @@
     "unit tests": "jest --selectProjects unit --coverage",
     "components tests": "jest --selectProjects components",
     "e2e tests": "npx cypress open",
+    "e2e tests server": "npx cypress run",
     "build": "next build",
     "lint": "next lint"
   },

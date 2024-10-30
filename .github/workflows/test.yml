@@ -9,7 +9,8 @@ jobs:
     env:
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
+      CYPRESS_BASE_URL: "https://personal-task-tracker-nine.vercel.app"
+      
     steps:
       - name: Check out the code
         uses: actions/checkout@v2

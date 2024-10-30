@@ -2,7 +2,7 @@
   "extends": "../tsconfig.json",  // Extends the main tsconfig
   "compilerOptions": {
     "isolatedModules": false,  // Cypress doesn't require isolatedModules
-    "types": ["cypress"],  // Load only Cypress types
+    "types": ["cypress", "node"],  // Load only Cypress types
     "resolveJsonModule": true  // Allow importing JSON files
   },
   "include": [

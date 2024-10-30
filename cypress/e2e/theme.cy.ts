@@ -1,41 +1,40 @@
-describe('Theme Toggle', () => {
+describe("Theme Toggle", () => {
   beforeEach(() => {
-    // Visite a URL do site
-    cy.visit('http://localhost:3000').then(() => {
-      // Certifique-se de que o tema começa como 'light'
-      cy.get('html').invoke('removeClass', 'dark').invoke('addClass', 'light');
+    // Visit the base URL and ensure the theme starts as 'light'
+    cy.visit("/").then(() => {
+      cy.get("html").invoke("removeClass", "dark").invoke("addClass", "light");
     });
   });
 
-  it('should toggle between light and dark modes', () => {
-    // Adiciona um spy para verificar se o clique está sendo registrado
+  it("should toggle between light and dark modes", () => {
+    // Add a spy to ensure the click event is registered
     const toggleSpy = cy.spy();
     cy.get('[data-cy="toggle-button"]').click({ force: true }).then(() => {
       toggleSpy();
     });
-  
-    // Verifique se o evento foi acionado
-    cy.wrap(toggleSpy).should('have.been.called');
-  
-    // Verifica se o tema mudou
-    cy.get('html').should('have.class', 'light');
+
+    // Verify that the event was triggered
+    cy.wrap(toggleSpy).should("have.been.called");
+
+    // Check that the theme toggled to 'dark'
+    cy.get("html").should("have.class", "dark");
   });
 
-  it('should persist theme after reload', () => {
-    // Alternar para o tema escuro
-    cy.get('html').should('have.class', 'dark');
-
-    // Recarregar a página e verificar se o tema ainda é escuro
-    cy.reload();
-    cy.get('html').should('have.class', 'dark');
-
-    // Alternar de volta para o tema claro
+  it("should persist theme after reload", () => {
+    // Switch to dark theme
     cy.get('[data-cy="toggle-button"]').click({ force: true });
-    cy.get('html').should('have.class', 'light');
+    cy.get("html").should("have.class", "dark");
 
-    // Recarregar a página e verificar se o tema ainda é claro
+    // Reload and check if theme persists as 'dark'
     cy.reload();
-    cy.get('html').should('have.class', 'light');
+    cy.get("html").should("have.class", "dark");
+
+    // Switch back to light theme
+    cy.get('[data-cy="toggle-button"]').click({ force: true });
+    cy.get("html").should("have.class", "light");
+
+    // Reload and check if theme persists as 'light'
+    cy.reload();
+    cy.get("html").should("have.class", "light");
   });
-  
 });

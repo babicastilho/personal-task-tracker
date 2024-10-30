@@ -5,8 +5,7 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // Add e2e node event listeners here if needed
     },
-    //baseUrl: 'http://localhost:3000',  // Base URL for your Next.js app local
-    baseUrl: 'https://personal-task-tracker-nine.vercel.app',
+    baseUrl: process.env.CYPRESS_BASE_URL || "http://localhost:3000",
     supportFile: 'cypress/support/e2e.ts',
     specPattern: 'cypress/e2e/**/*.cy.ts',
   },

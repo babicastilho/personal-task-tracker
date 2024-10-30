@@ -1,7 +1,7 @@
 // cypress/e2e/dashboard.cy.ts
 
 describe("Dashboard Page E2E", () => {
-  let token: string;
+  let token;
 
   before(() => {
     // Create a user with custom profile data for testing the dashboard
@@ -30,7 +30,7 @@ describe("Dashboard Page E2E", () => {
   });
 
   it("should display user information on the dashboard", () => {
-    // Verify if wlcome message is displayed on the dashboard
+    // Verify if welcome message is displayed on the dashboard
     cy.get('[data-cy="welcome-message"]').should("exist");
 
     // Check if preferred name is displayed

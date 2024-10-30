@@ -23,8 +23,7 @@
         "./*"
       ] // Mapping alias '@/' to the root
     },
-    "types": [] // No global types (neither jest nor cypress)
-    ,
+    "types": ["node"],
     "plugins": [
       {
         "name": "next"

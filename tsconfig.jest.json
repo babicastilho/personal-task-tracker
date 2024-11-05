@@ -1,5 +1,6 @@
 // tsconfig.jest.json
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -20,5 +21,5 @@
     }
   },
   "include": ["tests/**/*.ts", "tests/**/*.tsx", "setupTests.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "cypress" ]
 }

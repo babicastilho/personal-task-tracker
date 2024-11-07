@@ -61,7 +61,8 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(({
       ref={ref} // Attach the ref here
       className="transition-all bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-300 p-4 fixed top-0 w-full flex justify-between items-center z-50"
     >
-      <Title text="TO DO App" />
+      <Title mainText="personal" subText="tasks tracker" />
+      
       <div className="flex items-center space-x-4 justify-end flex-1">
         {!isAuthenticated && renderGitHubAndThemeToggle()}
         {isAuthenticated && (

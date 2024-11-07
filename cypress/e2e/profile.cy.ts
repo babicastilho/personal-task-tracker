@@ -44,8 +44,11 @@ describe("Profile Page E2E", () => {
 
     cy.get('input[name="firstName"]').clear().type(newFirstName);
     cy.get('textarea[name="bio"]').clear().type("This is an updated bio.");
-    cy.contains("Save Profile").click();
+    
+    // Ensure the "Save Profile" button is in view before clicking
+    cy.contains("Save Profile").scrollIntoView().should("be.visible").click();
 
+    // Verify that the profile was updated successfully
     cy.get('input[name="firstName"]').should("have.value", newFirstName);
     cy.contains("Profile updated successfully").should("be.visible");
   });
@@ -53,7 +56,11 @@ describe("Profile Page E2E", () => {
   it("should prevent access to profile page if not authenticated", () => {
     cy.logout();
 
-    cy.visit("/profile"); // Redireciona ao perfil sem autenticação
-    cy.url({ timeout: 5000 }).should('include', '/login?message=no_token'); 
+    cy.visit("/profile"); // Attempt to access the profile page without authentication
+    cy.url({ timeout: 5000 }).should("include", "/login?message=no_token"); 
+  });
+
+  after(() => {
+    cy.deleteUser("test@example.com", "password123");
   });
 });

@@ -4,11 +4,18 @@ export default defineConfig({
   projectId: 'xp4y1p',
   e2e: {
     setupNodeEvents(on, config) {
-      // Add e2e node event listeners here if needed
+      on('task', {
+        log(message) {
+          console.log(message);
+          return null;
+        },
+      });
     },
     baseUrl: process.env.CYPRESS_BASE_URL || "http://localhost:3000",
     supportFile: 'cypress/support/e2e.ts',
     specPattern: 'cypress/e2e/**/*.cy.ts',
+    viewportWidth: 1000, 
+    viewportHeight: 750, 
   },
   component: {
     devServer: {

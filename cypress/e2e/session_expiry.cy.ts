@@ -1,5 +1,24 @@
 /// <reference types="cypress" />
 
+function simulateTokenExpiry() {
+  cy.intercept("GET", "/api/auth/check", {
+    statusCode: 401,
+    body: { success: false, message: "Token expired" },
+  }).as("expiredSession");
+
+  cy.intercept("GET", "/api/tasks", {
+    statusCode: 401,
+    body: { success: false, message: "Token expired" },
+  }).as("expiredSession");
+
+  cy.intercept("GET", "/api/dashboard", {
+    statusCode: 401,
+    body: { success: false, message: "Token expired" },
+  }).as("expiredSession");
+}
+
+
+
 describe("Token Expiry During Active Session", () => {
   before(() => {
     cy.resetUser("test@example.com", "password123", {
@@ -15,10 +34,8 @@ describe("Token Expiry During Active Session", () => {
   });
 
   it("should redirect to /login with session expired message after token removal on /dashboard", function () {
-    cy.intercept("GET", "/api/auth/check", {
-      statusCode: 401,
-      body: { success: false, message: "Token expired" },
-    }).as("expiredSession");
+    // Use the simulateTokenExpiry function to set up the intercept
+    simulateTokenExpiry();
 
     cy.window().then((win) => {
       win.localStorage.removeItem("token");
@@ -34,10 +51,8 @@ describe("Token Expiry During Active Session", () => {
   it("should redirect to /login with session expired message after token removal on /tasks", function () {
     cy.visit("/tasks");
 
-    cy.intercept("GET", "/api/auth/check", {
-      statusCode: 401,
-      body: { success: false, message: "Token expired" },
-    }).as("expiredSession");
+    // Use the simulateTokenExpiry function to set up the intercept
+    simulateTokenExpiry();
 
     cy.window().then((win) => {
       win.localStorage.removeItem("token");

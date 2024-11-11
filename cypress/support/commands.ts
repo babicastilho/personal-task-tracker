@@ -6,36 +6,39 @@
  * @param password - User's password
  * @param profileData - Additional profile data for the user
  */
-Cypress.Commands.add("resetUser", (email: string, password: string, profileData: any = {}) => {
-  // Step 1: Attempt to log in to check if the user already exists
-  cy.request({
-    method: "POST",
-    url: "/api/auth/login", // Relative URL, uses baseUrl
-    body: { email, password },
-    failOnStatusCode: false, // Ignore non-200 statuses (in case user doesn't exist)
-  }).then((response) => {
-    if (response.status === 200 && response.body?.token) {
-      // User exists, proceed with deletion
-      const token = response.body.token;
+Cypress.Commands.add(
+  "resetUser",
+  (email: string, password: string, profileData: any = {}) => {
+    // Step 1: Attempt to log in to check if the user already exists
+    cy.request({
+      method: "POST",
+      url: "/api/auth/login", // Relative URL, uses baseUrl
+      body: { email, password },
+      failOnStatusCode: false, // Ignore non-200 statuses (in case user doesn't exist)
+    }).then((response) => {
+      if (response.status === 200 && response.body?.token) {
+        // User exists, proceed with deletion
+        const token = response.body.token;
 
-      // Step 2: Delete the user if they exist
-      cy.request({
-        method: "DELETE",
-        url: "/api/users/delete",
-        headers: {
-          Authorization: `Bearer ${token}`, // Use token for authorization
-        },
-        failOnStatusCode: false, // Ignore errors if delete fails
-      }).then(() => {
-        // After deletion, register the user again
+        // Step 2: Delete the user if they exist
+        cy.request({
+          method: "DELETE",
+          url: "/api/users/delete",
+          headers: {
+            Authorization: `Bearer ${token}`, // Use token for authorization
+          },
+          failOnStatusCode: false, // Ignore errors if delete fails
+        }).then(() => {
+          // After deletion, register the user again
+          registerUser(email, password, profileData);
+        });
+      } else {
+        // User doesn't exist, register directly
         registerUser(email, password, profileData);
-      });
-    } else {
-      // User doesn't exist, register directly
-      registerUser(email, password, profileData);
-    }
-  });
-});
+      }
+    });
+  }
+);
 
 /**
  * Helper function to register the user and update their profile.
@@ -104,27 +107,23 @@ Cypress.Commands.add("deleteUser", (email: string, password: string) => {
   });
 });
 
-/**
- * Custom command to log in a user.
- * Stores the authentication token in localStorage.
- * @param email - User's email
- * @param password - User's password
- * @param redirectUrl - URL to redirect after login
- */
-Cypress.Commands.add("login", (email: string, password: string, redirectUrl: string = "/") => {
+// Custom command to log in a user
+Cypress.Commands.add("login", (email, password, redirectUrl = "/") => {
   cy.intercept("POST", "/api/auth/login").as("loginRequest");
-  cy.visit("/login"); // Access the login page
+  cy.visit("/login");
 
   cy.get('input[id="email"]').type(email);
   cy.wait(1000);
   cy.get('input[id="password"]').type(password);
-
   cy.get('button[type="submit"]').click();
+
   cy.wait("@loginRequest").then((interception) => {
     expect(interception.response.statusCode).to.equal(200);
-    cy.visit(redirectUrl); // Redirect after login
+    cy.wait(1000); // Espera adicional para estabilidade
+    cy.visit(redirectUrl);
   });
 });
+
 
 /**
  * Custom command to log out the user.

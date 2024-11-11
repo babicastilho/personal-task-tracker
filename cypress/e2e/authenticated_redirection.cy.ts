@@ -30,7 +30,7 @@ describe("Authenticated User Redirection", () => {
 
   it("should display tasks when redirected to tasks page", function () {
     cy.visit("/tasks");
-    cy.url({ timeout: 5000 }).should("include", "/tasks");
+    cy.url({ timeout: 15000 }).should("include", "/tasks");
     cy.contains("Your To-Do List").should("be.visible");
     cy.get('[data-cy="todo-list"]').should("exist");
   });

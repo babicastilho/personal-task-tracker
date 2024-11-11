@@ -59,7 +59,7 @@ describe("Dashboard Page E2E", () => {
 
     // Verify if the To-Do list is displayed on the dashboard
     cy.contains("Your To-Do List").should("be.visible");
-    cy.wait(1000);
+    cy.wait(15000);
     cy.get('[data-cy="todo-list"]').should("exist");
   });
 

@@ -21,5 +21,11 @@
         "typescript.tsconfigPath": "./cypress/tsconfig.json"  // Use Cypress-specific tsconfig for Cypress
       }
     }
-  ]
+  ],
+
+  "workbench.editor.customLabels.patterns": {
+    "**/app/**/page.tsx": "${dirname} - Page",
+    "**/app/**/layout.tsx": "${dirname} - Layout",
+    "**/components/**/index.tsx": "${dirname} - Component"
+  }
 }

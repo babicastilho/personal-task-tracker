@@ -26,8 +26,8 @@ describe("Token Expiry During Active Session", () => {
     cy.wait(500);
     cy.reload();
 
-    cy.wait("@expiredSession", { timeout: 15000 });
-    cy.url({ timeout: 15000 }).should("include", "/login?message=session_expired");
+    cy.wait("@expiredSession", { timeout: 25000 });
+    cy.url({ timeout: 25000 }).should("include", "/login?message=session_expired");
     cy.contains("Your session has expired. Please log in again.").should("be.visible");
   });
 

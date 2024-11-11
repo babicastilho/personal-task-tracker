@@ -102,7 +102,7 @@ const Dashboard = () => {
           </div>
         )}
         <div className="flex-col items-center mx-5">
-          <h2 className="text-lg font-bold" data-cy="welcome-message">
+          <h2 className="text-lg font-bold" data-cy="welcome-message" data-testid="welcome-message">
             Welcome, <span data-cy="preferred-name">{getPreferredName()}</span>!
           </h2>
           <h3 className="text-base font-medium" data-cy="current-datetime">

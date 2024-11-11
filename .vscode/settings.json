@@ -1,0 +1,31 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.validate.enable": false, // Disable global TypeScript validation to avoid conflicts
+  "folders": [
+    {
+      "path": ".",
+      "settings": {
+        "typescript.tsconfigPath": "./tsconfig.json"  // Use main tsconfig for the project
+      }
+    },
+    {
+      "path": "./tests",
+      "settings": {
+        "typescript.tsconfigPath": "./tsconfig.jest.json"  // Use Jest-specific tsconfig for tests
+      }
+    },
+    {
+      "path": "./cypress",
+      "settings": {
+        "typescript.tsconfigPath": "./cypress/tsconfig.json"  // Use Cypress-specific tsconfig for Cypress
+      }
+    }
+  ],
+
+  "workbench.editor.customLabels.patterns": {
+    "**/app/**/page.tsx": "${dirname} - Page",
+    "**/app/**/layout.tsx": "${dirname} - Layout",
+    "**/components/**/index.tsx": "${dirname} - Component"
+  }
+}

@@ -6,6 +6,15 @@ The Personal Task Tracker is a robust task management application designed to su
 
 With options to view tasks in list, calendar, and Kanban board formats, the Personal Task Tracker offers flexibility and functionality for managing tasks efficiently. This project serves as an in-depth implementation of MongoDB and Next.js capabilities in building a full-featured, scalable task management solution.
 
+> **Note:** This project is a work in progress, with additional features and improvements planned.
+
+## Features
+
+- **Task Management**: Create, edit, delete, and organize tasks with priority levels and due dates.
+- **Priority-Based Filtering**: Filter tasks by priority, allowing users to focus on what matters most.
+- **Multiple Views**: Current support for Card view, with plans to include Kanban, list, and calendar views.
+- **Authentication**: Basic authentication with session management.
+
 ## Table of Contents
 - [Project Structure](#project-structure)
 - [Setup](#setup)
@@ -19,7 +28,9 @@ With options to view tasks in list, calendar, and Kanban board formats, the Pers
   - [Running Tests](#running-tests)
   - [Running E2E Tests](#running-e2e-tests)
 - [API Endpoints](#api-endpoints)
+- [TypeScript Configuration for Jest and Cypress](#typescript-configuration-for-jest-and-cypress)
 - [Directory Structure](#directory-structure)
+- [Planned Improvements](#planned-improvements)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -142,6 +153,10 @@ npx cypress open
 ```
 This will open the Cypress test runner. Ensure your development server is running before starting the tests.
 
+## TypeScript Configuration for Jest and Cypress
+
+The TypeScript configurations for Jest and Cypress are documented in a separate file to avoid conflicts and ensure smooth testing experiences. Please refer to the [TypeScript Configuration Documentation](TYPESCRIPT_CONFIG.md).
+
 ## API Endpoints
 
 The API endpoints are documented in a separate file for better organization. Please refer to [API Endpoints Documentation](API_ENDPOINTS.md).
@@ -206,6 +221,57 @@ The project’s detailed directory structure:
   * `next.config.mjs`: Next.js configuration file.
   * `tailwind.config.ts`: Tailwind CSS configuration.
   * `tsconfig.json`: TypeScript configuration file.
+
+## Planned Improvements
+
+### 1. Enhanced Layout and Navigation
+- Continue refining the layout of `TasksPage` to integrate Kanban, list, and calendar views seamlessly.
+- Implement expand/collapse functionality for the 'view tasks' section in the sidebar to enhance the user experience.
+
+### 2. Additional Filtering Options
+- Extend the filtering system to include options beyond priority, such as **due date**, **category**, and **status** (pending or completed).
+- Expand the generic filter component (`FilterBase`) to support different filter types, including **checkboxes** and **strings**.
+
+### 3. Comments and Attachments System
+- Add a comments system for tasks, allowing communication between team members.
+- Enable file attachments on tasks to share documents or relevant resources.
+
+### 4. Notification System
+- Develop a notification system to alert users about task deadlines and other important updates.
+- Visually highlight overdue tasks on the interface, following an alert style similar to Jira.
+
+### 5. Dashboard and Progress Reports
+- Create a dashboard with **progress charts** and **task statistics** to give an overview of task status.
+- Add productivity reports for a summary of completed and pending tasks.
+
+### 6. Sub-Tasks Implementation
+- Support sub-tasks, allowing each main task to have multiple steps.
+- Integrate sub-tasks within the Kanban view and task details for more granular task management.
+
+### 7. Priority System Enhancements
+- Refine the priority system with improved visual options, icons, and distinct colors for the five priority levels.
+- Implement advanced filters for viewing tasks based on each priority level.
+
+### 8. Scheduling System and Discord Bot Integration
+- Set up scheduling commands in the Discord bot, with recurrence options such as **daily**, **weekly**, **monthly**, or **custom**.
+- Allow the administrator to schedule multiple reminders to be sent automatically.
+
+### 9. Optimization and Testing
+- Continue refining **E2E** and **unit tests** to cover all functionalities, including filters, notifications, and task handling.
+- Enhance test structure to handle new task views and ensure compatibility with CI/CD pipelines and servers.
+
+### 10. Accessibility and Responsiveness
+- Improve page accessibility with a focus on **responsive design** for a consistent mobile experience.
+- Review color contrasts and font sizes for users with specific visual needs.
+
+### 11. Documentation and Code Quality
+- Continuously improve documentation, particularly with explanations for more complex components and pipeline configurations.
+- Add detailed headers to all files and maintain comments in English for consistency and easier maintenance.
+
+---
+
+> **Note:** This project is a work in progress, with these planned improvements set to expand its functionality and user experience. Contributions and feedback are welcome as we work towards these goals! 😊
+
 
 ## Contributing
 

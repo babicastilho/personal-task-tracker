@@ -10,7 +10,7 @@ Cypress.Commands.add("resetUser", (email: string, password: string, profileData:
   // Step 1: Attempt to log in to check if the user already exists
   cy.request({
     method: "POST",
-    url: "/api/auth/login", // Login URL (relative to baseUrl)
+    url: "/api/auth/login", // Relative URL, uses baseUrl
     body: { email, password },
     failOnStatusCode: false, // Ignore non-200 statuses (in case user doesn't exist)
   }).then((response) => {
@@ -46,7 +46,7 @@ Cypress.Commands.add("resetUser", (email: string, password: string, profileData:
 const registerUser = (email: string, password: string, profileData: any) => {
   cy.request({
     method: "POST",
-    url: "/api/auth/register", // Registration URL (relative to baseUrl)
+    url: "/api/auth/register", // Relative URL, uses baseUrl
     body: {
       username: profileData.username || "testuser", // Default username if not provided
       email,

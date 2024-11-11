@@ -39,6 +39,5 @@
   "exclude": [
     "node_modules",
     "tests",
-    "cypress"
   ] // Exclude test folders
 }

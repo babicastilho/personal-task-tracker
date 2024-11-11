@@ -3,6 +3,7 @@
 @import "tailwindcss/utilities";
 
 @import "../styles/Loading/loading";
+@import url('https://fonts.googleapis.com/css2?family=Cookie&display=swap');
 
 body {
   margin: 0;
@@ -30,6 +31,10 @@ footer {
   .ql-toolbar {
     background-color: #6b7280;
   }
+}
+
+.font-cookie {
+  font-family: 'Cookie', cursive;
 }
 
 

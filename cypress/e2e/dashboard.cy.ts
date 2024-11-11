@@ -1,5 +1,3 @@
-// cypress/e2e/dashboard.cy.ts
-
 describe("Dashboard Page E2E", () => {
   let token;
 
@@ -40,6 +38,15 @@ describe("Dashboard Page E2E", () => {
     cy.get('[data-cy="dashboard-calendar"]').should("exist");
   });
 
+  it("should display current date and time", () => {
+    // Going back to Dashboard
+    cy.get('[data-cy="menu-toggle-button"]').click();
+    cy.contains("Dashboard").click();
+
+    // Verify if the current date and time are displayed correctly
+    cy.get('[data-cy="current-datetime"]').should("be.visible");
+  });
+
   it("should display todo list component on dashboard", () => {
     // Open the menu to access the Tasks page
     cy.get('[data-cy="menu-toggle-button"]').click(); // Open the menu
@@ -49,10 +56,10 @@ describe("Dashboard Page E2E", () => {
     cy.wait(500);
     cy.get('[data-cy="sidebar-tasks-cards"]').click();
     cy.wait(500);
-    
+
     // Verify if the To-Do list is displayed on the dashboard
     cy.contains("Your To-Do List").should("be.visible");
-    cy.wait(1000);
+    cy.wait(15000);
     cy.get('[data-cy="todo-list"]').should("exist");
   });
 
@@ -86,12 +93,7 @@ describe("Dashboard Page E2E", () => {
     cy.get('[data-cy="edit-profile"]').should("exist");
   });
 
-  it("should display current date and time", () => {
-    // Going back to Dashboard
-    cy.get('[data-cy="menu-toggle-button"]').click();
-    cy.contains("Dashboard").click();
-
-    // Verify if the current date and time are displayed correctly
-    cy.get('[data-cy="current-datetime"]').should("be.visible");
+  after(() => {
+    cy.deleteUser("test@example.com", "password123");
   });
 });

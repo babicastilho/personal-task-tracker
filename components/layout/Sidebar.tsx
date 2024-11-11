@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } lg:translate-x-0`}
     >
-      <Title text="TO DO App" />
+      <Title mainText="personal" subText="tasks tracker" />
       <hr className="my-6 border-gray-400" />
 
       <nav>

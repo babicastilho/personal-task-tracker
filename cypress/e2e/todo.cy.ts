@@ -111,24 +111,6 @@ describe("Todo App E2E", () => {
   });
 
   after(() => {
-    cy.request({
-      method: "POST",
-      url: "/api/auth/login",
-      body: {
-        email: "test@example.com",
-        password: "password123",
-      },
-    }).then((response) => {
-      if (response.status === 200) {
-        token = response.body.token;
-        cy.request({
-          method: "DELETE",
-          url: "/api/users/delete",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      }
-    });
+    cy.deleteUser("test@example.com", "password123");
   });
 });

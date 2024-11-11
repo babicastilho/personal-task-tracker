@@ -1,13 +1,35 @@
 // components/Title.tsx
-
-import React from 'react';
+import React from "react";
+import Image from "next/image";
 
 interface TitleProps {
-  text: string;
+  mainText: string;
+  subText: string;
 }
 
-const Title: React.FC<TitleProps> = ({ text }) => {
-  return <h1 className="text-2xl lg:text-4xl">{text}</h1>;
+const Title: React.FC<TitleProps> = ({ mainText, subText }) => {
+  const logoSrc = process.env.NODE_ENV === "test" ? "" : "/images/logo.png";
+
+  return (
+    <div className="flex flex-row gap-5 items-center">
+      {logoSrc && (
+        <Image
+          src={logoSrc}
+          alt="Logo"
+          width={40}
+          height={40}
+        />
+      )}
+      <div>
+        <h1 className="font-cookie text-4xl lg:text-5xl text-gray-100 tracking-wider">
+          {mainText}
+        </h1>
+        <span className="text-xs lg:text-sm lowercase text-gray-400 -mt-3 ml-2 block">
+          {subText}
+        </span>
+      </div>
+    </div>
+  );
 };
 
 export default Title;

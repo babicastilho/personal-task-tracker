@@ -1,16 +1,24 @@
 {
-  "extends": "../tsconfig.json",  // Extends the main tsconfig
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "isolatedModules": false,  // Cypress doesn't require isolatedModules
-    "types": ["cypress", "node"],  // Load only Cypress types
-    "resolveJsonModule": true  // Allow importing JSON files
+    "isolatedModules": false,
+    "types": ["cypress", "node"],
+    "resolveJsonModule": true,
+    "lib": ["dom", "esnext"],
+    "allowJs": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": "../",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": [
-    "**/*.ts",  // Include all TypeScript files inside the Cypress folder
+    "**/*.ts",
     "**/*.tsx"
   ],
   "exclude": [
-    "../node_modules",  // Exclude node_modules
-    "../tests",  // Exclude test files outside Cypress folder 
+    "../node_modules",
+    "../tests"
   ]
 }

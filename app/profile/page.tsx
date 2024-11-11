@@ -192,7 +192,7 @@ const ProfilePage = () => {
           </div>
 
           {/* Preferred Name Option */}
-          <div className="relative flex flex-col w-full md:w-1/2 space-y-2 z-50">
+          <div className="relative flex flex-col w-full md:w-1/2 space-y-2 z-40">
             <Dropdown
               testIdPrefix="preferred-name-option"
               options={[

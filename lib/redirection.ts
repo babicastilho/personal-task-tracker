@@ -1,6 +1,5 @@
-// 
+// lib/redirection.ts
 /**
- * lib/redirection.ts
  * Manages user redirection based on authentication errors, such as missing or expired tokens.
  * 
  * This module includes functions to handle redirection to the login page with appropriate
@@ -28,12 +27,12 @@ export const handleAuthRedirection = (authError: string | null, routerOrWindow: 
 
   console.log('Current Path:', currentPath);
 
-  // Separa os cenários de redirecionamento por token_expired e no_token
+  // Separate the redirection scenarios for token_expired and no_token
   if (authError === 'token_expired') {
     if (currentPath && !['/login'].includes(currentPath)) {
       console.log('Redirecting due to token expired');
       if (routerOrWindow.replace) {
-        routerOrWindow.replace(`/login?message=session_expired`); // Redireciona para session_expired
+        routerOrWindow.replace(`/login?message=session_expired`); // Redirect to session_expired
       } else {
         window.location.href = `/login?message=session_expired`;
       }
@@ -42,7 +41,7 @@ export const handleAuthRedirection = (authError: string | null, routerOrWindow: 
     if (currentPath && !['/login'].includes(currentPath)) {
       console.log('Redirecting due to no token');
       if (routerOrWindow.replace) {
-        routerOrWindow.replace(`/login?message=no_token`); // Redireciona para no_token
+        routerOrWindow.replace(`/login?message=no_token`); // Redirect to no_token
       } else {
         window.location.href = `/login?message=no_token`;
       }

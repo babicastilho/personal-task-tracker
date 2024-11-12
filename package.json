@@ -7,8 +7,10 @@
     "unit tests": "jest --selectProjects unit --coverage",
     "components tests": "jest --selectProjects components",
     "e2e:local": "start-server-and-test 'next dev' 3000 'cypress run'",
+    "e2e:production": "start-server-and-test 'next start' 3000 'cypress run'",
     "e2e tests server": "npx cypress run",
     "build": "next build",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {

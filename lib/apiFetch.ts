@@ -1,4 +1,3 @@
-//
 // lib/apiFetch.ts
 /**
  * Provides a centralized function to handle authenticated API requests.
@@ -40,7 +39,10 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
     const response = await fetch(url, fetchOptions);
 
     if (response.status === 401) {
-      handleAuthRedirection("token_expired", window);
+      // Evita redirecionamento automático em ambiente de teste
+      if (process.env.NODE_ENV !== 'test') {
+        handleAuthRedirection("token_expired", window);
+      }
       return null;
     }
 

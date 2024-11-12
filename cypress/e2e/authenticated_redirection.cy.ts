@@ -14,10 +14,13 @@ describe("Authenticated User Redirection", () => {
   beforeEach(() => {
     // Log in before each test
     cy.login("test@example.com", "password123", "/login");
+
+    // Verifica se o login foi concluído redirecionando para o dashboard
+    cy.url({ timeout: 10000 }).should("include", "/dashboard");
   });
 
   it("should redirect authenticated users from /login to /dashboard", () => {
-    cy.visit("/");
+    cy.visit("/login");
     cy.url({ timeout: 5000 }).should("include", "/dashboard");
     cy.get('[data-cy="welcome-message"]').should("be.visible");
   });

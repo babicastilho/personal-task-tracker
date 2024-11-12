@@ -24,7 +24,7 @@ import Image from "next/image"; // Next.js Image component for optimized images
 import { Spinner } from "@/components/Loading"; // Loading spinner component
 import { useProtectedPage } from "@/hooks/useProtectedPage"; // Custom hook to handle protected pages
 import { useUserProfile } from "@/context/UserProfileProvider";
-import Dropdown from "@/components/commom/Dropdown";
+import Dropdown from "@/components/common/Dropdown";
 
 const ProfilePage = () => {
   const { isAuthenticated, loading } = useProtectedPage(); // Access authentication state (isAuthenticated, loading)

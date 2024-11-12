@@ -1,7 +1,7 @@
 // components/tasks/CardsView.tsx
 "use client";
 import React from "react";
-import TaskCard from "@/components/commom/TaskCard";
+import TaskCard from "@/components/common/TaskCard";
 import { Task, Category } from "@/types/TaskCategoryTypes";
 import { apiFetch } from "@/lib/apiFetch"; // Certifique-se de que você tem essa função para realizar fetch
 

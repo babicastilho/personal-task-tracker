@@ -1,0 +1,14 @@
+{
+  "login": {
+    "signIn": "Entrar",
+    "email": "Email",
+    "password": "Senha",
+    "signInButton": "Entrar",
+    "noAccount": "Não tem uma conta?",
+    "registerHere": "Registre-se aqui",
+    "sessionExpired": "Sua sessão expirou. Por favor, faça login novamente.",
+    "loginRequired": "Sua sessão expirou. Por favor, faça login novamente para continuar.",
+    "noToken": "Você precisa fazer login para continuar.",
+    "logoutSuccessful": "Logout bem-sucedido. Por favor, faça login novamente para continuar."
+  }
+}

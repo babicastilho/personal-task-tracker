@@ -1,5 +1,3 @@
-// RootLayout.tsx
-
 "use client";
 
 import React, { ReactNode, useEffect, useRef, useState } from "react";
@@ -13,7 +11,9 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { UserProfileProvider } from "@/context/UserProfileProvider";
 import { useTheme } from "@/hooks/useTheme";
 import { RouterProvider } from "@/context/RouterContext";
-import { usePathname } from "next/navigation"; // Importando usePathname para capturar a rota
+import { usePathname } from "next/navigation";
+// Importing i18n to initialize translations
+import "@/lib/i18n"; // Ensure this path matches your actual i18n file
 
 interface RootLayoutProps {
   children: ReactNode;
@@ -38,7 +38,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { theme, toggleTheme } = useTheme();
   const { isAuthenticated, loading } = useAuthContext();
-  const pathname = usePathname(); // Obtendo a rota atual
+  const pathname = usePathname();
 
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -48,13 +48,11 @@ function LayoutContent({ children }: { children: ReactNode }) {
   const footerRef = useRef<HTMLDivElement>(null);
   const [mainHeight, setMainHeight] = useState("100vh");
 
-  // Gerando o título da página com base na rota
-  const routeName = pathname.split("/")[1]; // Obtém a primeira parte da rota após "/"
+  const routeName = pathname.split("/")[1];
   const pageTitle = routeName
     ? `Personal Task Tracker » ${routeName.charAt(0).toUpperCase() + routeName.slice(1)}`
     : "Personal Task Tracker";
 
-  // Update the mainHeight dynamically based on header and footer
   useEffect(() => {
     const updateMainHeight = () => {
       const newHeaderHeight = headerRef.current?.offsetHeight || 0;

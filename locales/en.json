@@ -1,0 +1,16 @@
+{
+  "login": {
+    "session_expired": "Sua sessão expirou. Faça login novamente.",
+    "login_required": "Sua sessão expirou. Faça login novamente para continuar.",
+    "no_token": "Você precisa fazer login para continuar.",
+    "logout_successful": "Logout realizado com sucesso.",
+    "login_again": "Faça login novamente para continuar.",
+    "sign_in": "Entrar",
+    "email": "Email",
+    "password": "Senha",
+    "error": "Falha no login",
+    "sign_in_button": "Entrar",
+    "no_account": "Não tem uma conta?",
+    "register_here": "Cadastre-se aqui"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "login": {
+    "session_expired": "Su sesión ha expirado. Por favor, inicie sesión nuevamente.",
+    "login_required": "Su sesión ha expirado. Por favor, inicie sesión nuevamente para continuar.",
+    "no_token": "Necesita iniciar sesión para continuar.",
+    "logout_successful": "Cierre de sesión exitoso.",
+    "login_again": "Por favor, inicie sesión nuevamente para continuar.",
+    "sign_in": "Iniciar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "error": "Error al iniciar sesión",
+    "sign_in_button": "Iniciar sesión",
+    "no_account": "¿No tiene una cuenta?",
+    "register_here": "Regístrese aquí"
+  }
+}

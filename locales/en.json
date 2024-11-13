@@ -1,16 +1,41 @@
 {
   "login": {
-    "session_expired": "Sua sessão expirou. Faça login novamente.",
-    "login_required": "Sua sessão expirou. Faça login novamente para continuar.",
-    "no_token": "Você precisa fazer login para continuar.",
-    "logout_successful": "Logout realizado com sucesso.",
-    "login_again": "Faça login novamente para continuar.",
-    "sign_in": "Entrar",
+    "signIn": "Sign In",
     "email": "Email",
-    "password": "Senha",
-    "error": "Falha no login",
-    "sign_in_button": "Entrar",
-    "no_account": "Não tem uma conta?",
-    "register_here": "Cadastre-se aqui"
+    "password": "Password",
+    "signInButton": "Sign In",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Register here",
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "loginRequired": "Your session has expired. Please log in again to continue.",
+    "noToken": "You need to log in to continue.",
+    "logoutSuccessful": "Logout successful. Please log in again to continue."
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "categories": "Categories",
+    "viewTasks": "View Tasks",
+    "tasks": {
+      "board": "Board",
+      "list": "List",
+      "calendar": "Calendar",
+      "cards": "Cards"
+    },
+    "profile": "Profile",
+    "themeMode": {
+      "light": "Light Mode",
+      "dark": "Dark Mode"
+    },
+    "logout": "Log Out"
+  },
+  "userProfileMenu": {
+    "profile": "Profile",
+    "configurations": "Configurations",
+    "logout": "Log Out",
+    "languageSelector": {
+      "en": "English",
+      "pt": "Portuguese",
+      "es": "Spanish"
+    }
   }
 }

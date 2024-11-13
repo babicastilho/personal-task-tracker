@@ -152,8 +152,9 @@ const CategoriesPage: React.FC = () => {
       <ul className="list-disc space-y-2 pl-5" data-cy="category-list">
         {categories.map((category) => (
           <li key={category._id} className="flex justify-between items-center">
-            <span data-cy={`category-tests-${category.name}`}>{category.name}</span>
+            <span data-cy={`category-tests-${category.name.replace(/\s+/g, '-')}`}>{category.name}</span>
             <button
+              data-cy={`delete-category-${category.name.replace(/\s+/g, '-')}`}
               onClick={() => deleteCategory(category._id)}
               className="ml-2 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-700 transition"
             >

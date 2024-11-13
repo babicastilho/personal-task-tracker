@@ -1,16 +1,41 @@
 {
   "login": {
-    "session_expired": "Su sesión ha expirado. Por favor, inicie sesión nuevamente.",
-    "login_required": "Su sesión ha expirado. Por favor, inicie sesión nuevamente para continuar.",
-    "no_token": "Necesita iniciar sesión para continuar.",
-    "logout_successful": "Cierre de sesión exitoso.",
-    "login_again": "Por favor, inicie sesión nuevamente para continuar.",
-    "sign_in": "Iniciar sesión",
-    "email": "Correo electrónico",
+    "signIn": "Iniciar Sesión",
+    "email": "Correo Electrónico",
     "password": "Contraseña",
-    "error": "Error al iniciar sesión",
-    "sign_in_button": "Iniciar sesión",
-    "no_account": "¿No tiene una cuenta?",
-    "register_here": "Regístrese aquí"
+    "signInButton": "Iniciar Sesión",
+    "noAccount": "¿No tienes una cuenta?",
+    "registerHere": "Regístrate aquí",
+    "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
+    "loginRequired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo para continuar.",
+    "noToken": "Necesitas iniciar sesión para continuar.",
+    "logoutSuccessful": "Cierre de sesión exitoso. Por favor, inicia sesión de nuevo para continuar."
+  },
+  "sidebar": {
+    "dashboard": "Panel",
+    "categories": "Categorías",
+    "viewTasks": "Ver Tareas",
+    "tasks": {
+      "board": "Tablero",
+      "list": "Lista",
+      "calendar": "Calendario",
+      "cards": "Tarjetas"
+    },
+    "profile": "Perfil",
+    "themeMode": {
+      "light": "Modo Claro",
+      "dark": "Modo Oscuro"
+    },
+    "logout": "Cerrar Sesión"
+  },
+  "userProfileMenu": {
+    "profile": "Perfil",
+    "configurations": "Configuraciones",
+    "logout": "Cerrar Sesión",
+    "languageSelector": {
+      "en": "Inglés",
+      "pt": "Portugués",
+      "es": "Español"
+    }
   }
 }

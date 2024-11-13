@@ -20,7 +20,7 @@ import { apiFetch } from "@/lib/apiFetch";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic"; // To dynamically import react-quill
 import "react-quill/dist/quill.snow.css"; // React Quill CSS for styling
-import Dropdown from "@/components/commom/Dropdown";
+import Dropdown from "@/components/common/Dropdown";
 import {
   FaAngleDoubleUp,
   FaAngleUp,

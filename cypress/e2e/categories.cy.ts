@@ -60,14 +60,12 @@ describe("Categories Page", () => {
     cy.contains("Add Category").click();
     cy.wait(2000);
 
-    cy.get('li')
-      .contains('span', 'Category to Delete')
-      .parent()
-      .within(() => {
-        cy.get('button').click();
-      });
+    cy.get('[data-cy="category-tests-Category-to-Delete"]').should('exist');
+    
+    // Click delete button for "Category to Delete"
+    cy.get('[data-cy="delete-category-Category-to-Delete"]').click();
 
     cy.wait(1000);
-    cy.get('[data-cy="category-tests-Category to Delete"]').should('not.exist');
+    cy.get('[data-cy="category-tests-Category-to-Delete"]').should('not.exist');
   });
 });

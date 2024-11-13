@@ -10,5 +10,32 @@
     "loginRequired": "Sua sessão expirou. Por favor, faça login novamente para continuar.",
     "noToken": "Você precisa fazer login para continuar.",
     "logoutSuccessful": "Logout bem-sucedido. Por favor, faça login novamente para continuar."
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "categories": "Categorias",
+    "viewTasks": "Ver Tarefas",
+    "tasks": {
+      "board": "Quadro",
+      "list": "Lista",
+      "calendar": "Calendário",
+      "cards": "Cartões"
+    },
+    "profile": "Perfil",
+    "themeMode": {
+      "light": "Modo Claro",
+      "dark": "Modo Escuro"
+    },
+    "logout": "Sair"
+  },
+  "userProfileMenu": {
+    "profile": "Perfil",
+    "configurations": "Configurações",
+    "logout": "Sair",
+    "languageSelector": {
+      "en": "Inglês",
+      "pt": "Português",
+      "es": "Espanhol"
+    }
   }
 }

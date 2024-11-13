@@ -1,6 +1,6 @@
 // Dropdown.test.tsx
 import { render, screen, fireEvent, within } from "@testing-library/react";
-import Dropdown from "@/components/commom/Dropdown";
+import Dropdown from "@/components/common/Dropdown";
 import { FaAngleUp, FaAngleDown, FaEquals, FaAngleDoubleUp, FaAngleDoubleDown } from 'react-icons/fa';
 
 const priorityOptions = [
@@ -29,15 +29,17 @@ describe("Dropdown Component", () => {
         selectedValue="high"
         onSelect={onSelect}
         iconMap={iconMap}
+        textTransform="capitalize"
       />
     );
 
     const dropdownToggle = screen.getByTestId("dropdown-toggle");
     fireEvent.click(dropdownToggle);
 
-    // Buscar por data-testid no contêiner para evitar múltiplos elementos
     const dropdownOptions = screen.getByTestId("dropdown-options");
-    const highOption = within(dropdownOptions).getByText("High");
+
+    // Seleciona o botão exato com o texto "High" dentro do contêiner
+    const highOption = within(dropdownOptions).getByRole("button", { name: "High" });
     expect(highOption).toBeInTheDocument();
 
     fireEvent.click(highOption);
@@ -53,6 +55,7 @@ describe("Dropdown Component", () => {
         selectedValue="high"
         onSelect={onSelect}
         iconMap={iconMap}
+        textTransform="capitalize"
       />
     );
 
@@ -60,7 +63,9 @@ describe("Dropdown Component", () => {
     fireEvent.click(dropdownToggle);
 
     const dropdownOptions = screen.getByTestId("dropdown-options");
-    const lowOption = within(dropdownOptions).getByText("Low");
+
+    // Seleciona o botão exato com o texto "Low" dentro do contêiner
+    const lowOption = within(dropdownOptions).getByRole("button", { name: "Low" });
     fireEvent.click(lowOption);
 
     expect(onSelect).toHaveBeenCalledWith("low");

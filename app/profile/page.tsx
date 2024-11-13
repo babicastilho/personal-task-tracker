@@ -206,6 +206,7 @@ const ProfilePage = () => {
               onSelect={(value) =>
                 setProfile({ ...profile, preferredNameOption: value })
               }
+              data-cy="dropdown-preferred-name"
             />
 
             <label
@@ -227,6 +228,7 @@ const ProfilePage = () => {
               onChange={handleChange} // Handle input changes
               placeholder=" "
               className="p-3 border border-gray-300 rounded w-full peer bg-transparent focus:outline-none"
+              data-cy="first-name-input"
             />
             <label
               htmlFor="firstName"
@@ -244,6 +246,7 @@ const ProfilePage = () => {
               onChange={handleChange}
               placeholder=" "
               className="p-3 border border-gray-300 rounded w-full peer bg-transparent focus:outline-none"
+              data-cy="last-name-input"
             />
             <label
               htmlFor="lastName"
@@ -263,6 +266,7 @@ const ProfilePage = () => {
             onChange={handleChange}
             placeholder=" "
             className="p-3 border border-gray-300 rounded w-full peer bg-transparent focus:outline-none"
+            data-cy="nickname-input"
           />
           <label
             htmlFor="nickname"
@@ -281,6 +285,7 @@ const ProfilePage = () => {
             placeholder=" "
             className="p-3 border border-gray-300 rounded w-full peer bg-transparent focus:outline-none"
             maxLength={500}
+            data-cy="bio-textarea"
           ></textarea>
           <label
             htmlFor="bio"
@@ -294,13 +299,14 @@ const ProfilePage = () => {
         <button
           type="submit"
           className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+          data-cy="save-profile"
         >
           Save Profile
         </button>
 
         {/* Display status or error messages */}
-        {statusMessage && <p className="text-green-500">{statusMessage}</p>}
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {statusMessage && <p className="text-green-500" data-cy="status-message">{statusMessage}</p>}
+        {errorMessage && <p className="text-red-500" data-cy="error-message">{errorMessage}</p>}
       </form>
     </div>
   );

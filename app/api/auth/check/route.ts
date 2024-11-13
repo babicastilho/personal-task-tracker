@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     }
 
     // Return success response with user information
-    console.log('Token verified successfully:', decoded);
+    //console.log('Token verified successfully:', decoded);
     return NextResponse.json({ success: true, message: 'Authenticated', user: decoded }, { status: 200 });
     
   } catch (error) {

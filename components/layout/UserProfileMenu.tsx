@@ -18,12 +18,12 @@ import Link from "next/link";
 import { FaCog, FaUser, FaPowerOff } from "react-icons/fa";
 import useOutsideClick from "@/hooks/useOutsideClick";
 import { useUserProfile } from "@/context/UserProfileProvider";
-import Dropdown from "@/components/common/Dropdown"; // Import your Dropdown component
+import Dropdown from "@/components/common/Dropdown";
 import { useTranslation } from "react-i18next";
 
 const UserProfileMenu: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
   const { user, getPreferredName } = useUserProfile();
-  const { i18n } = useTranslation(); // Access i18n instance for language switching
+  const { t, i18n } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +41,7 @@ const UserProfileMenu: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
   };
 
   const handleLanguageChange = (lang: string) => {
-    i18n.changeLanguage(lang); // Update language in i18n instance
+    i18n.changeLanguage(lang);
   };
 
   return (
@@ -49,6 +49,8 @@ const UserProfileMenu: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
       <button
         onClick={() => setMenuOpen((prev) => !prev)}
         className="flex items-center"
+        data-cy="profile-menu-button"
+        data-testid="profile-menu-button"
       >
         {user.profilePicture ? (
           <Image
@@ -69,8 +71,10 @@ const UserProfileMenu: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
         <div
           ref={menuRef}
           className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded shadow-lg p-2 z-10"
+          data-cy="profile-menu-dropdown"
+          data-testid="profile-menu-dropdown"
         >
-          <div className="text-gray-900 dark:text-white px-4 pt-1">
+          <div className="text-gray-900 dark:text-white px-4 pt-1" data-cy="preferred-name" data-testid="preferred-name">
             {getPreferredName()}
           </div>
           <div className="text-gray-600 dark:text-gray-400 px-4 pb-1 text-sm">
@@ -94,18 +98,22 @@ const UserProfileMenu: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
             href="/profile"
             className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
             onClick={() => setMenuOpen(false)}
+            data-cy="profile-link"
+            data-testid="profile-link"
           >
             <FaUser className="w-5 h-5 mr-2" />
-            Profile
+            {t("userProfileMenu.profile")}
           </Link>
 
           <Link
             href="/profile"
             className="flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
             onClick={() => setMenuOpen(false)}
+            data-cy="configurations-link"
+            data-testid="configurations-link"
           >
             <FaCog className="w-5 h-5 mr-2" />
-            Configurations
+            {t("userProfileMenu.configurations")}
           </Link>
 
           <button
@@ -114,9 +122,11 @@ const UserProfileMenu: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
               setMenuOpen(false);
             }}
             className="w-full flex items-center p-2 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 rounded"
+            data-cy="logout-button"
+            data-testid="logout-button"
           >
             <FaPowerOff className="w-5 h-5 mr-2" />
-            Log Out
+            {t("userProfileMenu.logout")}
           </button>
         </div>
       )}

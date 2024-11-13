@@ -52,7 +52,12 @@ export default function SignIn() {
 
   return (
     <div className="p-4 bg-white text-black shadow-lg rounded-lg">
-      <h2 className="text-lg font-bold mb-4">{t("login.sign_in")}</h2>
+      <h2 
+        className="text-lg font-bold mb-4"
+        data-cy="signin_message" data-testid="signin_message"
+      >
+          {t("login.sign_in")}
+      </h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium mb-2">

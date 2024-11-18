@@ -21,11 +21,13 @@ import SignIn from "@/components/auth/SignIn";
 import { useRouter, useSearchParams } from "next/navigation"; // Import necessary hooks
 import { useAuth } from "@/hooks/useAuth"; // Import custom authentication hook
 import { Spinner } from "@/components/Loading"; // Import Spinner component
+import { useTranslation } from "react-i18next"; // Import translation hook
 
 export default function LoginPage() {
   const { isAuthenticated, loading } = useAuth(); // Access authentication status
   const router = useRouter();
   const searchParams = useSearchParams(); // Access URL search parameters
+  const { t } = useTranslation(); // Initialize translation hook
 
   const message = searchParams.get("message"); // Retrieve the 'message' parameter
   const redirectUrl = searchParams.get("redirect") || "/dashboard"; // Get the redirect URL or default to dashboard
@@ -46,23 +48,23 @@ export default function LoginPage() {
           {/* Conditionally display messages based on the 'message' query param */}
           {message === "session_expired" && (
             <p className="text-red-500 mb-4">
-              Your session has expired. Please log in again.
+              {t("login.sessionExpired")}
             </p>
           )}
           {message === "login_required" && (
             <p className="text-blue-500 mb-4">
-              Your session has expired. Please log in again to continue.
+              {t("login.loginRequired")}
             </p>
           )}
           {message === "no_token" && (
             <p className="text-blue-500 mb-4">
-              You need to log in to continue.
+              {t("login.noToken")}
             </p>
           )}
           {message === "logout_successful" && (
             <p className="text-center text-green-500 mb-4">
-              <span>Logout successful.</span>
-              <span className="block">Please log in again to continue.</span>
+              <span>{t("login.logoutSuccessful")}</span>
+              <span className="block">{t("login.loginRequired")}</span>
             </p>
           )}
 

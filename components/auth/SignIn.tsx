@@ -45,7 +45,7 @@ export default function SignIn() {
         router.push(redirectUrl);
       }
     } catch (error) {
-      setError(t("login.error")); // Use translation for error message
+      setError(t("login.sessionExpired")); // Use translation for error message
       console.error("Login failed:", error);
     }
   };
@@ -56,7 +56,7 @@ export default function SignIn() {
         className="text-lg font-bold mb-4"
         data-cy="signin_message" data-testid="signin_message"
       >
-          {t("login.sign_in")}
+        {t("login.signIn")}
       </h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -90,12 +90,12 @@ export default function SignIn() {
           type="submit"
           className="w-full px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"
         >
-          {t("login.sign_in_button")}
+          {t("login.signInButton")}
         </button>
         <p className="mt-4">
-          {t("login.no_account")}{" "}
+          {t("login.noAccount")}{" "}
           <Link className="text-red-500" href="/register">
-            {t("login.register_here")}
+            {t("login.registerHere")}
           </Link>
         </p>
       </form>

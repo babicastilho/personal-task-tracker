@@ -28,6 +28,16 @@
     },
     "logout": "Sair"
   },
+  "dashboard": {
+    "welcome": "Bem-vindo(a), {{name}}!",
+    "current_datetime": "{{datetime}}",
+    "stats_title": "Suas Estatísticas",
+    "tasks_completed": "Tarefas Concluídas: {{count}}",
+    "tasks_pending": "Tarefas Pendentes: {{count}}",
+    "tasks_due_today": "Tarefas Para Hoje: {{count}}",
+    "unread_messages": "Mensagens Não Lidas: {{count}}",
+    "calendar_title": "Seu Calendário"
+  },
   "userProfileMenu": {
     "profile": "Perfil",
     "configurations": "Configurações",
@@ -37,5 +47,69 @@
       "pt": "Português",
       "es": "Espanhol"
     }
+  },
+  "categories": {
+    "manageCategories": "Gerenciar Categorias",
+    "categoryNamePlaceholder": "Nome da categoria",
+    "categoryDescriptionPlaceholder": "Descrição da categoria",
+    "addCategoryButton": "Adicionar Categoria",
+    "errorFetchingCategories": "Falha ao buscar categorias.",
+    "errorLoadingCategories": "Falha ao carregar categorias. Por favor, tente novamente.",
+    "errorAddingCategory": "Falha ao adicionar categoria.",
+    "errorDeletingCategory": "Falha ao excluir categoria."
+  },
+  "tasksPage": {
+    "title": "Sua Lista de Tarefas",
+    "filterButton": "Filtrar",
+    "addNewTaskButton": "Adicionar Nova Tarefa",
+    "fetchError": "Falha ao carregar tarefas ou categorias. Por favor, tente novamente.",
+    "noTasks": "Nenhuma tarefa adicionada ainda. Que tal adicionar sua primeira tarefa?",
+    "noFilteredTasks": "Nenhuma tarefa corresponde aos filtros aplicados. Tente ajustar os filtros para ver suas tarefas."
+  },
+  "priority": {
+    "highest": "Mais Alta",
+    "high": "Alta",
+    "medium": "Média",
+    "low": "Baixa",
+    "lowest": "Mais Baixa",
+    "priority_label": "Prioridade"
+  },
+  "task": {
+    "no_tasks": "Nenhuma tarefa para exibir.",
+    "no_category": "Sem categoria",
+    "name": "Nome da Tarefa",
+    "resume": "Resumo",
+    "description": "Descrição",
+    "due_date": "Data de Vencimento",
+    "due_time": "Hora de Vencimento",
+    "no_due_date": "Sem data de vencimento",
+    "save": "Salvar Tarefa",
+    "cancel": "Cancelar",
+    "delete": "Excluir Tarefa",
+    "confirm_delete": "Tem certeza de que deseja excluir esta tarefa?",
+    "delete_yes": "Sim, excluir",
+    "delete_no": "Cancelar",
+    "add_new": "Adicionar Nova Tarefa",
+    "edit": "Editar Tarefa",
+    "untitled": "Sem Título",
+    "priority": "Prioridade",
+    "category": "Categoria",
+    "select_category": "Selecionar Categoria"
+  },
+  "profile": {
+    "edit": "Editar Perfil",
+    "picture": "Foto de Perfil",
+    "username": "Nome de Usuário",
+    "first_name": "Primeiro Nome",
+    "last_name": "Último Nome",
+    "nickname": "Apelido",
+    "biography": "Biografia",
+    "preferred_name": "Nome Preferido",
+    "save": "Salvar Perfil",
+    "choose_file": "Explorar...",
+    "no_file": "Nenhum ficheiro selecionado",
+    "update_success": "Perfil atualizado com sucesso!",
+    "update_failure": "Falha ao atualizar o perfil.",
+    "update_error": "Erro ao atualizar o perfil. Por favor, tente novamente."
   }
 }

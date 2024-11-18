@@ -12,6 +12,7 @@
  * @param onSelect - Callback function triggered when an option is selected, passing the selected value.
  * @param iconMap - Optional object mapping each option to an icon.
  * @param testIdPrefix - Optional prefix for data-cy and data-testid attributes.
+ * @param bordered - Optional boolean to add a border around the dropdown.
  * 
  * @returns A dropdown component with interactive options and an icon display if provided.
  */
@@ -24,8 +25,10 @@ interface DropdownProps<T> {
   selectedValue: T;
   onSelect: (value: T) => void;
   iconMap?: { [key: string]: JSX.Element };
+  labelMap?: { [key: string]: string }; 
   testIdPrefix?: string;
-  textTransform?: "uppercase" | "capitalize" | "none"; // New property for text transformation
+  textTransform?: "uppercase" | "capitalize" | "none";
+  bordered?: boolean;
 }
 
 function Dropdown<T extends string>({
@@ -33,8 +36,10 @@ function Dropdown<T extends string>({
   selectedValue,
   onSelect,
   iconMap,
+  labelMap = {}, // Novo: Recebe labelMap com rótulos traduzidos
   testIdPrefix = "dropdown",
-  textTransform = "none", // Default transformation is none
+  textTransform = "none",
+  bordered = false,
 }: DropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -64,12 +69,12 @@ function Dropdown<T extends string>({
         data-testid={`${testIdPrefix}-toggle`}
         className={`w-full p-3 rounded flex justify-between items-center transition-colors duration-300 ${
           isOpen ? "bg-white dark:bg-gray-700" : "bg-gray-100 dark:bg-gray-800"
-        }`}
+        } ${bordered ? "border border-gray-300 dark:border-gray-600" : ""}`}
       >
         <span className="flex items-center">
           {iconMap && iconMap[selectedValue]}
           <span className="ml-2" style={{ textTransform: textTransform }}>
-            {applyTextTransform(selectedValue)}
+            {applyTextTransform(labelMap[selectedValue] || selectedValue)}
           </span>
         </span>
         <span className="ml-auto">
@@ -91,7 +96,7 @@ function Dropdown<T extends string>({
               className="w-full p-3 text-left hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center transition-colors"
             >
               {iconMap && iconMap[option]}
-              <span className="ml-2">{applyTextTransform(option)}</span>
+              <span className="ml-2">{applyTextTransform(labelMap[option] || option)}</span>
             </button>
           ))}
         </div>

@@ -24,12 +24,17 @@ footer {
 }
 
 .quill-height .ql-container {
-  min-height: 100px; // Ajusta a altura mínima para caber 3 linhas de texto
+  min-height: 100px; 
+  &.ql-snow {border: 1px solid #d1d5db;}
 }
 
 .dark {
   .ql-toolbar {
     background-color: #6b7280;
+  }
+
+  .quill-height .ql-container {
+    &.ql-snow {border: 1px solid #4b5563;}
   }
 }
 

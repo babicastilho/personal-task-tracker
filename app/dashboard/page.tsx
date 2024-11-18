@@ -39,7 +39,7 @@ export default function DashboardPage() {
   // If the user is authenticated, render the dashboard
   if (isAuthenticated) {
     return (
-      <div className="p-8 dark:text-gray-300">
+      <div className="mt-4 p-8 dark:text-gray-300">
         <h2 className="text-3xl font-bold mb-8">Dashboard</h2>
         <Dashboard /> {/* Render the Dashboard component */}
       </div>

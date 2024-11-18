@@ -16,6 +16,7 @@ import { useProtectedPage } from "@/hooks/useProtectedPage"; // Custom hook for 
 import { apiFetch } from "@/lib/apiFetch"; // Import the apiFetch function for handling requests
 import { Skeleton } from "@/components/Loading"; // Import your loading skeleton
 import { FaRegTrashAlt } from "react-icons/fa";
+import { useTranslation } from "react-i18next"; // Import useTranslation for internationalization
 
 export interface Category {
   _id: string;
@@ -29,6 +30,7 @@ const CategoriesPage: React.FC = () => {
   const [newCategoryName, setNewCategoryName] = useState(""); // State for the new category name input
   const [newCategoryDescription, setNewCategoryDescription] = useState(""); // State for the new category description input
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // State to store error messages
+  const { t } = useTranslation(); // Initialize translation hook
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -39,18 +41,18 @@ const CategoriesPage: React.FC = () => {
         if (data && data.success) {
           setCategories(data.categories);
         } else {
-          setErrorMessage("Failed to fetch categories.");
+          setErrorMessage(t("categories.errorFetchingCategories"));
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
-        setErrorMessage("Failed to load categories. Please try again.");
+        setErrorMessage(t("categories.errorLoadingCategories"));
       }
     };
 
     if (isAuthenticated) {
       fetchCategories(); // Only fetch categories if authenticated
     }
-  }, [isAuthenticated]); // Dependency array ensures effect runs when auth state changes
+  }, [isAuthenticated, t]); // Dependency array includes translation function to avoid stale translations
 
   // Render the loading state while authentication check is in progress
   if (loading) {
@@ -87,11 +89,11 @@ const CategoriesPage: React.FC = () => {
           setNewCategoryName("");
           setNewCategoryDescription("");
         } else {
-          setErrorMessage("Failed to add category.");
+          setErrorMessage(t("categories.errorAddingCategory"));
         }
       } catch (error) {
         console.error("Error adding category:", error);
-        setErrorMessage("Error adding category. Please try again.");
+        setErrorMessage(t("categories.errorAddingCategory"));
       }
     }
   };
@@ -105,11 +107,11 @@ const CategoriesPage: React.FC = () => {
       if (data && data.success) {
         setCategories(categories.filter((category) => category._id !== id));
       } else {
-        setErrorMessage("Failed to delete category.");
+        setErrorMessage(t("categories.errorDeletingCategory"));
       }
     } catch (error) {
       console.error("Error deleting category:", error);
-      setErrorMessage("Error deleting category. Please try again.");
+      setErrorMessage(t("categories.errorDeletingCategory"));
     }
   };
 
@@ -119,9 +121,9 @@ const CategoriesPage: React.FC = () => {
   }
 
   return (
-    <div data-testid="categories-list" data-cy="categories-list" className="mt-16 p-8 dark:text-gray-300">
+    <div data-testid="categories-list" data-cy="categories-list" className="mt-24 p-8 dark:text-gray-300">
       <h2 className="text-lg font-bold mb-4" data-cy="category-tests">
-        Manage Categories
+        {t("categories.manageCategories")}
       </h2>
 
       {/* Form to add a new category */}
@@ -129,14 +131,14 @@ const CategoriesPage: React.FC = () => {
         <input
           type="text"
           className="mr-2 p-2 border border-gray-300 rounded"
-          placeholder="Category name"
+          placeholder={t("categories.categoryNamePlaceholder")}
           value={newCategoryName}
           onChange={(e) => setNewCategoryName(e.target.value)}
         />
         <input
           type="text"
           className="mr-2 p-2 border border-gray-300 rounded"
-          placeholder="Category description"
+          placeholder={t("categories.categoryDescriptionPlaceholder")}
           value={newCategoryDescription}
           onChange={(e) => setNewCategoryDescription(e.target.value)}
         />
@@ -144,7 +146,7 @@ const CategoriesPage: React.FC = () => {
           onClick={addCategory}
           className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"
         >
-          Add Category
+          {t("categories.addCategoryButton")}
         </button>
       </div>
 

@@ -1,15 +1,15 @@
 /**
  * LoginPage.tsx
- * 
+ *
  * Client-side rendered login page that checks authentication state, manages redirection,
  * and conditionally displays messages based on URL parameters.
- * 
+ *
  * Features:
  * - Uses `useAuth` hook to verify if the user is already authenticated.
  * - Redirects authenticated users to the specified URL or defaults to `/dashboard`.
  * - Displays context-specific messages (e.g., session expired, login required) based on query parameters.
  * - Renders the `SignIn` component for user login.
- * 
+ *
  * @param message - Query parameter to display relevant login messages (e.g., "session_expired").
  * @param redirectUrl - Optional query parameter for redirection upon login.
  */
@@ -39,7 +39,11 @@ export default function LoginPage() {
   }, [isAuthenticated, loading, router, redirectUrl]);
 
   return (
-    <div className={`flex flex-col items-center justify-center ${isAuthenticated ? '' : 'lg:ml-0'} min-h-screen`}>
+    <div
+      className={`flex flex-col items-center justify-center ${
+        isAuthenticated ? "" : "lg:ml-0"
+      } min-h-screen`}
+    >
       {/* Display a loading spinner while checking authentication */}
       {loading ? (
         <Spinner />
@@ -47,22 +51,25 @@ export default function LoginPage() {
         <>
           {/* Conditionally display messages based on the 'message' query param */}
           {message === "session_expired" && (
-            <p className="text-red-500 mb-4">
+            <p className="text-red-500 mb-4" data-cy="session-expired-message">
               {t("login.sessionExpired")}
             </p>
           )}
           {message === "login_required" && (
-            <p className="text-blue-500 mb-4">
+            <p className="text-blue-500 mb-4" data-cy="login-required-message">
               {t("login.loginRequired")}
             </p>
           )}
           {message === "no_token" && (
-            <p className="text-blue-500 mb-4">
+            <p className="text-blue-500 mb-4" data-cy="no-token-message">
               {t("login.noToken")}
             </p>
           )}
           {message === "logout_successful" && (
-            <p className="text-center text-green-500 mb-4">
+            <p
+              className="text-center text-green-500 mb-4"
+              data-cy="logout-successful-message"
+            >
               <span>{t("login.logoutSuccessful")}</span>
               <span className="block">{t("login.loginRequired")}</span>
             </p>

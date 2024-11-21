@@ -2,13 +2,16 @@
 
 function simulateTokenExpiry() {
   // Intercept all API requests (any method) and force them to return 401 to simulate token expiry
-  cy.intercept({
-    method: '*',  // Capture all HTTP methods (GET, POST, etc.)
-    url: '/api/*' // Capture all endpoints under /api
-  }, {
-    statusCode: 401,
-    body: { success: false, message: "Token expired" }
-  }).as("expiredSession");
+  cy.intercept(
+    {
+      method: "*", // Capture all HTTP methods (GET, POST, etc.)
+      url: "/api/*", // Capture all endpoints under /api
+    },
+    {
+      statusCode: 401,
+      body: { success: false, message: "Token expired" },
+    }
+  ).as("expiredSession");
 }
 
 // Array of routes to test
@@ -55,9 +58,9 @@ describe("Token Expiry During Active Session", () => {
         }
       });
 
-      // Verify redirection and message
+      // Verify redirection and message using data-cy
       cy.url({ timeout: 15000 }).should("include", "/login?message=session_expired");
-      cy.contains("Your session has expired. Please log in again.").should("be.visible");
+      cy.get('[data-cy="session-expired-message"]').should("be.visible");
     });
   });
 

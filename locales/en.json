@@ -67,12 +67,20 @@
     "noFilteredTasks": "No tasks match the applied filters. Try adjusting the filters to view your tasks."
   },
   "priority": {
+    "title": "Priority",
     "highest": "Highest",
     "high": "High",
     "medium": "Medium",
     "low": "Low",
     "lowest": "Lowest",
     "priority_label": "Priority"
+  },
+  "filters": {
+    "title": "Filters",
+    "clear": "Clear Filters",
+    "confirm_clear_message": "Do you want to clear all filters?",
+    "confirm_button": "Yes, clear filters",
+    "cancel_button": "No, just close"
   },
   "task": {
     "no_tasks": "No tasks to display",

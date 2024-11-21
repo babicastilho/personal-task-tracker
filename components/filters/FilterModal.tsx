@@ -14,6 +14,7 @@
  */
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FaTimes } from "react-icons/fa";
 
 interface FilterModalProps {
@@ -28,6 +29,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   children,
 }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const { t } = useTranslation();
 
   const handleClose = () => {
     setShowConfirmation(true);
@@ -53,14 +55,14 @@ const FilterModal: React.FC<FilterModalProps> = ({
       <div className="relative w-full max-w-md md:max-w-lg bg-white dark:bg-gray-800 rounded-lg shadow-lg max-h-full overflow-hidden">
         <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center">
-            <h2 className="text-xl font-semibold">Filters</h2>
+            <h2 className="text-xl font-semibold">{t("filters.title")}</h2>
             <button
               onClick={onClearFilters}
               data-cy="clear-filters-button"
               data-testid="clear-filters-button"
               className="ml-2 bg-gray-500 text-white p-2 rounded hover:bg-gray-600"
             >
-              Clear Filters
+              {t("filters.clear")}
             </button>
           </div>
           <button
@@ -86,7 +88,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
         >
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <p className="text-lg font-medium">
-              Do you want to clear all filters?
+            {t("filters.clear")}
             </p>
             <div className="flex w-full justify-center mt-4 space-x-2">
               <button
@@ -95,7 +97,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 data-testid="confirm-clear-filters"
                 className="text-sm bg-red-500 text-white p-2 rounded hover:bg-red-600"
               >
-                Yes, clear filters
+                {t("filters.confirm_button")}
               </button>
               <button
                 onClick={cancelClearFilters}
@@ -103,7 +105,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 data-testid="cancel-clear-filters"
                 className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600"
               >
-                No, just close
+                {t("filters.cancel_button")}
               </button>
             </div>
           </div>

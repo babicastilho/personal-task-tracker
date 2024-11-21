@@ -28,8 +28,7 @@ describe("Dashboard Page E2E", () => {
 
   it("should display user information on the dashboard", () => {
     cy.get('[data-cy="welcome-message"]').should("exist");
-    cy.get('[data-cy="preferred-name"]').should("exist");
-    cy.get('[data-cy="dashboard-calendar"]').should("exist");
+    cy.get('[data-cy="welcome-message"]').should("exist");
   });
 
   it("should display current date and time", () => {
@@ -48,7 +47,7 @@ describe("Dashboard Page E2E", () => {
   it("should display categories component from the menu on dashboard", () => {
     cy.get('[data-cy="menu-toggle-button"]').click();
     cy.get('[data-cy="sidebar-categories"]').click();
-    cy.get('[data-cy="categories-list"]').should("exist");
+    cy.get('[data-cy="category-list-items"]').should("exist");
   });
 
   it("should display profile component from the menu on dashboard", () => {

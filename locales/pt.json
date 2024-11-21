@@ -67,6 +67,7 @@
     "noFilteredTasks": "Nenhuma tarefa corresponde aos filtros aplicados. Tente ajustar os filtros para ver suas tarefas."
   },
   "priority": {
+    "title": "Prioridade",
     "highest": "Mais Alta",
     "high": "Alta",
     "medium": "Média",
@@ -74,6 +75,15 @@
     "lowest": "Mais Baixa",
     "priority_label": "Prioridade"
   },
+
+  "filters": {
+    "title": "Filtros",
+    "clear": "Limpar Filtros",
+    "confirm_clear_message": "Deseja limpar todos os filtros?",
+    "confirm_button": "Sim, limpar filtros",
+    "cancel_button": "Não, apenas fechar"
+  },
+
   "task": {
     "no_tasks": "Nenhuma tarefa para exibir.",
     "no_category": "Sem categoria",

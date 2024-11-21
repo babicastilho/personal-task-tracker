@@ -1,19 +1,3 @@
-/**
- * PriorityFilter.tsx
- * 
- * A filter component for selecting task priority levels.
- * - Renders buttons for each priority level with corresponding icons.
- * - Allows selection and toggling of priority filters, which visually updates based on selection.
- * 
- * @component
- * @param {string[]} selectedPriorities - Array of selected priority levels.
- * @param {function} onPriorityChange - Callback function for updating selected priorities.
- * @param {string} [dataCyPrefix="priority-filter"] - Optional prefix for data-cy attributes in tests.
- * @param {string} [dataTestIdPrefix="priority-filter"] - Optional prefix for data-testid attributes in tests.
- * 
- * @returns A UI component for filtering tasks by priority.
- */
-
 import React from "react";
 import {
   FaAngleDoubleDown,
@@ -22,6 +6,7 @@ import {
   FaAngleUp,
   FaEquals,
 } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 interface PriorityFilterProps {
   selectedPriorities: string[];
@@ -36,6 +21,8 @@ const PriorityFilter: React.FC<PriorityFilterProps> = ({
   dataCyPrefix = "priority-filter", 
   dataTestIdPrefix = "priority-filter" 
 }) => {
+  const { t } = useTranslation(); // Hook for translations
+
   const priorities = ["highest", "high", "medium", "low", "lowest"];
 
   const getPriorityIcon = (priority: string) => {
@@ -51,7 +38,7 @@ const PriorityFilter: React.FC<PriorityFilterProps> = ({
 
   return (
     <div className="mb-4">
-      <h3 className="text-lg font-medium">Priority</h3>
+      <h3 className="text-lg font-medium">{t("priority.title")}</h3>
       <div className="flex flex-wrap gap-2 mt-2">
         {priorities.map((priority) => (
           <button
@@ -66,7 +53,7 @@ const PriorityFilter: React.FC<PriorityFilterProps> = ({
             data-testid={`${dataTestIdPrefix}-${priority}`}
           >
             {getPriorityIcon(priority)}
-            <span className="ml-2 capitalize">{priority}</span>
+            <span className="ml-2 capitalize">{t(`priority.${priority}`)}</span>
           </button>
         ))}
       </div>

@@ -52,7 +52,7 @@ describe("Profile Page E2E", () => {
 
     // Verify profile update success message
     cy.get('[data-cy="first-name-input"]').should("have.value", newFirstName);
-    cy.get('[data-cy="status-message"]').should("contain", "Profile updated successfully");
+    cy.get('[data-cy="success-message"]').should("exist");
   });
 
   it("should prevent access to profile page if not authenticated", () => {

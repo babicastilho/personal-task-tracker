@@ -152,16 +152,27 @@ const ProfilePage = () => {
   // Render the profile form and related fields
   return (
     <div className="mt-24 p-8 dark:text-gray-300">
-      <h2 className="text-2xl font-bold mb-4">{t("profile.edit")}</h2>
+      <h2 
+        className="text-2xl font-bold mb-4"
+        data-testid="edit-profile-title"
+        data-cy="edit-profile-title"
+      >
+        {t("profile.edit")}
+      </h2>
       <form
         onSubmit={handleSubmit}
         className="space-y-6"
+        data-testid="edit-profile"
         data-cy="edit-profile"
       >
         {/* Profile Picture */}
         <div className="space-y-4">
           <label className="block mb-1 font-bold">{t("profile.picture")}</label>
-          <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
+          <div 
+            className="flex flex-col lg:flex-row lg:items-center lg:gap-4"
+            data-testid="profile-picture"
+            data-cy="profile-picture"
+          >
             {imagePreview ? (
               <Image
                 src={imagePreview}
@@ -193,6 +204,8 @@ const ProfilePage = () => {
               readOnly
               placeholder=" "
               className="p-3 text-gray-400 dark:text-gray-600 border border-gray-300 dark:border-gray-600 rounded w-full bg-transparent cursor-not-allowed peer focus:outline-none"
+              data-testid="profile-username"
+              data-cy="profile-username"
             />
             <label
               htmlFor="username"
@@ -320,7 +333,7 @@ const ProfilePage = () => {
 
         {/* Display status or error messages */}
         {statusMessage && (
-          <p className="text-green-500" data-cy="status-message">
+          <p className="text-green-500" data-cy="success-message">
             {statusMessage}
           </p>
         )}

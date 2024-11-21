@@ -4,6 +4,13 @@ import { render, fireEvent, screen } from '@testing-library/react';
 import FilterModal from '@/components/filters/FilterModal';
 import PriorityFilter from '@/components/filters/PriorityFilter';
 
+// Mock useTranslation hook
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key, // Return the translation key for testing
+  }),
+}));
+
 describe('FilterModal Component', () => {
   const handleClose = jest.fn(); // Mock function to handle modal close
   const handleClearFilters = jest.fn(); // Mock function to handle filter clearing
@@ -20,7 +27,7 @@ describe('FilterModal Component', () => {
       </FilterModal>
     );
     expect(screen.getByTestId('filter-modal')).toBeVisible();
-    expect(screen.getByText('Filters')).toBeInTheDocument();
+    expect(screen.getByText('filters.title')).toBeInTheDocument(); // Updated to use the translation key
   });
 
   it('should call onClose when "No, just close" button is clicked in the confirmation modal', () => {

@@ -60,7 +60,13 @@ const priorityIcons = {
 
 const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
   const { t } = useTranslation();
-  const priorityOptions = ["highest", "high", "medium", "low", "lowest"];
+  const priorityOptions = [
+    "highest",
+    "high",
+    "medium",
+    "low",
+    "lowest",
+  ] as const;
   const priorityLabelMap = {
     highest: t("priority.highest"),
     high: t("priority.high"),
@@ -254,7 +260,8 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
             options={categories.map((cat) => cat.name)}
             selectedValue={
               selectedCategoryId
-                ? categories.find((cat) => cat._id === selectedCategoryId)?.name
+                ? categories.find((cat) => cat._id === selectedCategoryId)
+                    ?.name || ""
                 : t("task.select_category")
             }
             onSelect={(value) => {
@@ -269,12 +276,16 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
 
         {/* Priority Selection with Dropdown */}
         <div>
-          <label className="text-gray-500 dark:text-gray-300">{t("task.priority")}</label>
+          <label className="text-gray-500 dark:text-gray-300">
+            {t("task.priority")}
+          </label>
           <Dropdown
             testIdPrefix="priority-dropdown"
-            options={priorityOptions}
+            options={[...priorityOptions]}
             selectedValue={priority}
-            onSelect={(value) => setPriority(value)}
+            onSelect={(
+              value: "highest" | "high" | "medium" | "low" | "lowest"
+            ) => setPriority(value)}
             iconMap={priorityIcons}
             labelMap={priorityLabelMap}
             textTransform="capitalize"
@@ -385,9 +396,7 @@ const TodoForm: React.FC<{ task?: Task }> = ({ task }) => {
       {showDeleteModal && (
         <div className="z-10 fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
           <div className="bg-white dark:bg-slate-800 p-6 rounded-md shadow-lg text-center">
-            <p className="mb-4 text-lg">
-            {t("task.confirm_delete")}
-            </p>
+            <p className="mb-4 text-lg">{t("task.confirm_delete")}</p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleDeleteTask}

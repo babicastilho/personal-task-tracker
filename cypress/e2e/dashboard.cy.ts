@@ -51,7 +51,13 @@ describe("Dashboard Page E2E", () => {
   it("should display todo list component on dashboard", () => {
     cy.get('[data-cy="menu-toggle-button"]').click();
     cy.get('[data-cy="sidebar-view-tasks"]').click();
-    cy.get('[data-cy="sidebar-tasks-cards"]').click();
+  
+    // Ensure the sidebar menu item is visible and scroll into view
+    cy.get('[data-cy="sidebar-tasks-cards"]')
+      .scrollIntoView()
+      .should("be.visible")
+      .click();
+  
     checkElementVisibility(
       '[data-cy="todo-list"]',
       "Todo list component loaded successfully",
@@ -60,14 +66,17 @@ describe("Dashboard Page E2E", () => {
   });
 
   it("should display categories component from the menu on dashboard", () => {
+    // Click the menu toggle button and navigate to categories
     cy.get('[data-cy="menu-toggle-button"]').click();
     cy.get('[data-cy="sidebar-categories"]').click();
+  
+    // Check if the categories list is visible
     checkElementVisibility(
       '[data-cy="category-list-items"]',
       "Categories component loaded successfully",
       "Categories component did not load"
     );
-  });
+  });  
 
   it("should display profile component from the menu on dashboard", () => {
     cy.get('[data-cy="menu-toggle-button"]').click();

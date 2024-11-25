@@ -56,29 +56,35 @@ describe("Profile Page E2E", () => {
 
   it("should allow users to update their profile", () => {
     const newFirstName = "UpdatedFirstName";
-
+  
     cy.get("body").then(($body) => {
       if ($body.find('[data-cy="first-name-input"]').length > 0) {
         cy.log("Profile edit form loaded successfully");
-        
-        // Update profile fields
-        cy.get('[data-cy="first-name-input"]').clear().type(newFirstName);
+  
+        // Ensure the field is cleared before typing
+        cy.get('[data-cy="first-name-input"]')
+          .invoke("val") // Get the current value
+          .then((currentValue) => {
+            cy.log(`Current value: ${currentValue}`);
+            cy.get('[data-cy="first-name-input"]').clear().type(newFirstName);
+          });
+  
         cy.get('[data-cy="bio-textarea"]').clear().type("This is an updated bio.");
-        
+  
         // Scroll to and click the "Save Profile" button
         cy.get('[data-cy="save-profile"]')
           .scrollIntoView()
           .should("be.visible")
           .click();
-
-        // Verify profile update success message
+  
+        // Verify profile update success message and final value
         cy.get('[data-cy="first-name-input"]').should("have.value", newFirstName);
         cy.get('[data-cy="success-message"]').should("exist");
       } else {
         cy.log("Profile edit form did not load");
       }
     });
-  });
+  }); 
 
   it("should prevent access to profile page if not authenticated", () => {
     // Logout to test unauthorized access

@@ -2,11 +2,8 @@ import { defineConfig } from "cypress";
 
 export default defineConfig({
   projectId: 'xp4y1p',
-  retries: {
-    runMode: 2, // Tenta 2 vezes no modo CLI
-    openMode: 1, // Tenta 1 vez no modo aberto
-  },
   e2e: {
+    defaultCommandTimeout: 10000,
     setupNodeEvents(on, config) {
       on('task', {
         log(message) {

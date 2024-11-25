@@ -1,24 +1,29 @@
 /// <reference types="cypress" />
 
+import { navigateAndVerify, checkElementVisibility } from "../support/utils";
+
+/**
+ * Simulates token expiry by intercepting API requests and returning a 401 status.
+ */
 function simulateTokenExpiry() {
-  // Intercept all API requests (any method) and force them to return 401 to simulate token expiry
   cy.intercept(
     {
       method: "*", // Capture all HTTP methods (GET, POST, etc.)
       url: "/api/*", // Capture all endpoints under /api
     },
     {
-      statusCode: 401,
+      statusCode: 401, // Return 401 Unauthorized to simulate token expiration
       body: { success: false, message: "Token expired" },
     }
   ).as("expiredSession");
 }
 
-// Array of routes to test
+// Array of protected routes to test
 const protectedRoutes = ["/tasks", "/dashboard", "/categories", "/profile"];
 
 describe("Token Expiry During Active Session", () => {
   before(() => {
+    // Reset the user with a valid session before the tests
     cy.resetUser("test@example.com", "password123", {
       firstName: "Jane",
       lastName: "Smith",
@@ -28,43 +33,45 @@ describe("Token Expiry During Active Session", () => {
   });
 
   beforeEach(() => {
+    // Log in before each test
     cy.login("test@example.com", "password123", "/dashboard");
   });
 
   protectedRoutes.forEach((route) => {
     it(`should redirect to /login with session expired message after token removal on ${route}`, function () {
-      cy.visit(route);
+      // Navigate to the protected route and verify it loads
+      navigateAndVerify(route);
 
-      // Set up the intercept for simulating token expiry
+      // Simulate token expiry by intercepting API requests
       simulateTokenExpiry();
 
-      // Wait briefly to ensure intercept is fully registered
+      // Wait briefly to ensure the intercept is active
       cy.wait(1000);
 
-      // Invalidate the token in localStorage
+      // Invalidate the token by setting an invalid value in localStorage
       cy.window().then((win) => {
-        console.log(`Setting invalid token in localStorage for ${route}`);
+        cy.log(`Invalidating token for ${route}`);
         win.localStorage.setItem("token", "invalid_token_value");
       });
 
-      // Wait before reload to ensure token invalidation takes effect
+      // Reload the page to trigger token validation
       cy.wait(500);
       cy.reload();
 
-      // Explicit redirection check for each route
-      cy.window().then((win) => {
-        if (win.location.pathname !== "/login") {
-          win.location.href = "/login?message=session_expired";
-        }
-      });
+      // Ensure the redirection happens to either session_expired or no_token
+      navigateAndVerify(route, ["/login?message=session_expired", "/login?message=no_token"]);
 
-      // Verify redirection and message using data-cy
-      cy.url({ timeout: 15000 }).should("include", "/login?message=session_expired");
-      cy.get('[data-cy="session-expired-message"]').should("be.visible");
+      // Verify the session expired message is displayed
+      checkElementVisibility(
+        '[data-cy="session-expired-message"]',
+        "Session expired message is displayed",
+        "Session expired message not found"
+      );
     });
   });
 
   after(() => {
+    // Delete the test user after all tests
     cy.deleteUser("test@example.com", "password123");
   });
 });

@@ -1,3 +1,7 @@
+/// <reference types="cypress" />
+
+import { navigateAndVerify, checkElementVisibility } from "../support/utils";
+
 describe("Dashboard Page E2E", () => {
   let token;
 
@@ -27,33 +31,52 @@ describe("Dashboard Page E2E", () => {
   });
 
   it("should display user information on the dashboard", () => {
-    cy.get('[data-cy="welcome-message"]').should("exist");
-    cy.get('[data-cy="welcome-message"]').should("exist");
+    checkElementVisibility(
+      '[data-cy="welcome-message"]',
+      "User information loaded successfully",
+      "User information did not load"
+    );
   });
 
   it("should display current date and time", () => {
     cy.get('[data-cy="menu-toggle-button"]').click();
     cy.get('[data-cy="sidebar-dashboard"]').click();
-    cy.get('[data-cy="current-datetime"]').should("be.visible");
+    checkElementVisibility(
+      '[data-cy="current-datetime"]',
+      "Current date and time loaded successfully",
+      "Current date and time did not load"
+    );
   });
 
   it("should display todo list component on dashboard", () => {
     cy.get('[data-cy="menu-toggle-button"]').click();
     cy.get('[data-cy="sidebar-view-tasks"]').click();
     cy.get('[data-cy="sidebar-tasks-cards"]').click();
-    cy.get('[data-cy="todo-list"]').should("exist");
+    checkElementVisibility(
+      '[data-cy="todo-list"]',
+      "Todo list component loaded successfully",
+      "Todo list component did not load"
+    );
   });
 
   it("should display categories component from the menu on dashboard", () => {
     cy.get('[data-cy="menu-toggle-button"]').click();
     cy.get('[data-cy="sidebar-categories"]').click();
-    cy.get('[data-cy="category-list-items"]').should("exist");
+    checkElementVisibility(
+      '[data-cy="category-list-items"]',
+      "Categories component loaded successfully",
+      "Categories component did not load"
+    );
   });
 
   it("should display profile component from the menu on dashboard", () => {
     cy.get('[data-cy="menu-toggle-button"]').click();
     cy.get('[data-cy="sidebar-profile"]').click();
-    cy.get('[data-cy="edit-profile"]').should("exist");
+    checkElementVisibility(
+      '[data-cy="edit-profile"]',
+      "Profile component loaded successfully",
+      "Profile component did not load"
+    );
   });
 
   after(() => {

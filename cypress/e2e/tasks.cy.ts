@@ -1,6 +1,8 @@
+/// <reference types="cypress" />
+
 import { formatForDataCy } from "@/lib/utils";
 
-describe("Todo App E2E", () => {
+describe("Tasks App E2E", () => {
   let token;
 
   before(() => {

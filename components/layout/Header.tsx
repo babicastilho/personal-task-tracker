@@ -73,6 +73,7 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(({
             )}
           </div>
         )}
+        
         <div className="lg:hidden relative z-50">
           <button
             onClick={handleMenuToggle}

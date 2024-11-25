@@ -1,16 +1,16 @@
 /**
  * ProfilePage.tsx
- * 
+ *
  * Page for managing and editing the user's profile information.
- * 
+ *
  * Features:
  * - Fetches and displays profile information for authenticated users, including fields for first name, last name, nickname, and bio.
  * - Provides functionality to upload and preview a profile picture.
  * - Handles profile updates through an API, with status and error messages displayed to the user.
  * - Protects the page to ensure it’s only accessible to authenticated users.
- * 
+ *
  * @returns A form that allows the user to view and update their profile information.
- * 
+ *
  * Dependencies:
  * - `useProtectedPage`: Custom hook for handling authentication.
  * - `useUserProfile`: Context hook for managing global profile data.
@@ -24,9 +24,11 @@ import Image from "next/image"; // Next.js Image component for optimized images
 import { Spinner } from "@/components/Loading"; // Loading spinner component
 import { useProtectedPage } from "@/hooks/useProtectedPage"; // Custom hook to handle protected pages
 import { useUserProfile } from "@/context/UserProfileProvider";
-import Dropdown from "@/components/commom/Dropdown";
+import Dropdown from "@/components/common/Dropdown";
+import { useTranslation } from "react-i18next";
 
 const ProfilePage = () => {
+  const { t } = useTranslation();
   const { isAuthenticated, loading } = useProtectedPage(); // Access authentication state (isAuthenticated, loading)
   const { refreshUserProfile } = useUserProfile();
 
@@ -92,23 +94,29 @@ const ProfilePage = () => {
     return null;
   }
 
-  // Handle profile form submission
+  // Handle form submission for profile updates
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    setStatusMessage(null); // Clear previous status messages
-    setErrorMessage(null); // Clear previous error messages
+    e.preventDefault(); // Prevent the default form behavior
+    setStatusMessage(null); // Clear any previous status messages
+    setErrorMessage(null); // Clear any previous error messages
 
     try {
-      const response = await updateProfile(profile); // Update profile via API
+      // Make API request to update the profile
+      const response = await updateProfile(profile);
       if (response.success) {
-        setStatusMessage("Profile updated successfully!"); // Show success message
-        await refreshUserProfile(); // Atualiza o contexto após o sucesso
+        setStatusMessage(t("profile.update_success")); // Show success message
+        await refreshUserProfile(); // Refresh user profile context after update
       } else {
-        setErrorMessage("Failed to update profile."); // Show error message on failure
+        setErrorMessage(t("profile.update_failure")); // Show failure message
       }
     } catch (error) {
-      setErrorMessage("Error updating profile. Please try again."); // Handle profile update error
+      setErrorMessage(t("profile.update_error")); // Handle API request error
     }
+  };
+  
+   // Handle dropdown selection for the preferred name
+   const handleDropdownSelect = (value: string) => {
+    setProfile((prevProfile) => ({ ...prevProfile, preferredNameOption: value })); // Update the selected option
   };
 
   // Handle form input changes
@@ -118,8 +126,11 @@ const ProfilePage = () => {
     >
   ) => {
     const { name, value } = e.target;
-    // Update the profile state based on form inputs
     setProfile((prevProfile) => ({ ...prevProfile, [name]: value }));
+
+    // Certifique-se de limpar mensagens ao alterar o valor
+    setStatusMessage(null);
+    setErrorMessage(null);
   };
 
   // Handle file input changes for profile picture
@@ -140,17 +151,28 @@ const ProfilePage = () => {
 
   // Render the profile form and related fields
   return (
-    <div className="mt-16 p-8 dark:text-gray-300">
-      <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
+    <div className="mt-24 p-8 dark:text-gray-300">
+      <h2 
+        className="text-2xl font-bold mb-4"
+        data-testid="edit-profile-title"
+        data-cy="edit-profile-title"
+      >
+        {t("profile.edit")}
+      </h2>
       <form
         onSubmit={handleSubmit}
         className="space-y-6"
+        data-testid="edit-profile"
         data-cy="edit-profile"
       >
         {/* Profile Picture */}
         <div className="space-y-4">
-          <label className="block mb-1 font-bold">Profile Picture</label>
-          <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
+          <label className="block mb-1 font-bold">{t("profile.picture")}</label>
+          <div 
+            className="flex flex-col lg:flex-row lg:items-center lg:gap-4"
+            data-testid="profile-picture"
+            data-cy="profile-picture"
+          >
             {imagePreview ? (
               <Image
                 src={imagePreview}
@@ -181,38 +203,35 @@ const ProfilePage = () => {
               value={profile.username} // Display the username
               readOnly
               placeholder=" "
-              className="p-3 text-gray-400 dark:text-gray-600 border border-gray-300 rounded w-full bg-transparent cursor-not-allowed peer focus:outline-none"
+              className="p-3 text-gray-400 dark:text-gray-600 border border-gray-300 dark:border-gray-600 rounded w-full bg-transparent cursor-not-allowed peer focus:outline-none"
+              data-testid="profile-username"
+              data-cy="profile-username"
             />
             <label
               htmlFor="username"
               className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10 bg-gray-50 dark:bg-slate-800 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:bg-transparent"
             >
-              Username
+              {t("profile.username")}
             </label>
           </div>
 
           {/* Preferred Name Option */}
           <div className="relative flex flex-col w-full md:w-1/2 space-y-2 z-40">
-            <Dropdown
-              testIdPrefix="preferred-name-option"
-              options={[
-                "username",
-                "firstName",
-                "lastName",
-                "nickname",
-                "fullName",
-              ]}
-              selectedValue={profile.preferredNameOption}
-              onSelect={(value) =>
-                setProfile({ ...profile, preferredNameOption: value })
-              }
-            />
-
+          <Dropdown
+            testIdPrefix="preferred-name-option"
+            options={["username", "firstName", "lastName", "nickname", "fullName"]}
+            selectedValue={profile.preferredNameOption}
+            onSelect={handleDropdownSelect} // Updates the selected value
+            bordered={true}
+            data-cy="dropdown-preferred-name"
+            data-testid="dropdown-preferred-name"
+          />
+            
             <label
               htmlFor="preferredNameOption"
               className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10 bg-gray-50 dark:bg-slate-800 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:bg-transparent"
             >
-              Preferred Name
+              {t("profile.preferred_name")}
             </label>
           </div>
         </div>
@@ -226,13 +245,17 @@ const ProfilePage = () => {
               value={profile.firstName} // Display first name
               onChange={handleChange} // Handle input changes
               placeholder=" "
-              className="p-3 border border-gray-300 rounded w-full peer bg-transparent focus:outline-none"
+              className="p-3 w-full peer bg-transparent 
+              border border-gray-300 dark:border-gray-600 rounded 
+              focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+              data-cy="first-name-input"
+              data-testid="first-name-input"
             />
             <label
               htmlFor="firstName"
               className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10 bg-gray-50 dark:bg-slate-800 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:bg-transparent"
             >
-              First Name
+              {t("profile.first_name")}
             </label>
           </div>
 
@@ -243,13 +266,16 @@ const ProfilePage = () => {
               value={profile.lastName} // Display last name
               onChange={handleChange}
               placeholder=" "
-              className="p-3 border border-gray-300 rounded w-full peer bg-transparent focus:outline-none"
+              className="p-3 w-full peer bg-transparent 
+              border border-gray-300 dark:border-gray-600 rounded 
+              focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+              data-cy="last-name-input"
             />
             <label
               htmlFor="lastName"
               className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10 bg-gray-50 dark:bg-slate-800 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:bg-transparent"
             >
-              Last Name
+              {t("profile.last_name")}
             </label>
           </div>
         </div>
@@ -262,13 +288,16 @@ const ProfilePage = () => {
             value={profile.nickname} // Display nickname
             onChange={handleChange}
             placeholder=" "
-            className="p-3 border border-gray-300 rounded w-full peer bg-transparent focus:outline-none"
+            className="p-3 w-full peer bg-transparent 
+              border border-gray-300 dark:border-gray-600 rounded 
+              focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+            data-cy="nickname-input"
           />
           <label
             htmlFor="nickname"
             className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10 bg-gray-50 dark:bg-slate-800 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:bg-transparent"
           >
-            Nickname
+            {t("profile.nickname")}
           </label>
         </div>
 
@@ -279,14 +308,17 @@ const ProfilePage = () => {
             value={profile.bio} // Display bio
             onChange={handleChange}
             placeholder=" "
-            className="p-3 border border-gray-300 rounded w-full peer bg-transparent focus:outline-none"
+            className="p-3 w-full peer bg-transparent 
+              border border-gray-300 dark:border-gray-600 rounded 
+              focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
             maxLength={500}
+            data-cy="bio-textarea"
           ></textarea>
           <label
             htmlFor="bio"
             className="absolute px-2 text-gray-500 duration-300 transform -translate-y-5 scale-75 top-0 origin-[0] left-2 z-10 bg-gray-50 dark:bg-slate-800 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-4 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:bg-transparent"
           >
-            Biography
+            {t("profile.biography")}
           </label>
         </div>
 
@@ -294,13 +326,22 @@ const ProfilePage = () => {
         <button
           type="submit"
           className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+          data-cy="save-profile"
         >
-          Save Profile
+          {t("profile.save")}
         </button>
 
         {/* Display status or error messages */}
-        {statusMessage && <p className="text-green-500">{statusMessage}</p>}
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {statusMessage && (
+          <p className="text-green-500" data-cy="success-message">
+            {statusMessage}
+          </p>
+        )}
+        {errorMessage && (
+          <p className="text-red-500" data-cy="error-message">
+            {errorMessage}
+          </p>
+        )}
       </form>
     </div>
   );

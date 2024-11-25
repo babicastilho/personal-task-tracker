@@ -5,26 +5,30 @@
  * 
  * - Displays a list of options, allows selecting one, and shows an icon next to the selected item if an icon map is provided.
  * - Toggles between open and closed states to show or hide the options list.
- * - Supports customizable `data-cy` and `data-testid` prefixes for testing.
+ * - Supports customizable data-cy and data-testid prefixes for testing.
  * 
  * @param options - Array of selectable options.
  * @param selectedValue - The currently selected option.
  * @param onSelect - Callback function triggered when an option is selected, passing the selected value.
  * @param iconMap - Optional object mapping each option to an icon.
- * @param testIdPrefix - Optional prefix for `data-cy` and `data-testid` attributes.
+ * @param testIdPrefix - Optional prefix for data-cy and data-testid attributes.
+ * @param bordered - Optional boolean to add a border around the dropdown.
  * 
  * @returns A dropdown component with interactive options and an icon display if provided.
  */
 
-import React, { useState } from 'react';
-import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
+import React, { useState } from "react";
+import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 
 interface DropdownProps<T> {
   options: T[];
   selectedValue: T;
   onSelect: (value: T) => void;
   iconMap?: { [key: string]: JSX.Element };
-  testIdPrefix?: string; 
+  labelMap?: { [key: string]: string }; 
+  testIdPrefix?: string;
+  textTransform?: "uppercase" | "capitalize" | "none";
+  bordered?: boolean;
 }
 
 function Dropdown<T extends string>({
@@ -32,7 +36,10 @@ function Dropdown<T extends string>({
   selectedValue,
   onSelect,
   iconMap,
-  testIdPrefix = "dropdown" // Valor padrão se não for fornecido
+  labelMap = {}, // Novo: Recebe labelMap com rótulos traduzidos
+  testIdPrefix = "dropdown",
+  textTransform = "none",
+  bordered = false,
 }: DropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -43,20 +50,31 @@ function Dropdown<T extends string>({
     setIsOpen(false);
   };
 
+  const applyTextTransform = (text: string) => {
+    switch (textTransform) {
+      case "uppercase":
+        return text.toUpperCase();
+      case "capitalize":
+        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+      default:
+        return text;
+    }
+  };
+
   return (
     <div className="z-10 relative w-full">
       <button
         onClick={toggleDropdown}
         data-cy={`${testIdPrefix}-toggle`}
         data-testid={`${testIdPrefix}-toggle`}
-        className={`w-full p-3 border rounded flex justify-between items-center transition-colors duration-300 ${
-          isOpen ? 'bg-white dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-800'
-        }`}
+        className={`w-full p-3 rounded flex justify-between items-center transition-colors duration-300 ${
+          isOpen ? "bg-white dark:bg-gray-700" : "bg-gray-100 dark:bg-gray-800"
+        } ${bordered ? "border border-gray-300 dark:border-gray-600" : ""}`}
       >
         <span className="flex items-center">
           {iconMap && iconMap[selectedValue]}
-          <span className="ml-2">
-            {selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1)}
+          <span className="ml-2" style={{ textTransform: textTransform }}>
+            {applyTextTransform(labelMap[selectedValue] || selectedValue)}
           </span>
         </span>
         <span className="ml-auto">
@@ -67,7 +85,7 @@ function Dropdown<T extends string>({
         <div
           data-cy={`${testIdPrefix}-options`}
           data-testid={`${testIdPrefix}-options`}
-          className="absolute w-full mt-1 border rounded bg-white dark:bg-gray-800 shadow-md max-h-60 overflow-y-auto transition-all duration-300 ease-in"
+          className="absolute w-full mt-1 border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 shadow-md max-h-60 overflow-y-auto transition-all duration-300 ease-in"
         >
           {options.map((option) => (
             <button
@@ -78,9 +96,7 @@ function Dropdown<T extends string>({
               className="w-full p-3 text-left hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center transition-colors"
             >
               {iconMap && iconMap[option]}
-              <span className="ml-2">
-                {option.charAt(0).toUpperCase() + option.slice(1)}
-              </span>
+              <span className="ml-2">{applyTextTransform(labelMap[option] || option)}</span>
             </button>
           ))}
         </div>

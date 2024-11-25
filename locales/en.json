@@ -1,0 +1,123 @@
+{
+  "login": {
+    "signIn": "Sign In",
+    "email": "Email",
+    "password": "Password",
+    "signInButton": "Sign In",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Register here",
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "loginRequired": "Your session has expired. Please log in again to continue.",
+    "noToken": "You need to log in to continue.",
+    "logoutSuccessful": "Logout successful. Please log in again to continue."
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "categories": "Categories",
+    "viewTasks": "View Tasks",
+    "tasks": {
+      "board": "Board",
+      "list": "List",
+      "calendar": "Calendar",
+      "cards": "Cards"
+    },
+    "profile": "Profile",
+    "themeMode": {
+      "light": "Light Mode",
+      "dark": "Dark Mode"
+    },
+    "logout": "Log Out"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}!",
+    "current_datetime": "{{datetime}}",
+    "stats_title": "Your Stats",
+    "tasks_completed": "Tasks Completed: {{count}}",
+    "tasks_pending": "Tasks Pending: {{count}}",
+    "tasks_due_today": "Tasks Due Today: {{count}}",
+    "unread_messages": "Unread Messages: {{count}}",
+    "calendar_title": "Your Calendar"
+  },
+  "userProfileMenu": {
+    "profile": "Profile",
+    "configurations": "Configurations",
+    "logout": "Log Out",
+    "languageSelector": {
+      "en": "English",
+      "pt": "Portuguese",
+      "es": "Spanish"
+    }
+  },
+  "categories": {
+    "manageCategories": "Manage Categories",
+    "categoryNamePlaceholder": "Category name",
+    "categoryDescriptionPlaceholder": "Category description",
+    "addCategoryButton": "Add Category",
+    "errorFetchingCategories": "Failed to fetch categories.",
+    "errorLoadingCategories": "Failed to load categories. Please try again.",
+    "errorAddingCategory": "Failed to add category.",
+    "errorDeletingCategory": "Failed to delete category."
+  },
+  "tasksPage": {
+    "title": "Your To-Do List",
+    "filterButton": "Filter",
+    "addNewTaskButton": "Add New Task",
+    "fetchError": "Failed to load tasks or categories. Please try again.",
+    "noTasks": "No tasks added yet. How about adding your first task?",
+    "noFilteredTasks": "No tasks match the applied filters. Try adjusting the filters to view your tasks."
+  },
+  "priority": {
+    "title": "Priority",
+    "highest": "Highest",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low",
+    "lowest": "Lowest",
+    "priority_label": "Priority"
+  },
+  "filters": {
+    "title": "Filters",
+    "clear": "Clear Filters",
+    "confirm_clear_message": "Do you want to clear all filters?",
+    "confirm_button": "Yes, clear filters",
+    "cancel_button": "No, just close"
+  },
+  "task": {
+    "no_tasks": "No tasks to display",
+    "no_category": "No category",
+    "name": "Task Name",
+    "resume": "Resume",
+    "description": "Description",
+    "due_date": "Due Date",
+    "due_time": "Due Time",
+    "no_due_date": "No due date",
+    "save": "Save Task",
+    "cancel": "Cancel",
+    "delete": "Delete Task",
+    "confirm_delete": "Are you sure you want to delete this task?",
+    "delete_yes": "Yes, delete",
+    "delete_no": "Cancel",
+    "add_new": "Add a New Task",
+    "edit": "Edit Task",
+    "untitled": "Untitled",
+    "priority": "Priority",
+    "category": "Category",
+    "select_category": "Select Category"
+  },
+  "profile": {
+    "edit": "Edit Profile",
+    "picture": "Profile Picture",
+    "username": "Username",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "nickname": "Nickname",
+    "biography": "Biography",
+    "preferred_name": "Preferred Name",
+    "save": "Save Profile",
+    "choose_file": "Choose File",
+    "no_file": "No file selected",
+    "update_success": "Profile updated successfully!",
+    "update_failure": "Failed to update profile.",
+    "update_error": "Error updating profile. Please try again."
+  }
+}

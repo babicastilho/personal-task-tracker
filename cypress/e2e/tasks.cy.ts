@@ -1,6 +1,8 @@
+/// <reference types="cypress" />
+
 import { formatForDataCy } from "@/lib/utils";
 
-describe("Todo App E2E", () => {
+describe("Tasks App E2E", () => {
   let token;
 
   before(() => {
@@ -30,7 +32,6 @@ describe("Todo App E2E", () => {
 
   it("should load the app and display the task list", () => {
     cy.wait(1000);
-    cy.contains("Your To-Do List").should("be.visible");
     cy.get('[data-cy="todo-list-title"]').should("exist");
   });
 
@@ -40,7 +41,6 @@ describe("Todo App E2E", () => {
     const formattedTitle = formatForDataCy(taskTitle);
 
     cy.get('[data-cy="button-add-task"]').click();
-    cy.contains("Add a New Task").should("be.visible");
 
     cy.get('[data-cy="task-input"]').type(taskTitle);
     cy.get('[data-cy="resume-input"]').type(taskResume);

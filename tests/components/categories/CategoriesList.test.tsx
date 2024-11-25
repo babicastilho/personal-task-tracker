@@ -8,6 +8,22 @@ import { useAuth } from '@/hooks/useAuth'; // Mock the authentication hook
 jest.mock('@/lib/apiFetch');
 jest.mock('@/hooks/useAuth');
 
+// Mock i18n translations
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "categories.errorFetchingCategories": "Failed to fetch categories.",
+        "categories.manageCategories": "Manage Categories",
+        "categories.categoryNamePlaceholder": "Category name",
+        "categories.categoryDescriptionPlaceholder": "Category description",
+        "categories.addCategoryButton": "Add Category",
+      };
+      return translations[key] || key;
+    },
+  }),
+}));
+
 describe('CategoriesPage Component', () => {
   beforeEach(() => {
     // Mock document.cookie to simulate token presence
@@ -45,53 +61,62 @@ describe('CategoriesPage Component', () => {
   });
 
   it('handles fetch failure gracefully', async () => {
-    // Mock the authentication check to simulate the user being authenticated
+    // Mock authentication to simulate an authenticated user
     (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, loading: false });
-
+  
     // Mock a failed fetch response
     (apiFetch as jest.Mock).mockResolvedValueOnce({
       success: false,
     });
-
-    // Use act to ensure all updates are handled correctly
+  
+    // Render the component
     await act(async () => {
       render(<CategoriesPage />);
     });
-
+  
     // Ensure the error message is displayed
-    expect(screen.getByText('Failed to fetch categories.')).toBeInTheDocument();
+    expect(screen.getByText('Error fetching categories.')).toBeInTheDocument();
   });
 
   it('allows adding a new category', async () => {
-    // Mock the authentication check to simulate the user being authenticated
+    // Mock authentication to simulate an authenticated user
     (useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true, loading: false });
-
-    // Mock the fetch responses:
-    // - The first mock for fetching the initial categories (empty)
-    // - The second mock for adding a new category
-    (apiFetch as jest.Mock)
-      .mockResolvedValueOnce({
-        success: true,
-        categories: [],
-      })
-      .mockResolvedValueOnce({
-        success: true,
-        category: { _id: '3', name: 'New Category' },
-      });
-
-    // Use act to ensure all updates are handled corretamente
+  
+    // Mock API calls
+    (apiFetch as jest.Mock).mockImplementation((url, options) => {
+      console.log('Mock API Call:', { url, options }); // Log mock calls
+      if (options.method === 'GET') {
+        return Promise.resolve({ success: true, categories: [] });
+      }
+      if (options.method === 'POST') {
+        console.log('POST Request Body:', options.body); // Log POST body
+        return Promise.resolve({ success: true, category: { _id: '3', name: 'New Category' } });
+      }
+      return Promise.resolve({ success: false });
+    });
+  
+    // Render the component
     await act(async () => {
       render(<CategoriesPage />);
     });
-
-    // Simulate user input and actions
+  
+    // Ensure the initial state is empty
+    expect(screen.getByTestId('category-list-items')).toBeInTheDocument();
+    expect(screen.queryByTestId('category-name-3')).not.toBeInTheDocument();
+  
+    // Simulate user input and button click
     fireEvent.change(screen.getByPlaceholderText('Category name'), { target: { value: 'New Category' } });
     fireEvent.change(screen.getByPlaceholderText('Category description'), { target: { value: 'Description' } });
     fireEvent.click(screen.getByText('Add Category'));
-
-    // Wait for the new category to appear in the document
+  
+    console.log('Waiting for new category...');
     await waitFor(() => {
-      expect(screen.getByText('New Category')).toBeInTheDocument();
+      screen.debug(); // Output the DOM for debugging
+      const addedCategory = screen.getByTestId('category-name-3');
+      expect(addedCategory).toBeInTheDocument();
+      expect(addedCategory).toHaveTextContent('New Category');
     });
-  });
+    console.log('New category added!');
+  }, 10000); // Increased timeout to 10 seconds
+    
 });

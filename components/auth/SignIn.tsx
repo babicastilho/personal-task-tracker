@@ -1,25 +1,10 @@
-/**
- * SignIn.tsx
- * 
- * Sign-in component allowing users to enter email and password to log in.
- * - Displays error messages on login failure and redirects upon successful login.
- * - Accepts a redirect URL from query parameters to control post-login navigation.
- * 
- * @component
- * @returns A sign-in form with email and password fields, error handling, and redirection.
- * 
- * @param email - User's email address.
- * @param password - User's password.
- * @param error - Error message displayed on login failure.
- * @param redirectUrl - URL to redirect to upon successful login (default is "/dashboard").
- */
-
 "use client";
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthContext } from "@/context/AuthProvider";
 import Link from "next/link";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -30,6 +15,7 @@ export default function SignIn() {
   const redirectUrl = searchParams.get("redirect") || "/dashboard";
   const { login } = useAuthContext();
   const [isMounted, setIsMounted] = useState(false);
+  const { t } = useTranslation(); // Initialize translation hook
 
   useEffect(() => {
     setIsMounted(true);
@@ -53,24 +39,29 @@ export default function SignIn() {
         throw new Error(data.message || "Failed to login");
       }
 
-      login(data.token); // Use localStorage token to manage login
+      login(data.token);
 
       if (isMounted) {
-        router.push(redirectUrl); // Redirect after login
+        router.push(redirectUrl);
       }
     } catch (error) {
-      setError("Login failed");
+      setError(t("login.sessionExpired")); // Use translation for error message
       console.error("Login failed:", error);
     }
   };
 
   return (
     <div className="p-4 bg-white text-black shadow-lg rounded-lg">
-      <h2 className="text-lg font-bold mb-4">Sign In</h2>
+      <h2 
+        className="text-lg font-bold mb-4"
+        data-cy="signin_message" data-testid="signin_message"
+      >
+        {t("login.signIn")}
+      </h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium mb-2">
-            Email:
+            {t("login.email")}
           </label>
           <input
             id="email"
@@ -83,7 +74,7 @@ export default function SignIn() {
         </div>
         <div className="mb-4">
           <label htmlFor="password" className="block text-sm font-medium mb-2">
-            Password:
+            {t("login.password")}
           </label>
           <input
             id="password"
@@ -99,12 +90,12 @@ export default function SignIn() {
           type="submit"
           className="w-full px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-700 transition"
         >
-          Sign In
+          {t("login.signInButton")}
         </button>
         <p className="mt-4">
-          Don&#39;t have an account?{" "}
+          {t("login.noAccount")}{" "}
           <Link className="text-red-500" href="/register">
-            Register here
+            {t("login.registerHere")}
           </Link>
         </p>
       </form>

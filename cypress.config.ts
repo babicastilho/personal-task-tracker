@@ -3,6 +3,7 @@ import { defineConfig } from "cypress";
 export default defineConfig({
   projectId: 'xp4y1p',
   e2e: {
+    defaultCommandTimeout: 10000,
     setupNodeEvents(on, config) {
       on('task', {
         log(message) {

@@ -32,6 +32,14 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
+// Mock react-i18next
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key, 
+  }),
+}));
+
+
 // Additional global setups can be added here if needed
 
 // Mock global Request class for use in tests

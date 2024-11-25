@@ -1,30 +1,14 @@
-/**
- * Dashboard.tsx
- * 
- * Displays the user's dashboard with personalized stats, a calendar, and a welcome message. 
- * Shows real-time date and time, task status, and an optional profile picture.
- * - Fetches and displays user-specific statistics such as tasks completed, pending, due today, and unread messages.
- * - Updates the displayed time every second and fetches dashboard data on mount.
- * 
- * @component
- * @returns A user dashboard with statistics, real-time clock, calendar, and welcome message.
- * 
- * @param user - User's profile information from context, including profile picture and preferred name.
- * @param dashboardData - Statistics on tasks and unread messages.
- * @param currentDateTime - Real-time formatted date and time.
- * 
- * @dependencies - Uses `apiFetch` for API calls and `useUserProfile` context for user data.
- */
-
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Calendar from "@/components/dashboard/Calendar";
 import { Spinner } from "@/components/Loading";
 import Image from "next/image";
 import { apiFetch } from "@/lib/apiFetch";
 import { useUserProfile } from "@/context/UserProfileProvider";
+import { useTranslation } from "react-i18next";
 
 const Dashboard = () => {
+  const { t } = useTranslation(); // Hook for translations
   const { user, loadingProfile, getPreferredName } = useUserProfile();
   const [dashboardData, setDashboardData] = useState<{
     tasksCompleted: number;
@@ -39,9 +23,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const data = await apiFetch("/api/dashboard", {
-          method: "GET",
-        });
+        const data = await apiFetch("/api/dashboard", { method: "GET" });
         if (data && data.success) {
           setDashboardData(data.dashboard);
         }
@@ -79,11 +61,10 @@ const Dashboard = () => {
   if (!dashboardData) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p>User or dashboard data not found.</p>
+        <p>{t("dashboard.error_no_data")}</p>
       </div>
     );
   }
-
 
   return (
     <>
@@ -103,26 +84,30 @@ const Dashboard = () => {
         )}
         <div className="flex-col items-center mx-5">
           <h2 className="text-lg font-bold" data-cy="welcome-message" data-testid="welcome-message">
-            Welcome, <span data-cy="preferred-name">{getPreferredName()}</span>!
+            {t("dashboard.welcome", { name: getPreferredName() })}
           </h2>
           <h3 className="text-base font-medium" data-cy="current-datetime">
-            {currentDateTime}
+            {t("dashboard.current_datetime", { datetime: currentDateTime })}
           </h3>
         </div>
       </div>
 
       <div className="mt-6">
-        <h3 className="text-md font-semibold mb-2" data-cy="dashboard-status">Your Stats</h3>
+        <h3 className="text-md font-semibold mb-2" data-cy="dashboard-status">
+          {t("dashboard.stats_title")}
+        </h3>
         <ul>
-          <li>Tasks Completed: {dashboardData.tasksCompleted}</li>
-          <li>Tasks Pending: {dashboardData.tasksPending}</li>
-          <li>Tasks Due Today: {dashboardData.dueToday}</li>
-          <li>Unread Messages: {dashboardData.unreadMessages}</li>
+          <li>{t("dashboard.tasks_completed", { count: dashboardData.tasksCompleted })}</li>
+          <li>{t("dashboard.tasks_pending", { count: dashboardData.tasksPending })}</li>
+          <li>{t("dashboard.tasks_due_today", { count: dashboardData.dueToday })}</li>
+          <li>{t("dashboard.unread_messages", { count: dashboardData.unreadMessages })}</li>
         </ul>
       </div>
 
       <div className="mt-6">
-        <h3 className="text-md font-semibold mb-2">Your Calendar</h3>
+        <h3 className="text-md font-semibold mb-2">
+          {t("dashboard.calendar_title")}
+        </h3>
         <Calendar />
       </div>
     </>

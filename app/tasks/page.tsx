@@ -9,8 +9,10 @@ import { Task, Category } from "@/types/TaskCategoryTypes";
 import FilterModal from "@/components/filters/FilterModal";
 import PriorityFilter from "@/components/filters/PriorityFilter";
 import { FaFilter } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 export default function TasksPage() {
+  const { t } = useTranslation();
   const { isAuthenticated, loading } = useProtectedPage();
   const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -30,39 +32,34 @@ export default function TasksPage() {
     setSelectedPriorities([]);
   };
 
-  // Remova o bloco useEffect que verifica o token
-useEffect(() => {
-  const fetchTasksAndCategories = async () => {
-    try {
-      const taskData = await apiFetch("/api/tasks", { method: "GET" });
-      if (taskData && taskData.success) {
-        setTasks(taskData.tasks);
-      } else {
-        setErrorMessage("Failed to fetch tasks.");
+  useEffect(() => {
+    const fetchTasksAndCategories = async () => {
+      try {
+        const taskData = await apiFetch("/api/tasks", { method: "GET" });
+        if (taskData && taskData.success) {
+          setTasks(taskData.tasks);
+        } else {
+          setErrorMessage(t("tasksPage.fetchError"));
+        }
+
+        const categoryData = await apiFetch("/api/categories", {
+          method: "GET",
+        });
+        if (categoryData && categoryData.success) {
+          setCategories(categoryData.categories);
+        } else {
+          setErrorMessage(t("tasksPage.fetchError"));
+        }
+      } catch (error) {
+        setErrorMessage(t("tasksPage.fetchError"));
+      } finally {
+        setLoadingData(false);
       }
+    };
 
-      const categoryData = await apiFetch("/api/categories", {
-        method: "GET",
-      });
-      if (categoryData && categoryData.success) {
-        setCategories(categoryData.categories);
-      } else {
-        setErrorMessage("Failed to fetch categories.");
-      }
-    } catch (error) {
-      setErrorMessage(
-        "Failed to load tasks or categories. Please try again."
-      );
-    } finally {
-      setLoadingData(false);
-    }
-  };
+    if (isAuthenticated) fetchTasksAndCategories();
+  }, [isAuthenticated, t]);
 
-  if (isAuthenticated) fetchTasksAndCategories();
-}, [isAuthenticated]);
-
-
-  // Depend only on `isAuthenticated` and `loading` from `useProtectedPage`
   if (loading || loadingData) {
     return (
       <div className="flex flex-1 justify-center items-center">
@@ -77,14 +74,13 @@ useEffect(() => {
     );
   }
 
-  // If not authenticated, return null to avoid rendering content
   if (!isAuthenticated) {
     return null;
   }
 
   return (
     <div
-      className="mt-16 p-8 dark:text-gray-300"
+      className="mt-20 p-8 dark:text-gray-300"
       data-cy="todo-list"
       data-testid="todo-list"
     >
@@ -94,7 +90,7 @@ useEffect(() => {
           data-cy="todo-list-title"
           data-testid="todo-list-title"
         >
-          Your To-Do List
+          {t("tasksPage.title")}
         </h1>
         <div className="flex items-center">
           <button
@@ -104,7 +100,7 @@ useEffect(() => {
             data-testid="filter-modal-button"
           >
             <FaFilter className="mr-1" />
-            Filter
+            {t("tasksPage.filterButton")}
           </button>
 
           <button
@@ -113,7 +109,7 @@ useEffect(() => {
             data-cy="button-add-task"
             data-testid="button-add-task"
           >
-            Add New Task
+            {t("tasksPage.addNewTaskButton")}
           </button>
         </div>
       </div>
@@ -141,8 +137,8 @@ useEffect(() => {
       {filteredTasks.length === 0 && (
         <p className="text-gray-500 mt-4">
           {tasks.length === 0
-            ? "No tasks added yet. How about adding your first task?"
-            : "No tasks match the applied filters. Try adjusting the filters to view your tasks."}
+            ? t("tasksPage.noTasks")
+            : t("tasksPage.noFilteredTasks")}
         </p>
       )}
 

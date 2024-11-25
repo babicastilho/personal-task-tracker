@@ -1,0 +1,123 @@
+{
+  "login": {
+    "signIn": "Iniciar Sesión",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "signInButton": "Iniciar Sesión",
+    "noAccount": "¿No tienes una cuenta?",
+    "registerHere": "Regístrate aquí",
+    "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
+    "loginRequired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo para continuar.",
+    "noToken": "Necesitas iniciar sesión para continuar.",
+    "logoutSuccessful": "Cierre de sesión exitoso. Por favor, inicia sesión de nuevo para continuar."
+  },
+  "sidebar": {
+    "dashboard": "Panel",
+    "categories": "Categorías",
+    "viewTasks": "Ver Tareas",
+    "tasks": {
+      "board": "Tablero",
+      "list": "Lista",
+      "calendar": "Calendario",
+      "cards": "Tarjetas"
+    },
+    "profile": "Perfil",
+    "themeMode": {
+      "light": "Modo Claro",
+      "dark": "Modo Oscuro"
+    },
+    "logout": "Cerrar Sesión"
+  },
+  "dashboard": {
+    "welcome": "¡Bienvenido(a), {{name}}!",
+    "current_datetime": "{{datetime}}",
+    "stats_title": "Tus Estadísticas",
+    "tasks_completed": "Tareas Completadas: {{count}}",
+    "tasks_pending": "Tareas Pendientes: {{count}}",
+    "tasks_due_today": "Tareas para Hoy: {{count}}",
+    "unread_messages": "Mensajes Sin Leer: {{count}}",
+    "calendar_title": "Tu Calendario"
+  },
+  "userProfileMenu": {
+    "profile": "Perfil",
+    "configurations": "Configuraciones",
+    "logout": "Cerrar Sesión",
+    "languageSelector": {
+      "en": "Inglés",
+      "pt": "Portugués",
+      "es": "Español"
+    }
+  },
+  "categories": {
+    "manageCategories": "Administrar Categorías",
+    "categoryNamePlaceholder": "Nombre de la categoría",
+    "categoryDescriptionPlaceholder": "Descripción de la categoría",
+    "addCategoryButton": "Agregar Categoría",
+    "errorFetchingCategories": "Error al obtener categorías.",
+    "errorLoadingCategories": "Error al cargar categorías. Por favor, intenta nuevamente.",
+    "errorAddingCategory": "Error al agregar la categoría.",
+    "errorDeletingCategory": "Error al eliminar la categoría."
+  },
+  "tasksPage": {
+    "title": "Tu Lista de Tareas",
+    "filterButton": "Filtrar",
+    "addNewTaskButton": "Agregar Nueva Tarea",
+    "fetchError": "Error al cargar tareas o categorías. Por favor, inténtalo de nuevo.",
+    "noTasks": "No se han agregado tareas. ¿Qué tal agregar tu primera tarea?",
+    "noFilteredTasks": "No hay tareas que coincidan con los filtros aplicados. Intenta ajustar los filtros para ver tus tareas."
+  },
+  "priority": {
+    "title": "Prioridad",
+    "highest": "Más Alta",
+    "high": "Alta",
+    "medium": "Media",
+    "low": "Baja",
+    "lowest": "Más Baja",
+    "priority_label": "Prioridad"
+  },
+  "filters": {
+    "title": "Filtros",
+    "clear": "Limpiar Filtros",
+    "confirm_clear_message": "¿Quieres limpiar todos los filtros?",
+    "confirm_button": "Sí, limpiar filtros",
+    "cancel_button": "No, solo cerrar"
+  },
+  "task": {
+    "no_tasks": "No hay tareas para mostrar.",
+    "no_category": "Sin categoría",
+    "name": "Nombre de la Tarea",
+    "resume": "Resumen",
+    "description": "Descripción",
+    "due_date": "Fecha de Vencimiento",
+    "due_time": "Hora de Vencimiento",
+    "no_due_date": "Sin fecha de vencimiento",
+    "save": "Guardar Tarea",
+    "cancel": "Cancelar",
+    "delete": "Eliminar Tarea",
+    "confirm_delete": "¿Está seguro de que desea eliminar esta tarea?",
+    "delete_yes": "Sí, eliminar",
+    "delete_no": "Cancelar",
+    "add_new": "Agregar Nueva Tarea",
+    "edit": "Editar Tarea",
+    "untitled": "Sin Título",
+    "priority": "Prioridad",
+    "category": "Categoría",
+    "select_category": "Seleccionar Categoría"
+  },
+  "profile": {
+    "edit": "Editar Perfil",
+    "picture": "Foto de Perfil",
+    "username": "Nombre de Usuario",
+    "first_name": "Nombre",
+    "last_name": "Apellido",
+    "nickname": "Apodo",
+    "biography": "Biografía",
+    "preferred_name": "Nombre Preferido",
+    "save": "Guardar Perfil",
+    "choose_file": "Explorar...",
+    "no_file": "Ningún archivo seleccionado",
+    "update_success": "Perfil atualizado com sucesso!",
+    "update_failure": "Falha ao atualizar o perfil.",
+    "update_error": "Erro ao atualizar o perfil. Por favor, tente novamente."
+  }
+}

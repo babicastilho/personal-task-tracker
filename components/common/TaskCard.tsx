@@ -27,6 +27,7 @@ import {
 
 import { formatForDataCy } from "@/lib/utils";
 import { Task } from "@/types/TaskCategoryTypes";
+import { useTranslation } from "react-i18next";
 
 interface TaskCardProps {
   task: Task;
@@ -35,6 +36,8 @@ interface TaskCardProps {
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onEditTask, category }) => {
+  const { t, i18n } = useTranslation();
+
   const isTaskOverdue = (dueDate?: string) => {
     if (!dueDate) return false;
     const currentDate = new Date();
@@ -59,9 +62,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEditTask, category }) => {
     }
   };
 
+  // Mapeia o nível de prioridade para a tradução correspondente
+  const translatedPriority = t(`priority.${task.priority}`);
+
   const dueDate = task.dueDate
-    ? new Date(task.dueDate).toLocaleDateString()
-    : "No due date";
+    ? new Date(task.dueDate).toLocaleDateString(i18n.language)
+    : t("task.no_due_date");
 
   return (
     <div
@@ -86,9 +92,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEditTask, category }) => {
       <div className="my-3 text-sm text-gray-500">
         <p className="flex items-center">
           {getPriorityIcon(task.priority)}{" "}
-          <span className="ml-1 capitalize">{task.priority} priority</span>
+          <span className="ml-1">{translatedPriority} {t("priority.priority_label")}</span>
         </p>
-        <p>{category || "No category"}</p>
+        <p>{category || t("task.no_category")}</p>
         <p className={`mt-1 flex items-center ${
               isTaskOverdue(task.dueDate) ? "text-red-600" : "text-gray-500"
             }`}>

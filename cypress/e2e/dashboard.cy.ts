@@ -1,33 +1,55 @@
 /// <reference types="cypress" />
 
-import { navigateAndVerify, checkElementVisibility } from "../support/utils";
+import { checkElementVisibility } from "../support/utils";
 
 describe("Dashboard Page E2E", () => {
-  let token;
-
-  before(() => {
-    // Create a user with custom profile data for testing the dashboard
-    cy.resetUser("test@example.com", "password123", {
-      firstName: "Jane",
-      lastName: "Smith",
-      nickname: "JaneS",
-      username: "janesmith",
-    }).then((response) => {
-      token = response.body.token; // Store the token for API requests
-    });
-  });
-
   beforeEach(() => {
-    // Intercept the login request before the test
-    cy.intercept("POST", "/api/auth/login").as("loginRequest");
+    // Mock for login endpoint
+    cy.intercept("POST", "/api/auth/login", {
+      statusCode: 200,
+      body: {
+        success: true,
+        token: "valid-token", // Simulates a valid authentication token
+      },
+    }).as("loginRequest");
 
-    // Use the custom login function
-    cy.login("test@example.com", "password123", "/login");
+    // Mock for authentication check endpoint
+    cy.intercept("GET", "/api/auth/check", {
+      statusCode: 200,
+      body: { success: true }, // Indicates the session is valid
+    }).as("authCheck");
 
-    // Wait for the intercepted login request and assert the response
-    cy.wait("@loginRequest").then((interception) => {
-      expect(interception.response.statusCode).to.equal(200);
-    });
+    // Mock for user profile endpoint
+    cy.intercept("GET", "/api/users/profile", {
+      statusCode: 200,
+      body: {
+        success: true,
+        user: {
+          id: "123",
+          name: "Test User",
+          email: "test@example.com",
+        },
+      },
+    }).as("userProfile");
+
+    // Mock for fetching categories
+    cy.intercept("GET", "/api/categories", {
+      statusCode: 200,
+      body: {
+        success: true,
+        categories: [
+          { _id: "1", name: "Work", description: "Work-related tasks" },
+          { _id: "2", name: "Personal", description: "Personal tasks" },
+        ],
+      },
+    }).as("categoriesRequest");
+
+    // Simulate login
+    cy.visit("/login");
+    cy.get('input[id="email"]').type("test@example.com");
+    cy.get('input[id="password"]').type("password123");
+    cy.get('button[type="submit"]').click();
+    cy.wait("@loginRequest").its("response.statusCode").should("eq", 200);
   });
 
   it("should display user information on the dashboard", () => {
@@ -52,6 +74,7 @@ describe("Dashboard Page E2E", () => {
     cy.get('[data-cy="menu-toggle-button"]').click();
     cy.get('[data-cy="sidebar-view-tasks"]').click();
     cy.get('[data-cy="sidebar-tasks-cards"]').click();
+
     checkElementVisibility(
       '[data-cy="todo-list"]',
       "Todo list component loaded successfully",
@@ -60,8 +83,24 @@ describe("Dashboard Page E2E", () => {
   });
 
   it("should display categories component from the menu on dashboard", () => {
+    // Mock response ensures predictable data
+    cy.intercept("GET", "/api/categories", {
+      statusCode: 200,
+      body: {
+        success: true,
+        categories: [
+          { _id: "1", name: "Work", description: "Work-related tasks" },
+          { _id: "2", name: "Personal", description: "Personal tasks" },
+        ],
+      },
+    }).as("categoriesRequest");
+
     cy.get('[data-cy="menu-toggle-button"]').click();
     cy.get('[data-cy="sidebar-categories"]').click();
+
+    // Wait for the mocked API request
+    cy.wait("@categoriesRequest").its("response.statusCode").should("eq", 200);
+
     checkElementVisibility(
       '[data-cy="category-list-items"]',
       "Categories component loaded successfully",
@@ -77,9 +116,5 @@ describe("Dashboard Page E2E", () => {
       "Profile component loaded successfully",
       "Profile component did not load"
     );
-  });
-
-  after(() => {
-    cy.deleteUser("test@example.com", "password123");
   });
 });

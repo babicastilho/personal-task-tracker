@@ -56,38 +56,57 @@ describe("Profile Page E2E", () => {
 
   it("should allow users to update their profile", () => {
     const newFirstName = "UpdatedFirstName";
-
+  
     cy.get("body").then(($body) => {
       if ($body.find('[data-cy="first-name-input"]').length > 0) {
         cy.log("Profile edit form loaded successfully");
-        
-        // Update profile fields
-        cy.get('[data-cy="first-name-input"]').clear().type(newFirstName);
+  
+        // Ensure the field is cleared before typing
+        cy.get('[data-cy="first-name-input"]')
+          .invoke("val") // Get the current value
+          .then((currentValue) => {
+            cy.log(`Current value: ${currentValue}`);
+            cy.get('[data-cy="first-name-input"]').clear().type(newFirstName);
+          });
+  
         cy.get('[data-cy="bio-textarea"]').clear().type("This is an updated bio.");
-        
+  
         // Scroll to and click the "Save Profile" button
         cy.get('[data-cy="save-profile"]')
           .scrollIntoView()
           .should("be.visible")
           .click();
-
-        // Verify profile update success message
+  
+        // Verify profile update success message and final value
         cy.get('[data-cy="first-name-input"]').should("have.value", newFirstName);
         cy.get('[data-cy="success-message"]').should("exist");
       } else {
         cy.log("Profile edit form did not load");
       }
     });
-  });
+  }); 
 
   it("should prevent access to profile page if not authenticated", () => {
-    // Logout to test unauthorized access
+    // Mock the auth check response to simulate an unauthenticated user
+    cy.intercept("GET", "/api/auth/check", {
+      statusCode: 401, // Simulate unauthorized response
+      body: { success: false, message: "Unauthorized" },
+    }).as("authCheck");
+  
+    // Perform logout to clear authentication state
     cy.logout();
-
+  
     // Attempt to visit the profile page
     cy.visit("/profile");
+  
+    // Wait for the auth check request and validate the response
+    cy.wait("@authCheck").then((interception) => {
+      expect(interception.response.statusCode).to.equal(401);
+    });
+  
+    // Verify redirection to the login page with appropriate message
     cy.url({ timeout: 5000 }).should("include", "/login?message=no_token");
-  });
+  });  
 
   after(() => {
     // Delete test user after tests

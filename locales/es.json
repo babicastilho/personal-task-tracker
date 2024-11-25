@@ -56,7 +56,8 @@
     "errorFetchingCategories": "Error al obtener categorías.",
     "errorLoadingCategories": "Error al cargar categorías. Por favor, intenta nuevamente.",
     "errorAddingCategory": "Error al agregar la categoría.",
-    "errorDeletingCategory": "Error al eliminar la categoría."
+    "errorDeletingCategory": "Error al eliminar la categoría.",
+    "emptyMessage": "No hay categorías disponibles. ¡Empieza añadiendo una nueva categoría!"
   },
   "tasksPage": {
     "title": "Tu Lista de Tareas",

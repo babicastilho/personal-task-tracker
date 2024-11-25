@@ -87,13 +87,23 @@ describe("Profile Page E2E", () => {
   }); 
 
   it("should prevent access to profile page if not authenticated", () => {
+    // Mock the /api/auth/check endpoint to return 401
+    cy.intercept("GET", "/api/auth/check", {
+      statusCode: 401,
+      body: { success: false, message: "Unauthorized" },
+    }).as("authCheck");
+  
     // Logout to test unauthorized access
     cy.logout();
-
+  
     // Attempt to visit the profile page
     cy.visit("/profile");
+  
+    // Wait for the unauthorized check and verify redirection
+    cy.wait("@authCheck");
     cy.url({ timeout: 5000 }).should("include", "/login?message=no_token");
   });
+  
 
   after(() => {
     // Delete test user after tests

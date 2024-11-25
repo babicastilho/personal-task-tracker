@@ -56,7 +56,8 @@
     "errorFetchingCategories": "Failed to fetch categories.",
     "errorLoadingCategories": "Failed to load categories. Please try again.",
     "errorAddingCategory": "Failed to add category.",
-    "errorDeletingCategory": "Failed to delete category."
+    "errorDeletingCategory": "Failed to delete category.",
+    "emptyMessage": "No categories available. Start by adding a new category!"
   },
   "tasksPage": {
     "title": "Your To-Do List",

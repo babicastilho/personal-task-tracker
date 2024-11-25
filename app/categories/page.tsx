@@ -162,30 +162,42 @@ const CategoriesPage: React.FC = () => {
       </div>
 
       <ul
-  className="list-disc space-y-2 pl-5"
-  data-testid="category-list-items"
-  data-cy="category-list-items"
->
-  {categories?.map((category) => (
-    <li key={category._id} className="flex justify-between items-center">
-      <span
-        data-testid={`category-name-${category._id}`}
-        data-cy={`category-name-${category._id}`}
+        className="list-disc space-y-2 pl-5"
+        data-testid="category-list-items"
+        data-cy="category-list-items"
       >
-        {category.name}
-      </span>
-      <button
-        data-testid={`delete-category-${category._id}`}
-        data-cy={`delete-category-${category._id}`}
-        onClick={() => deleteCategory(category._id)}
-        className="ml-2 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-700 transition"
-      >
-        <FaRegTrashAlt />
-      </button>
-    </li>
-  ))}
-</ul>
-
+        {categories && categories.length > 0 ? (
+          categories.map((category) => (
+            <li
+              key={category._id}
+              className="flex justify-between items-center"
+            >
+              <span
+                data-testid={`category-name-${category._id}`}
+                data-cy={`category-name-${category._id}`}
+              >
+                {category.name}
+              </span>
+              <button
+                data-testid={`delete-category-${category._id}`}
+                data-cy={`delete-category-${category._id}`}
+                onClick={() => deleteCategory(category._id)}
+                className="ml-2 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-700 transition"
+              >
+                <FaRegTrashAlt />
+              </button>
+            </li>
+          ))
+        ) : (
+          <p
+            data-testid="no-categories-message"
+            data-cy="no-categories-message"
+            className="text-gray-500"
+          >
+            {t("categories.emptyMessage")}
+          </p>
+        )}
+      </ul>
     </div>
   );
 };
